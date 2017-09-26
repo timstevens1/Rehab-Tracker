@@ -72,6 +72,7 @@
         //
         
         if (!securityCheck($path_parts, $yourURL)) {
+	    print "$path_parts" . ", $yourURL";
             print "<p>Login failed: " . date("F j, Y") . " at " . date("h:i:s") . "</p>\n";
             die("<p>Sorry you cannot access this page. Security breach detected and reported</p>");
         }
@@ -80,16 +81,16 @@
         // Set up database connection
         //
         
-        $dbUserName = 'bgoodwin_reader';
+        $dbUserName = 'rtracker_reader';
         $whichPass = "r"; //flag for which one to use.
         $dbName = DATABASE_NAME;
         $thisDatabaseReader = new Database($dbUserName, $whichPass, $dbName);
         
-        $dbUserName = 'bgoodwin_writer';
+        $dbUserName = 'rtracker_writer';
         $whichPass = "w";
         $thisDatabaseWriter = new Database($dbUserName, $whichPass, $dbName);
         
-        $dbUserName = 'bgoodwin_admin';
+        $dbUserName = 'rtracker_admin';
         $whichPass = "a";
         $thisDatabaseAdmin = new Database($dbUserName, $whichPass, $dbName);
         ?>

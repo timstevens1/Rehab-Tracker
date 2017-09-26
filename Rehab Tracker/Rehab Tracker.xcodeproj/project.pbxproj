@@ -89,6 +89,7 @@
 
 /* Begin PBXFileReference section */
 		19CED83F4022241E44F1F882 /* Pods_Rehab_TrackerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Rehab_TrackerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3800A0281F1D695800AD52DC /* Rehab Tracker.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Rehab Tracker.entitlements"; sourceTree = "<group>"; };
 		4221681B1DF9A069008FDDF8 /* StatsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatsViewController.swift; sourceTree = "<group>"; };
 		42378C6B1E53D39C005575D6 /* Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
 		42A0D50D1E5259960003A96B /* CoreDataPractice.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreDataPractice.xcdatamodel; sourceTree = "<group>"; };
@@ -178,6 +179,7 @@
 		42F252A71DC8F42200C79D99 /* Rehab Tracker */ = {
 			isa = PBXGroup;
 			children = (
+				3800A0281F1D695800AD52DC /* Rehab Tracker.entitlements */,
 				42F252B71DC8F42300C79D99 /* Info.plist */,
 				42F252A81DC8F42200C79D99 /* AppDelegate.swift */,
 				42A96A961DF5E7FC0016FD5B /* Session+CoreDataClass.swift */,
@@ -308,7 +310,7 @@
 								enabled = 0;
 							};
 							com.apple.Push = {
-								enabled = 0;
+								enabled = 1;
 							};
 						};
 					};
@@ -669,16 +671,19 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_ENTITLEMENTS = "Rehab Tracker/Rehab Tracker.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Christian Skalka (X2Z8E88897)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Christian Skalka (X2Z8E88897)";
 				DEVELOPMENT_TEAM = XD63BJ9269;
 				INFOPLIST_FILE = "Rehab Tracker/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "UVM.Rehab-Tracker-CS275";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -688,15 +693,17 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Rehab Tracker/Rehab Tracker.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = XD63BJ9269;
 				INFOPLIST_FILE = "Rehab Tracker/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "UVM.Rehab-Tracker-CS275";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

@@ -1,12 +1,13 @@
 <?php
 // passwords for your database 
-// mysql -h webdb.uvm.edu -p -u mewinter_admin MEWINTER_UVM_Courses
-$dbReader="DIMVAZ3XEFWc";
-$dbWriter="L1lkkhknP9uY";
-$dbAdmin="9ORjQCNJwzLx";
-
-//$dbReader="gpGKRC074aTH";
-//$dbWriter="rpH3fK2M4dp4";
-//$dbAdmin="v2eYlabngmwT";
+//mysql -h webdb.uvm.edu -p -u mewinter_admin MEWINTER_UVM_Courses
+//tjsteven
+//$dbReader="cY5froJT6XVv";
+//$dbWriter="DcKCFjACHzF8";
+//$dbAdmin="V4oky34874sW";
+//rtracker
+$dbReader="2KxQWK4Myk6V";
+$dbWriter="DBrt5ZDslxv5";
+$dbAdmin="e4pnB1EGNzUz";
 ?>
  

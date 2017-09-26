@@ -96,7 +96,7 @@ class ViewController: UIViewController {
             let saveAction = UIAlertAction(title: "Save",
                                            style: .default,
                                            handler: { (action:UIAlertAction) -> Void in
-                                            
+                                        
                                             //calls saveUserID function with input as arguement
                                             let textField = alert.textFields!.first
                                             self.saveUserID(textField!.text!)
@@ -150,7 +150,7 @@ class ViewController: UIViewController {
     private func getDatabaseUsername() -> String {
         
         // Create urlstr string with current userID
-        let urlstr : String = "https://www.uvm.edu/~bgoodwin/Restful/example.php?pmkPatientID=" + Util.returnCurrentUsersID()
+        let urlstr : String = "https://www.uvm.edu/~rtracker/Restful/example.php?pmkPatientID=" + Util.returnCurrentUsersID()
         
         // Make url string into actual url and catch errors
         guard let url = URL(string: urlstr)

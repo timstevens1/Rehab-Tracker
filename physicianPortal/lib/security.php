@@ -60,6 +60,9 @@ function securityCheck($path_parts, $yourURL, $form = false) {
     $whiteListFolders = array();
     $whiteListFolders[] = "/CS275";
     $whiteListFolders[] = "/CS275/physicianPortal";
+    $whiteListFolders[] = "/physicianPortal";
+    $whiteListFolders[] = "/~tjsteven/physicianPortal";
+    $whiteListFolders[] = "/~rtracker/physicianPortal";
 
 
 
@@ -77,11 +80,11 @@ function securityCheck($path_parts, $yourURL, $form = false) {
     }
 
     // Check server
-    $server = htmlentities($_SERVER['SERVER_NAME'], ENT_QUOTES, "UTF-8");
-    if ($server != get_current_user() . ".w3.uvm.edu") {
+    /*$server = htmlentities($_SERVER['SERVER_NAME'], ENT_QUOTES, "UTF-8");
+    if ($server != get_current_user() . "zoo.uvm.edu") {
         $passed = false;
         $errorMsg[] = "<p>Failed server check: " . $server . "</p>";
-    }
+    }*/
 
     // when it is a form page check to make sure it submitted to itself
     if ($form) {
