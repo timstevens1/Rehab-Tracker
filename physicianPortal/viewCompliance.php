@@ -63,8 +63,27 @@ if ($tblPatient != "") {
     print '</aside>';
 }
 print '</div>';
+print '<aside>';
+if($tblPatient != ""){
+	$tblPatientQuery = 'SELECT pmkPatientID FROM ' . $tblPatient;
+	$patientPrimaries = $thisDatabaseReader -> select($tblPatientQuery, "", 0, 0, 0, 0, false, false);
+	foreach($patientPrimaries as $patientPrimary){
+		$thisPMK =  $patientPrimary[0];
+		print '<p>Patient pmk: ' . $thisPMK . '</p>';
+		if($tblSession != ""){
+			$tblSessionQuery = 'SELECT fldSessNum, fldSessionCompliance, fldNote, fldDeviceSynced FROM ' . $tblSession . ' WHERE pmkPatientID = "' . $thisPMK . '"';
+			$sessionInformation = $thisDatabaseReader -> select($tblSessionQuery, "", 1, 0, 2, 0, false, false);
+			print '<p>Data from ' . count($sessionInformation) . ' sessions available</p>';
+				foreach($sessionInformation as $individualSession){
+					print '<p>Session Number: ' . $individualSession[0] . ' Sesion Compliance: ' .$individualSession[1] . ' Note: ' . $individualSession[2] . ' Sync Date: ' . $individualSession[3] . '</p>';
+				}
+		}
+	}
+}
+$currentDate = date('Y-m-d');
+$fiveDaysPrior = date_format(date_modify(date_create($currentDate), '-5 day'),'Y-m-d');
+print '</aside>';
 print '</article>';
-
 ////--------------------TBLSESSION INFORMATION--------------------------------
 //
 //// Begin output
