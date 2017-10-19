@@ -65,10 +65,14 @@ if ($tblPatient != "") {
 print '</div>';
 //begin analysis script
 print '<aside>';
-//if tblPatient is not null
-if($tblPatient != ""){
+//if tblPatient and tblSeesion are not null
+if($tblPatient != "" && $tblSession!= ""){
+	//get the current date
+	$currentDate = date('Y-m-d');	
+	//generate a date  prior and parse it into a form the database can recognize
+	$priorDate = date_format(date_modify(date_create($currentDate), '-7 month'),'Y-m-d');
 	//this query select pmkS from tblPatient
-	$tblPatientQuery = 'SELECT pmkPatientID FROM ' . $tblPatient;
+	$tblPatientQuery = 'SELECT pmkPatientID FROM tblPatient';
 	//get the patient primary key array
 	$patientPrimaries = $thisDatabaseReader -> select($tblPatientQuery, "", 0, 0, 0, 0, false, false);
 	//for all patients in the table
@@ -77,32 +81,29 @@ if($tblPatient != ""){
 		$thisPMK =  $patientPrimary[0];
 		//print the pmk (testing)
 		print '<p>Patient pmk: ' . $thisPMK . '</p>';
-		//if tblSession is not null
-		if($tblSession != ""){
-			//this query selects data we want to analyze about the selected patient from tblSession
-			$tblSessionQuery = 'SELECT fldSessNum, fldSessionCompliance, fldNote, fldDeviceSynced FROM ' . $tblSession . ' WHERE pmkPatientID = "' . $thisPMK . '"';
-			//get the data from the table
-			$sessionInformation = $thisDatabaseReader -> select($tblSessionQuery, $thisPMKArray, 1, 0, 2, 0, false, false);
+		//this query selects data we want to analyze about the selected patient from tblSession
+		$tblSessionQuery = 'SELECT fldSessNum, fldSessionCompliance, fldNote, fldDeviceSynced FROM  tblSession  WHERE pmkPatientID = ? AND fldDeviceSynced BETWEEN ? AND ?';
+		//encapsulate the data for security
+		$sessionInfoData = array($thisPMK,$priorDate,$currentDate);
+		//get the data from the table
+		$sessionInformation = $thisDatabaseReader -> select($tblSessionQuery, $sessionInfoData, 1, 2, 0, 0, false, false);
+		if(count($sessionInformation)>0){
 			//print the number of sessions this patient has in the database (testing)
 			print '<p>Data from ' . count($sessionInformation) . ' sessions available</p>';
 			//initialize an accumulator for session compliance
 			$averageCompliance = 0;
-				//for each individual session
-				foreach($sessionInformation as $individualSession){
-					//increment the accumulator by compliance from this session
-					$averageCompliance += $individualSession[1];
-					//print out the session info (testing)
-					print '<p>Session Number: ' . $individualSession[0] . ' Sesion Compliance: ' .$individualSession[1] . ' Note: ' . $individualSession[2] . ' Sync Date: ' . $individualSession[3] . '</p>';
-				}
+			//for each individual session
+			foreach($sessionInformation as $individualSession){
+				//increment the accumulator by compliance from this session	
+				$averageCompliance += $individualSession[1];
+				//print out the session info (testing)
+				print '<p>Session Number: ' . $individualSession[0] . ' Sesion Compliance: ' .$individualSession[1] . ' Note: ' . $individualSession[2] . ' Sync Date: ' . $individualSession[3] . '</p>';
+			}
 			//print out average compliance
 			print '<p>Average compliance: ' . $averageCompliance/count($sessionInformation) . '</p>';
-		}
+		}		
 	}
 }
-//get the current date
-$currentDate = date('Y-m-d');
-//generate a date 5 days prior and parse it into a form the database can recognize
-$fiveDaysPrior = date_format(date_modify(date_create($currentDate), '-5 day'),'Y-m-d');
 print '</aside>';
 //end analysis script
 print '</article>';
