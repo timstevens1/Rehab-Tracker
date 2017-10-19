@@ -82,14 +82,20 @@ if($tblPatient != ""){
 			//this query selects data we want to analyze about the selected patient from tblSession
 			$tblSessionQuery = 'SELECT fldSessNum, fldSessionCompliance, fldNote, fldDeviceSynced FROM ' . $tblSession . ' WHERE pmkPatientID = "' . $thisPMK . '"';
 			//get the data from the table
-			$sessionInformation = $thisDatabaseReader -> select($tblSessionQuery, "", 1, 0, 2, 0, false, false);
+			$sessionInformation = $thisDatabaseReader -> select($tblSessionQuery, $thisPMKArray, 1, 0, 2, 0, false, false);
 			//print the number of sessions this patient has in the database (testing)
 			print '<p>Data from ' . count($sessionInformation) . ' sessions available</p>';
+			//initialize an accumulator for session compliance
+			$averageCompliance = 0;
 				//for each individual session
 				foreach($sessionInformation as $individualSession){
+					//increment the accumulator by compliance from this session
+					$averageCompliance += $individualSession[1];
 					//print out the session info (testing)
 					print '<p>Session Number: ' . $individualSession[0] . ' Sesion Compliance: ' .$individualSession[1] . ' Note: ' . $individualSession[2] . ' Sync Date: ' . $individualSession[3] . '</p>';
 				}
+			//print out average compliance
+			print '<p>Average compliance: ' . $averageCompliance/count($sessionInformation) . '</p>';
 		}
 	}
 }
