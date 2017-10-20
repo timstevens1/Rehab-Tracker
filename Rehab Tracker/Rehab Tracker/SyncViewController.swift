@@ -108,7 +108,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                                             }else{
                                                 print("[DEBUG] There is no peripheral to be disconnected")
                                                 
-                                                // NEED TO CHANGE THIS
+                                               // TEMP - DEBUGGING MEASURE TO CLEAR PREV USER SESSIONS
                                                 Util.overwriteSessions()
                                                 
                                                 // Parses the CSV and saves it in core data
@@ -188,6 +188,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             session.notes = self.comments
             session.hasUser = Util.returnCurrentUser()
         }
+        // THIS COULD BE PROBLEM - SAVE CONTEXT AFTER FOR LOOP
+        // TEST THIS - ALL SESSION SAVED TO CORE DATA? - MIGHT HAVE TO BE IN FOR
         (UIApplication.shared.delegate as! AppDelegate).saveContext()
         self.searchForStats()
         
@@ -639,11 +641,11 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                 
                 try csvText.write(to: fileURL, atomically: true, encoding: .utf8)
                 
-                // NEED TO CHANGE THIS
-                Util.overwriteSessions()
+                // NEED TO CHANGE THIS - DEBUGGING MEASURE TO CLEAR PREV USER SESSIONS
+                //Util.overwriteSessions()
                 
                 // Parses the CSV and saves it in core data
-                try self.parseCSV()
+                //try self.parseCSV() //THIS IS OUTDATED - SHOULD ONLY BE CALLED ON SYNCH ACTION
                 
             } catch {
                 print("[ERROR] Failed writing to URL: \(fileURL), Error: " + error.localizedDescription)
