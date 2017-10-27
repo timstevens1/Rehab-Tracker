@@ -16,6 +16,10 @@ import CoreData
 import Foundation
 import CoreBluetooth
 
+// DEBUG mode flag
+let DEBUG = true
+let TEST_LOCAL_FILE_NAME = "/Users/brianjcolombini/Documents/fall_2017/CS275/rehab_tracker/data2.csv"
+
 protocol BLEDelegate1 {
     func bleDidUpdateState()
     func bleDidConnectToPeripheral()
@@ -108,8 +112,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                                             }else{
                                                 print("[DEBUG] There is no peripheral to be disconnected")
                                                 
-                                                // NEED TO CHANGE THIS
-                                                Util.overwriteSessions()
+                                               // TEMP - DEBUGGING MEASURE TO CLEAR PREV USER SESSIONS
+                                                //Util.overwriteSessions()
                                                 
                                                 // Parses the CSV and saves it in core data
                                                 try self.parseCSV()
@@ -136,17 +140,29 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     
     // Function to parse data from CSV file
     private func parseCSV() throws {
+        let fileName:String
+        let fileURL:URL = URL.init(string:"empty")!
+        let dbfile:String
         // Name of the database file, with newline-separated records
-        let fileName = "data"
-        let docDirectory = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        if let fileURL = docDirectory?.appendingPathComponent(fileName).appendingPathExtension("csv") {
+        if(DEBUG) {
+            fileName = TEST_LOCAL_FILE_NAME
+        } else{
+            fileName = "data"
+            let docDirectory = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        }
+        // UNCOMMENT if not debug mode
+        //if fileURL = docDirectory?.appendingPathComponent(fileName).appendingPathExtension("csv") {
             
             // Record field delimeter (is a comma for csv)
             let delimeter = ","
             self.stats = []
         
             do {
-                let dbfile = try String(contentsOf: fileURL)
+                if(DEBUG) {
+                    dbfile = try String(contentsOfFile: fileName)
+                } else {
+                    dbfile = try String(contentsOf: fileURL)
+                }
                 let lines:[String] = dbfile.components(separatedBy: "\n") as [String]
             
                 for line in lines {
@@ -170,7 +186,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                 // Print error
                 print("file input failed \(error), \(error.userInfo)")
             }
-        }
+        // UNCOMMENT if not debug mode
+        //}
     }
     
     // Function to add data from csv to core data
@@ -207,6 +224,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                 
                 // Assign values for post variables
                 fldSessNum = val.sessionID!
+                print("FLD_SESS_NUM")
+                print(fldSessNum)
                 fldSessionCompliance = val.session_compliance
                 fldIntensity1 = val.avg_ch1_intensity!
                 fldIntensity2 = val.avg_ch2_intensity!
@@ -229,12 +248,12 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     private func thisDate() {
         let currDate = Date()
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy/MM/dd"
+        formatter.dateFormat = "yyyy-MM-dd"
         fldDeviceSynced = formatter.string(from: currDate)
     }
     
     private func pushToDatabase() {
-        let urlstr : String = "https://www.uvm.edu/~bgoodwin/Restful/example.php?pmkPatientID="
+        let urlstr : String = "https://www.uvm.edu/~rtracker/Restful/example.php?pmkPatientID="
             + pmkPatientID
             + "&fldSessNum="
             + fldSessNum
@@ -248,7 +267,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             + fldNote
             + "&fldDeviceSynced="
             + fldDeviceSynced
-        
+
         let urlurl = urlstr.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)
         
         //Make url string into actual url and catch errors
@@ -639,11 +658,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                 
                 try csvText.write(to: fileURL, atomically: true, encoding: .utf8)
                 
-                // NEED TO CHANGE THIS
-                Util.overwriteSessions()
-                
-                // Parses the CSV and saves it in core data
-                try self.parseCSV()
+                // NEED TO CHANGE THIS - DEBUGGING MEASURE TO CLEAR PREV USER SESSIONS
+                //Util.overwriteSessions()
                 
             } catch {
                 print("[ERROR] Failed writing to URL: \(fileURL), Error: " + error.localizedDescription)
