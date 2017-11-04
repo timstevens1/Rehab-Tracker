@@ -18,7 +18,7 @@ import CoreBluetooth
 
 // DEBUG mode flag
 let DEBUG = true
-let TEST_LOCAL_FILE_NAME = "/Users/brianjcolombini/Documents/fall_2017/CS275/rehab_tracker/data2.csv"
+let TEST_LOCAL_FILE_NAME = "/Users/brianjcolombini/Documents/fall_2017/CS275/rehab_tracker/data_11-4_newsess.csv"
 
 protocol BLEDelegate1 {
     func bleDidUpdateState()
@@ -31,7 +31,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     
     // Array and dictionary to hold stats
     private var sessions = [Session]()
-    private var stats:[(sessionID: String, avg_ch1_intensity:String, avg_ch2_intensity:String, session_compliance: String)]?
+    private var stats:[(sessionID: String, avg_ch1_intensity:String, avg_ch2_intensity:String, session_compliance: String, start_time: String, end_time: String)]?
     
     // global variable comments to store session comments
     private var comments = "No Comments"
@@ -123,6 +123,29 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                                             if ( Util.average(array: self.lastSessionCompliance) >= 0.9167 ){
                                                 self.positiveFeedbackAlert()
                                             }
+                                            
+                                            // see what's in core data - DEBUG STEP
+                                            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+                                            let context = appDelegate.persistentContainer.viewContext
+                                            let request: NSFetchRequest<Session> = Session.fetchRequest()
+                                            request.returnsObjectsAsFaults = false
+                                            
+                                            do {
+                                                let cd_sessions = try context.fetch(request)
+                                                print("ALL SESSIONS IN CORE DATA:") //DEBUG STEP
+                                                for val in cd_sessions {
+                                                    // Assign values for post variables
+                                                    let num = val.sessionID!
+                                                    print("FLD_SESS_NUM") //DEBUG STEP
+                                                    print(num)
+                                                }
+                                                
+                                            }catch {
+                                                // Sync Error Alert
+                                                self.syncErrorAlert()
+                                                
+                                                print("Could not find stats. \(error)")
+                                            }
                                         }
                                         catch {
                                             print("Could not find stats. \(error)")
@@ -169,7 +192,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                     var fields = [String]()
                     if(line != "") {
                         fields = line.components(separatedBy: delimeter)
-                        let stat = (sessionID: fields[0], avg_ch1_intensity:fields[1], avg_ch2_intensity:fields[2], session_compliance: fields[3])
+                        let stat = (sessionID: fields[0], avg_ch1_intensity:fields[1], avg_ch2_intensity:fields[2], session_compliance: fields[3],
+                            start_time:fields[4], end_time:fields[5])
                         self.stats?.append(stat)
                     
                         // append the session_compliance to the array for calculating if we should give feedback
@@ -195,13 +219,17 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
         let sesEntity = NSEntityDescription.entity(forEntityName: "Session", in: context)
-    
+        print("NEW SESSIONS TO SAVE TO CORE DATA:") //DEBUG STEP
         for stat in stats! {
             let session = NSManagedObject(entity: sesEntity!, insertInto: context)as! Session
             session.sessionID = stat.sessionID
+            print(session.sessionID) //DEBUG STEP
             session.session_compliance = stat.session_compliance
+            session.start_time = Int32(stat.start_time)!
+            session.end_time = Int32(stat.end_time)!
             session.avg_ch1_intensity = stat.avg_ch1_intensity
             session.avg_ch2_intensity = stat.avg_ch2_intensity
+            session.pushed_to_db = false
             session.notes = self.comments
             session.hasUser = Util.returnCurrentUser()
         }
@@ -215,17 +243,18 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
         let request: NSFetchRequest<Session> = Session.fetchRequest()
+        request.predicate = NSPredicate(format: "pushed_to_db == false")
         request.returnsObjectsAsFaults = false
         
         do {
             sessions = try context.fetch(request)
-            
+            print("SESSIONS RETRIEVED FROM CORE DATA:") //DEBUG STEP
             for val in sessions {
                 
                 // Assign values for post variables
                 fldSessNum = val.sessionID!
-                print("FLD_SESS_NUM")
-                print(fldSessNum)
+                print("FLD_SESS_NUM") //DEBUG STEP
+                print(fldSessNum) //DEBUG STEP
                 fldSessionCompliance = val.session_compliance
                 fldIntensity1 = val.avg_ch1_intensity!
                 fldIntensity2 = val.avg_ch2_intensity!
@@ -253,6 +282,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     }
     
     private func pushToDatabase() {
+        print("SESSION PUSHED TO DB")
+        print(fldSessNum)
         let urlstr : String = "https://www.uvm.edu/~rtracker/Restful/example.php?pmkPatientID="
             + pmkPatientID
             + "&fldSessNum="
@@ -297,6 +328,28 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         
         // Return value of returnedUserID
         task.resume()
+        print("before pushed_to_db flag set")
+        // Update pushed_to_db flag to true in core data for saved sessions
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let context = appDelegate.persistentContainer.viewContext
+        let request: NSFetchRequest<Session> = Session.fetchRequest()
+        request.predicate = NSPredicate(format: "sessionID == %@", fldSessNum)
+        do {
+            let pushedSession = try context.fetch(request) // list of one session
+            
+            if pushedSession.count != 1 { // count != 1 for this session id in core data
+                print("count != 1 for sessionID in core data")
+            }
+            for session in pushedSession {
+                session.setValue(true, forKey: "pushed_to_db")
+            }
+            (UIApplication.shared.delegate as! AppDelegate).saveContext()
+            print("UPDATE PUSHED TO DB FOR SESS:")
+            print(fldSessNum)
+        }
+        catch {
+            print("Update pushed_to_db field failed")
+        }
     }
     
     override func viewDidLoad() {
