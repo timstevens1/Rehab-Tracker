@@ -18,7 +18,7 @@ import CoreBluetooth
 
 // DEBUG mode flag
 let DEBUG = true
-let TEST_LOCAL_FILE_NAME = "/Users/brianjcolombini/Documents/fall_2017/CS275/rehab_tracker/data_11-4_newsess.csv"
+let TEST_LOCAL_FILE_NAME = "/Users/brianjcolombini/Documents/fall_2017/CS275/rehab_tracker/data_11-4_newnewsess.csv"
 
 protocol BLEDelegate1 {
     func bleDidUpdateState()
@@ -46,6 +46,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     private var fldIntensity1 = ""
     private var fldIntensity2 = ""
     private var fldNote = ""
+    private var fldStartTime = ""
+    private var fldEndTime = ""
     private var fldDeviceSynced = ""
     
     @IBAction func showInfo(_ sender: UIBarButtonItem) {
@@ -225,10 +227,10 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             session.sessionID = stat.sessionID
             print(session.sessionID) //DEBUG STEP
             session.session_compliance = stat.session_compliance
-            session.start_time = Int32(stat.start_time)!
-            session.end_time = Int32(stat.end_time)!
             session.avg_ch1_intensity = stat.avg_ch1_intensity
             session.avg_ch2_intensity = stat.avg_ch2_intensity
+            session.start_time = Int32(stat.start_time)!
+            session.end_time = Int32(stat.end_time)!
             session.pushed_to_db = false
             session.notes = self.comments
             session.hasUser = Util.returnCurrentUser()
@@ -258,6 +260,12 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                 fldSessionCompliance = val.session_compliance
                 fldIntensity1 = val.avg_ch1_intensity!
                 fldIntensity2 = val.avg_ch2_intensity!
+                fldStartTime = toDatetime(seconds_since_1970: val.start_time)
+                print("start time")
+                print(fldStartTime)
+                fldEndTime = toDatetime(seconds_since_1970: val.end_time)
+                print("end time")
+                print(fldEndTime)
                 fldNote = self.comments
                 pmkPatientID = Util.returnCurrentUsersID()
                 self.thisDate()
@@ -279,6 +287,14 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         fldDeviceSynced = formatter.string(from: currDate)
+    }
+    
+    // Convert unix time (seconds - this is format sent by Arduino) to datetime format
+    private func toDatetime(seconds_since_1970:Int32) -> String {
+        let datetime = Date(timeIntervalSince1970: Double(seconds_since_1970))
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return formatter.string(from: datetime)
     }
     
     private func pushToDatabase() {
