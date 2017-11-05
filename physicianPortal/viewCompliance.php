@@ -65,10 +65,6 @@ if ($tblPatient != "") {
 print '</div>';
 //begin analysis script
 print '<aside>';
-//test for new table to see if modifications to top.php or database.php are needed
-$tblNotificationsQuery = 'SELECT * FROM tblNotifications';
-$notificationTest = $thisDatabaseReader -> select($tblNotificationsQuery, "", 0,0,0,0,false,false);
-print '<p>' . $notificationTest[0][0] . '</p>';
 //if tblPatient and tblSeesion are not null
 if($tblPatient != "" && $tblSession!= ""){
 	//get the current date
@@ -84,16 +80,17 @@ if($tblPatient != "" && $tblSession!= ""){
 		//parse the pmk
 		$thisPMK =  $patientPrimary[0];
 		//print the pmk (testing)
-		print '<p>Patient pmk: ' . $thisPMK . '</p>';
+		//print '<p>Patient pmk: ' . $thisPMK . '</p>';
 		//this query selects data we want to analyze about the selected patient from tblSession
 		$tblSessionQuery = 'SELECT fldSessNum, fldSessionCompliance, fldNote, fldDeviceSynced FROM  tblSession  WHERE pmkPatientID = ? AND fldDeviceSynced BETWEEN ? AND ?';
 		//encapsulate the data for security
 		$sessionInfoData = array($thisPMK,$priorDate,$currentDate);
 		//get the data from the table
 		$sessionInformation = $thisDatabaseReader -> select($tblSessionQuery, $sessionInfoData, 1, 2, 0, 0, false, false);
-		if(count($sessionInformation)>0){
+		//if they have more than one session
+		if(count($sessionInformation)>1){
 			//print the number of sessions this patient has in the database (testing)
-			print '<p>Data from ' . count($sessionInformation) . ' sessions available</p>';
+			//print '<p>Data from ' . count($sessionInformation) . ' sessions available</p>';
 			//initialize an accumulator for session compliance
 			$averageCompliance = 0;
 			//for each individual session
@@ -101,10 +98,13 @@ if($tblPatient != "" && $tblSession!= ""){
 				//increment the accumulator by compliance from this session	
 				$averageCompliance += $individualSession[1];
 				//print out the session info (testing)
-				print '<p>Session Number: ' . $individualSession[0] . ' Sesion Compliance: ' .$individualSession[1] . ' Note: ' . $individualSession[2] . ' Sync Date: ' . $individualSession[3] . '</p>';
+				//print '<p>Session Number: ' . $individualSession[0] . ' Sesion Compliance: ' .$individualSession[1] . ' Note: ' . $individualSession[2] . ' Sync Date: ' . $individualSession[3] . '</p>';
 			}
 			//print out average compliance
-			print '<p>Average compliance: ' . $averageCompliance/count($sessionInformation) . '</p>';
+			//print '<p>Average compliance: ' . $averageCompliance/count($sessionInformation) . '</p>';
+				//now we will print out what we want to insert into tblPush
+				print '<p>fnkPatientID: ' . $thisPMK . ' Notification ID: ' . rand(1,16) . '</p>';
+			 
 		}		
 	}
 }
@@ -121,7 +121,8 @@ print '</article>';
 //// Display all the records for a given table
 //if ($tblSession != "") {
 //    print '<aside id="records">';
-//    $query = 'SHOW COLUMNS FROM ' . $tblSession;
+//    $query = 'SHOW COLUMNS FROM ' . $tblSession;verageCompliance = 0;
+
 //    $info = $thisDatabaseReader->select($query, "", 0, 0, 0, 0, false, false);
 //    $span = count($info);
 ////print out the table name and how many records there are
