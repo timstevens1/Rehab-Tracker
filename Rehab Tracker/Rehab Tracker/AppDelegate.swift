@@ -103,6 +103,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         )
         })
         registerForPushNotifications()
+
         return true
     }
     
@@ -125,6 +126,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
+        application.applicationIconBadgeNumber = 0
+
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
     }
 
@@ -170,11 +173,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     func registerForPushNotifications() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
-            (granted, error) in
-            print("Permission granted: \(granted)")
-            guard granted else { return }
-            self.getNotificationSettings()
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
+                (granted, error) in
+                print("Permission granted: \(granted)")
+                guard granted else { return }
+                self.getNotificationSettings()
         }
     }
     func getNotificationSettings() {
@@ -191,7 +194,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         let token = tokenParts.joined()
-        print("Device Token: \(token)")
+        print(token)
+        Util.setUDID(udid :token)
+        if Util.returnCurrentUsersID() == Util.getDatabaseUsername(){
+            print(Util.pushRegistration())
+        }
+        
     }
     
     func application(_ application: UIApplication,

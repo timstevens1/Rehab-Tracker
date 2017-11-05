@@ -17,9 +17,12 @@ extension Session {
 
     @NSManaged public var avg_ch1_intensity: String?
     @NSManaged public var avg_ch2_intensity: String?
+    @NSManaged public var end_time: Int32
     @NSManaged public var notes: String?
+    @NSManaged public var pushed_to_db: Bool
     @NSManaged public var session_compliance: String
     @NSManaged public var sessionID: String?
+    @NSManaged public var start_time: Int32
     @NSManaged public var hasUser: User?
 
 }

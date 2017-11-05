@@ -9,10 +9,11 @@
 import UIKit
 import CoreData
 import Foundation
-
+var UDID = ""
+var DBuser = ""
 // This is a bunch of utility functions used throughout the code
 class Util {
-    
+
     // Returns current User's userID as a string
     class func returnCurrentUsersID() -> String {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -137,7 +138,7 @@ class Util {
     class func updateTargetIntensity() {
         
         // Create urlstr string with current userID
-        let urlstr : String = "https://www.uvm.edu/~bgoodwin/Restful/getTargetIntensity.php?pmkPatientID="
+        let urlstr : String = "https://www.uvm.edu/~rtracker/Restful/getTargetIntensity.php?pmkPatientID="
             + Util.returnCurrentUsersID()
         
         // Make url string into actual url and catch errors
@@ -268,5 +269,111 @@ class Util {
         }
         let ave = sum / Double(array.count)
         return ave
+    }
+    class func setUDID(udid: String){
+        UDID = udid;
+    }
+    class func getUDID() -> String{
+        return UDID;
+    }
+    class func getDatabaseUsername() -> String {
+        findDatabaseUsername()
+        return DBuser
+    }
+    class func findDatabaseUsername(){
+        
+        // Create urlstr string with current userID
+        let urlstr : String = "https://www.uvm.edu/~rtracker/Restful/example.php?pmkPatientID=" + Util.returnCurrentUsersID()
+        
+        // Make url string into actual url and catch errors
+        guard let url = URL(string: urlstr)
+            else {
+                print("Error: cannot create URL")
+                return
+        }
+        
+        // Creates urlRequest using our url
+        // Let urlRequest = NSMutableURLRequest(url: url)
+        var urlRequest = URLRequest(url: url)
+        var task = URLSession.shared.dataTask(with: urlRequest, completionHandler: {
+            (data, response, error) in
+            // If data exists, grab it and set it to our global variable
+            if (error == nil) {
+                let jo : NSDictionary
+                do {
+                    jo =
+                        try JSONSerialization.jsonObject(with: data!, options: []) as! NSDictionary
+                    print(jo)
+                }
+                catch {
+                    return
+                }
+                if let name = jo["pmkPatientID"] {
+                        DBuser = name as! String
+                }
+            }
+            else {
+                print(error as! String)
+            }
+        })
+        // Return value of returnedUserID
+        task.resume()
+        return
+    }
+    class func pushRegistration() -> String {
+    
+        let earl = "http://rtracker.w3.uvm.edu/restful.py"
+        var urlRequest: URLRequest
+        guard let url2 = URL(string: earl)
+            else {
+                print("Error: cannot create URL")
+                return "URL creation failed"
+            }
+        do{
+            urlRequest = URLRequest(url: url2 as URL)
+        }
+        catch{
+            print("error can't create URL")
+            return "URL creation failed"
+        }
+        urlRequest.httpMethod = "POST"
+        let json: [String: Any] = [
+            "ID": Util.returnCurrentUsersID(),
+            "UDID": Util.getUDID()
+        ]
+        do {
+            urlRequest.httpBody = try JSONSerialization.data(withJSONObject: json, options: [])
+        } catch let error {
+            print(error.localizedDescription)
+        }
+    
+        urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        urlRequest.addValue("application/json", forHTTPHeaderField: "Accept")
+        let task = URLSession.shared.dataTask(with: urlRequest, completionHandler: {
+            (data, response, error) in
+            // If data exists, grab it and set it to our global variable
+            if (error == nil) {
+                let jo : NSDictionary
+                do {
+                    jo = try JSONSerialization.jsonObject(with: data!, options: []) as! NSDictionary
+                }
+                catch {
+                    return
+                }
+                if let success = jo["success"] {
+                    if  success as!  Bool{
+                        print("push notification registration successful!")
+                    }
+                else{
+                    print("push notification registration failed:")
+                    print(jo["error"])
+    
+                }
+            }
+        }
+    })
+    // Return value of returnedUserID
+    task.resume()
+    return "success"
     }
 }

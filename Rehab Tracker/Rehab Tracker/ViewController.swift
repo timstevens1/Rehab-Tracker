@@ -10,6 +10,7 @@ import UIKit
 import CoreData
 import Foundation
 import CoreBluetooth
+import UserNotifications
 
 // This is the main page, allows users to login and get into the app
 class ViewController: UIViewController {
@@ -21,6 +22,10 @@ class ViewController: UIViewController {
         let user = User(context: context)
         user.userID = thisUserID
         (UIApplication.shared.delegate as! AppDelegate).saveContext()
+        //COMPLETE ME!
+        print(Util.pushRegistration())
+        // register new user for push notifications
+       
     }
 
     // Responds to add user button and checks to see if theres already a user logged in
@@ -119,8 +124,13 @@ class ViewController: UIViewController {
 
     @IBAction func Continue(_ sender: UIButton) {
         // If username is valid, allows the user to continue into the app
-        if self.getDatabaseUsername() == Util.returnCurrentUsersID() {
+        print("Database")
+        print(Util.getDatabaseUsername())
+        print("persistent")
+        print(Util.returnCurrentUsersID())
+        if Util.getDatabaseUsername() == Util.returnCurrentUsersID() {
             // Continues on to the syncviewcontroller
+            
             let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
             let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Sync")
             self.present(nextViewController, animated:true, completion:nil)
@@ -147,46 +157,11 @@ class ViewController: UIViewController {
     private var returnedUserID = "DEFAULTVALUE"
     
     // Function to check if a username is in the database, if yes, returns the name as string
-    private func getDatabaseUsername() -> String {
-        
-        // Create urlstr string with current userID
-        let urlstr : String = "https://www.uvm.edu/~rtracker/Restful/example.php?pmkPatientID=" + Util.returnCurrentUsersID()
-        
-        // Make url string into actual url and catch errors
-        guard let url = URL(string: urlstr)
-            else {
-            print("Error: cannot create URL")
-            return "Error creating URL!"
-            }
-        
-        // Creates urlRequest using our url
-        // Let urlRequest = NSMutableURLRequest(url: url)
-        let urlRequest = URLRequest(url: url)
-        let task = URLSession.shared.dataTask(with: urlRequest, completionHandler: {
-            (data, response, error) in
-            // If data exists, grab it and set it to our global variable
-            if (error == nil) {
-                let jo : NSDictionary
-                do {
-                    jo =
-                        try JSONSerialization.jsonObject(with: data!, options: []) as! NSDictionary
-                }
-                catch {
-                    return
-                }
-                if let name = jo["pmkPatientID"] {
-                    self.returnedUserID = name as! String
-                }
-            }
-        })
-        // Return value of returnedUserID
-        task.resume()
-        return self.returnedUserID
-    }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        _ = self.getDatabaseUsername()
+        self.returnedUserID = Util.getDatabaseUsername()
         
         // Do any additional setup after loading the view, typically from a nib.
     }

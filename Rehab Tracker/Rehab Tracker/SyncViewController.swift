@@ -16,6 +16,10 @@ import CoreData
 import Foundation
 import CoreBluetooth
 
+// DEBUG mode flag
+let DEBUG = true
+let TEST_LOCAL_FILE_NAME = "/Users/brianjcolombini/Documents/fall_2017/CS275/rehab_tracker/data_11-4_newnewnewsess.csv"
+
 protocol BLEDelegate1 {
     func bleDidUpdateState()
     func bleDidConnectToPeripheral()
@@ -27,7 +31,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     
     // Array and dictionary to hold stats
     private var sessions = [Session]()
-    private var stats:[(sessionID: String, avg_ch1_intensity:String, avg_ch2_intensity:String, session_compliance: String)]?
+    private var stats:[(sessionID: String, avg_ch1_intensity:String, avg_ch2_intensity:String, session_compliance: String, start_time: String, end_time: String)]?
     
     // global variable comments to store session comments
     private var comments = "No Comments"
@@ -42,6 +46,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     private var fldIntensity1 = ""
     private var fldIntensity2 = ""
     private var fldNote = ""
+    private var fldStartTime = ""
+    private var fldEndTime = ""
     private var fldDeviceSynced = ""
     
     @IBAction func showInfo(_ sender: UIBarButtonItem) {
@@ -108,8 +114,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                                             }else{
                                                 print("[DEBUG] There is no peripheral to be disconnected")
                                                 
-                                                // NEED TO CHANGE THIS
-                                                Util.overwriteSessions()
+                                               // TEMP - DEBUGGING MEASURE TO CLEAR PREV USER SESSIONS
+                                                //Util.overwriteSessions()
                                                 
                                                 // Parses the CSV and saves it in core data
                                                 try self.parseCSV()
@@ -118,6 +124,29 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                                             // If the average compliance is higher than 55/60 minutes, give positive feedback
                                             if ( Util.average(array: self.lastSessionCompliance) >= 0.9167 ){
                                                 self.positiveFeedbackAlert()
+                                            }
+                                            
+                                            // see what's in core data - DEBUG STEP
+                                            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+                                            let context = appDelegate.persistentContainer.viewContext
+                                            let request: NSFetchRequest<Session> = Session.fetchRequest()
+                                            request.returnsObjectsAsFaults = false
+                                            
+                                            do {
+                                                let cd_sessions = try context.fetch(request)
+                                                print("ALL SESSIONS IN CORE DATA:") //DEBUG STEP
+                                                for val in cd_sessions {
+                                                    // Assign values for post variables
+                                                    let num = val.sessionID!
+                                                    print("FLD_SESS_NUM") //DEBUG STEP
+                                                    print(num)
+                                                }
+                                                
+                                            }catch {
+                                                // Sync Error Alert
+                                                self.syncErrorAlert()
+                                                
+                                                print("Could not find stats. \(error)")
                                             }
                                         }
                                         catch {
@@ -136,24 +165,37 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     
     // Function to parse data from CSV file
     private func parseCSV() throws {
+        let fileName:String
+        let fileURL:URL = URL.init(string:"empty")!
+        let dbfile:String
         // Name of the database file, with newline-separated records
-        let fileName = "data"
-        let docDirectory = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        if let fileURL = docDirectory?.appendingPathComponent(fileName).appendingPathExtension("csv") {
+        if(DEBUG) {
+            fileName = TEST_LOCAL_FILE_NAME
+        } else{
+            fileName = "data"
+            let docDirectory = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        }
+        // UNCOMMENT if not debug mode
+        //if fileURL = docDirectory?.appendingPathComponent(fileName).appendingPathExtension("csv") {
             
             // Record field delimeter (is a comma for csv)
             let delimeter = ","
             self.stats = []
         
             do {
-                let dbfile = try String(contentsOf: fileURL)
+                if(DEBUG) {
+                    dbfile = try String(contentsOfFile: fileName)
+                } else {
+                    dbfile = try String(contentsOf: fileURL)
+                }
                 let lines:[String] = dbfile.components(separatedBy: "\n") as [String]
             
                 for line in lines {
                     var fields = [String]()
                     if(line != "") {
                         fields = line.components(separatedBy: delimeter)
-                        let stat = (sessionID: fields[0], avg_ch1_intensity:fields[1], avg_ch2_intensity:fields[2], session_compliance: fields[3])
+                        let stat = (sessionID: fields[0], avg_ch1_intensity:fields[1], avg_ch2_intensity:fields[2], session_compliance: fields[3],
+                            start_time:fields[4], end_time:fields[5])
                         self.stats?.append(stat)
                     
                         // append the session_compliance to the array for calculating if we should give feedback
@@ -170,7 +212,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                 // Print error
                 print("file input failed \(error), \(error.userInfo)")
             }
-        }
+        // UNCOMMENT if not debug mode
+        //}
     }
     
     // Function to add data from csv to core data
@@ -178,13 +221,17 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
         let sesEntity = NSEntityDescription.entity(forEntityName: "Session", in: context)
-    
+        print("NEW SESSIONS TO SAVE TO CORE DATA:") //DEBUG STEP
         for stat in stats! {
             let session = NSManagedObject(entity: sesEntity!, insertInto: context)as! Session
             session.sessionID = stat.sessionID
+            print(session.sessionID) //DEBUG STEP
             session.session_compliance = stat.session_compliance
             session.avg_ch1_intensity = stat.avg_ch1_intensity
             session.avg_ch2_intensity = stat.avg_ch2_intensity
+            session.start_time = Int32(stat.start_time)!
+            session.end_time = Int32(stat.end_time)!
+            session.pushed_to_db = false
             session.notes = self.comments
             session.hasUser = Util.returnCurrentUser()
         }
@@ -198,18 +245,27 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
         let request: NSFetchRequest<Session> = Session.fetchRequest()
+        request.predicate = NSPredicate(format: "pushed_to_db == false")
         request.returnsObjectsAsFaults = false
         
         do {
             sessions = try context.fetch(request)
-            
+            print("SESSIONS RETRIEVED FROM CORE DATA:") //DEBUG STEP
             for val in sessions {
                 
                 // Assign values for post variables
                 fldSessNum = val.sessionID!
+                print("FLD_SESS_NUM") //DEBUG STEP
+                print(fldSessNum) //DEBUG STEP
                 fldSessionCompliance = val.session_compliance
                 fldIntensity1 = val.avg_ch1_intensity!
                 fldIntensity2 = val.avg_ch2_intensity!
+                fldStartTime = unixSecondsToDatetime(seconds_since_1970: val.start_time)
+                print("start time")
+                print(fldStartTime)
+                fldEndTime = unixSecondsToDatetime(seconds_since_1970: val.end_time)
+                print("end time")
+                print(fldEndTime)
                 fldNote = self.comments
                 pmkPatientID = Util.returnCurrentUsersID()
                 //self.thisDate()
@@ -225,10 +281,27 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         
     }
     
-    //     }
+
+    // Gets the Data for Sync()
+    private func thisDate() {
+        let currDate = Date()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        fldDeviceSynced = formatter.string(from: currDate)
+    }
+    
+    // Convert unix time (seconds - this is format sent by Arduino) to datetime format
+    private func unixSecondsToDatetime(seconds_since_1970:Int32) -> String {
+        let datetime = Date(timeIntervalSince1970: Double(seconds_since_1970))
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return formatter.string(from: datetime)
+    }
     
     private func pushToDatabase() {
-        let urlstr : String = "https://www.uvm.edu/~bgoodwin/Restful/example.php?pmkPatientID="
+        print("SESSION PUSHED TO DB")
+        print(fldSessNum)
+        let urlstr : String = "https://www.uvm.edu/~rtracker/Restful/example.php?pmkPatientID="
             + pmkPatientID
             + "&fldSessNum="
             + fldSessNum
@@ -238,11 +311,15 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             + fldIntensity1
             + "&fldIntensity2="
             + fldIntensity2
+            + "&fldStartTime="
+            + fldStartTime
+            + "&fldEndTime="
+            + fldEndTime
             + "&fldNote="
             + fldNote
             + "&fldDeviceSynced="
             + fldDeviceSynced
-        
+
         let urlurl = urlstr.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)
         
         //Make url string into actual url and catch errors
@@ -272,6 +349,28 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         
         // Return value of returnedUserID
         task.resume()
+        print("before pushed_to_db flag set")
+        // Update pushed_to_db flag to true in core data for saved sessions
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let context = appDelegate.persistentContainer.viewContext
+        let request: NSFetchRequest<Session> = Session.fetchRequest()
+        request.predicate = NSPredicate(format: "sessionID == %@", fldSessNum)
+        do {
+            let pushedSession = try context.fetch(request) // list of one session
+            
+            if pushedSession.count != 1 { // count != 1 for this session id in core data
+                print("count != 1 for sessionID in core data")
+            }
+            for session in pushedSession {
+                session.setValue(true, forKey: "pushed_to_db")
+            }
+            (UIApplication.shared.delegate as! AppDelegate).saveContext()
+            print("UPDATE PUSHED TO DB FOR SESS:")
+            print(fldSessNum)
+        }
+        catch {
+            print("Update pushed_to_db field failed")
+        }
     }
     
     override func viewDidLoad() {
@@ -636,11 +735,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                 
                 try csvText.write(to: fileURL, atomically: true, encoding: .utf8)
                 
-                // NEED TO CHANGE THIS
-                Util.overwriteSessions()
-                
-                // Parses the CSV and saves it in core data
-                try self.parseCSV()
+                // NEED TO CHANGE THIS - DEBUGGING MEASURE TO CLEAR PREV USER SESSIONS
+                //Util.overwriteSessions()
                 
             } catch {
                 print("[ERROR] Failed writing to URL: \(fileURL), Error: " + error.localizedDescription)
