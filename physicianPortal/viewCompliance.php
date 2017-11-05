@@ -65,6 +65,10 @@ if ($tblPatient != "") {
 print '</div>';
 //begin analysis script
 print '<aside>';
+//test for new table to see if modifications to top.php or database.php are needed
+$tblNotificationsQuery = 'SELECT * FROM tblNotifications';
+$notificationTest = $thisDatabaseReader -> select($tblNotificationsQuery, "", 0,0,0,0,false,false);
+print '<p>' . $notificationTest[0][0] . '</p>';
 //if tblPatient and tblSeesion are not null
 if($tblPatient != "" && $tblSession!= ""){
 	//get the current date
