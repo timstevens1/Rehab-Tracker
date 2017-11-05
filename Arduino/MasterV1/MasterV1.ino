@@ -10,7 +10,7 @@ boolean testMode = true;
 #include <RBL_nRF8001.h>
 #include <RBL_services.h>
 
-int buttonPin = 8; // pin for sync button
+int buttonPin = 7; // pin for sync button
 int LED1 = 2; // Status lights
 int LED2 = 3;
 int LED3 = 4;
@@ -36,15 +36,22 @@ int maxVal1=0;
 int ant2=0;
 int next2=0;
 int maxVal2=0;
+void ButtonInterrupt();
+void WriteStorage();
+void ArrayAdd(float intensityValue, int channel);
+float IntensityMap(int sensorValue);
 
 
 void setup(){
   // Initialize what we need in here
-  EEPROM.setMaxAllowedWrites(32768);
+  //EEPROM.setMaxAllowedWrites(32768);
+  EEPROM.setMaxAllowedWrites(EEPROMSizeUno);
+
   EEPROM.writeInt(0,1);
   EEPROM.writeInt(2,2);
   sessionCount = EEPROM.readInt(0);
   currentAddress = EEPROM.readInt(2);
+  
   // UPLOAD EEPROM SHITE
   pinMode(LED1, OUTPUT);
   pinMode(LED2, OUTPUT);
@@ -54,16 +61,19 @@ void setup(){
     Serial.print("SessionCount = ");
     Serial.println(sessionCount);
   }
-  ble_begin();
+  ble_begin(); //ble_begin starts the BLE stack and broadcasting the advertising packet
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void loop()
 {
-  Serial.println("yo");
+  analogWrite(LED2, 10);
+
   while(1)
   {
     ButtonInterrupt();
   }
+
+  ButtonInterrupt();
   
   if (testMode){
     Serial.println("TEST MODE ACTIVE");
@@ -91,12 +101,20 @@ void loop()
       maxVal1=0;
       ButtonInterrupt();
       delay(500);
+      
+      
       if (((sampleNum1+1) % 10) == 0){
         WriteStorage();
         ButtonInterrupt();
       }
+      
+      /*
+      WriteStorage();
+      ButtonInterrupt();
+      */
     }
-  } else {
+  } 
+  else {
     maxVal1=next1;
   }
 
@@ -115,9 +133,15 @@ void loop()
       ArrayAdd(IntensityMap(maxVal2),2);
       maxVal2=0;
       delay(500);
+      
       if (((sampleNum2+1) % 10) == 0){
         WriteStorage();
       }
+      
+      /*
+      WriteStorage();
+      ButtonInterrupt();
+      */
     }
   }else{
     maxVal2=next2;
@@ -133,8 +157,30 @@ void loop()
 
     Serial.print("SampleNumber 2 = "); 
     Serial.println(sampleNum2);
-    Serial.println("------------Loop Complete-------------");
-  
+    Serial.println("------------Loop Complete-------------");  
+}
+
+/*
+void outputtingToApp(){
+  unsigned char thisThing[13] = {'W', 'e', ' ', 'C', 'a', 'n', ' ', 'O', 'u', 't', 'p', 'u', 't'};
+  ble_write_bytes(thisThing, 13);
+}
+*/
+
+void outputtingToApp(){
+  unsigned char thisThing[13];
+  unsigned char val = '0';
+  unsigned char output;
+  for(int pos = 0; pos < 10; pos++){
+    EEPROM.writeByte(pos, val);
+  }
+  for(int i = 0; i < 10; i++){
+    output = EEPROM.readByte(i);
+    thisThing[i]=output;
+    Serial.println(thisThing[i]);
+  }
+  //= {'W', 'e', ' ', 'C', 'a', 'n', ' ', 'O', 'u', 't', 'p', 'u', 't'};
+  ble_write_bytes(thisThing, 10);
 }
 
 ////////////Button Inter//////////////////////////////////////////////////////////
@@ -144,13 +190,14 @@ void ButtonInterrupt(){
   unsigned char bytes[255];
   unsigned char value;
   
-  if (digitalRead(buttonPin)==1 || sampleNum1>90 || sampleNum2>90){
+  //if (digitalRead(buttonPin)==1 || sampleNum1>90 || sampleNum2>90){
+  if (digitalRead(buttonPin)==0 || sampleNum1>90 || sampleNum2>90){
+    ble_set_pins(6,7); //ble_set_pins is to specify the REQN and RDYN pins to the BLE chip, i.e. the jumper on the BLE Shield.
 
-    ble_set_pins(6,7);
-    ble_set_name("SEED 15");
-    while (!ble_connected()){
+    ble_set_name("SEED 15"); //Call ble_set_name by giving name before calling to ble_begin to set the broadcasting name.
+    while (!ble_connected()){ //ble_connected returns 1 if connected by BLE Central or 0 if not.
       Serial.println("BLE Not Connected");
-      ble_do_events();
+      ble_do_events(); //ble_do_events allows the BLE to process its events, if data is pending, it will be sent out.
     }
     
     if ( ble_connected() ){
@@ -161,25 +208,89 @@ void ButtonInterrupt(){
         // avoiding sending many 0 in a row
         while (address < 255) {
           bytes[address]=value;
-          Serial.write(value);
+          Serial.write(value); //Writes binary data to the serial port. This data is sent as a byte or series of bytes
           address = address + 1;
           value = EEPROM.readByte(address);
+          //Serial.println(String (value));
         }
-        ble_write_bytes(bytes,255);
+        Serial.println("***************");
+
+        //bytes[0]='a';
+        //ble_write_bytes(bytes,255); //ble_write_bytes writes an array of bytes in data with length in len.
+        //ble_write_bytes(bytes,address); //ble_write_bytes writes an array of bytes in data with length in len.
+        //ble_write_bytes(bytes,20);
+        //outputtingToApp();
+
+        delay(10000);
+
+        
+        Serial.println(bytes[0]); //original sessionCount
+        Serial.println(bytes[1]);
+        Serial.println(bytes[2]); //sessionCount
+        Serial.println(bytes[3]);
+        Serial.println(bytes[4]); //comma
+        Serial.println(bytes[5]); //arrayAvg1
+        Serial.println(bytes[6]);
+        Serial.println(bytes[7]);
+        Serial.println(bytes[8]);
+        Serial.println(bytes[9]); //comma
+        Serial.println(bytes[10]); //arrayAvg2
+        Serial.println(bytes[11]);
+        Serial.println(bytes[12]);
+        Serial.println(bytes[13]);
+        Serial.println(bytes[14]); //comma
+        Serial.println(bytes[15]); //sessionComp
+        Serial.println(bytes[16]);
+        Serial.println(bytes[17]);
+        Serial.println(bytes[18]);
+        Serial.println(bytes[19]); //new line
+        
+
+        ble_write_bytes(bytes,19);
+
+        
+        /*
+        Serial.println(bytes[0]); //original sessionCount
+        Serial.println();
+        Serial.println(bytes[2]); //sessionCount
+        Serial.println();
+        Serial.println(bytes[4]); //comma
+        Serial.println();
+        Serial.println(bytes[5]); //arrayAvg1
+        Serial.println();
+        Serial.println(bytes[9]); //comma
+        Serial.println();
+        Serial.println(bytes[10]); //arrayAvg2
+        Serial.println();
+        Serial.println(bytes[14]); //comma
+        Serial.println();
+        Serial.println(bytes[15]); //sessionComp
+        Serial.println();
+        Serial.println(bytes[19]); //new line
+        Serial.println();
+        */
+        
+        Serial.println("***************");
+        
         address = 0;
         delay(1000); // We wait for an answer if its true, he has receive it so we go out of the loop, if not, we send it again
-        if (ble_read()==true) { // We may have to change true for the byte that corresponds to true
-          ble_disconnect();
+        if (ble_read()==-1) { // We may have to change true for the byte that corresponds to true
+        //if (true){
+          //ble_disconnect(); //ble_read reads a byte from BLE Central, It returns -1 if nothing to be read.
+          Serial.println("BLE disconnected.");
+          break;
         }
       }
     }
   //}
-  ble_do_events();
-}
 
+  ble_do_events();
+
+}
+}
 ///////////////////////Writing to EEPROM///////////////////////////////////////////////////
 void WriteStorage(){
-  EEPROM.updateInt(currentAddress,sessionCount);
+  EEPROM.updateInt(currentAddress,sessionCount); //currentAddress == 2
   currentAddress = currentAddress + 2; //increase by int
   EEPROM.updateByte(currentAddress,comma);
   currentAddress++; //increase by char

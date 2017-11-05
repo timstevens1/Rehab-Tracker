@@ -16,6 +16,8 @@ void setup()
 { 
   // Init. and start BLE library.
   ble_begin();
+  Serial.begin(57600);
+  Serial.println("Start");
 }
 
 void loop()
@@ -23,12 +25,13 @@ void loop()
   while ( !ble_connected() )
   {
     // This sends out a ping advertising the peripheral
+    Serial.println("BLE not connected.");
     ble_do_events();
   }
   
   if ( ble_connected() )
   {
-
+    Serial.println("BLE is connected.");
     // If the BLE is connected, add values to the bytes[] array
     // Can only write a character at a time
     // Adjust the pointer each time
@@ -101,7 +104,21 @@ void loop()
     // The ble_write_bytes function just iterates through the array
     // And does a ble_write for each character
     // address is the length of the array so that it can iterate
+    
     ble_write_bytes(bytes,address);
+/*
+    unsigned char test[2];
+    test[0] = 'H';
+    test[1] = 'I';
+    ble_write_bytes(test, 2);
+*/
+    
+    Serial.println("write");
+    
+    /*if (ble_read()==-1) { // We may have to change true for the byte that corresponds to true
+        ble_disconnect();
+    }
+    */
   }
 
   // This actually sends the data over the connection

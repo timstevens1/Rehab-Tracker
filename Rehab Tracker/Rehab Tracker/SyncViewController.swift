@@ -212,7 +212,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                 fldIntensity2 = val.avg_ch2_intensity!
                 fldNote = self.comments
                 pmkPatientID = Util.returnCurrentUsersID()
-                self.thisDate()
+                //self.thisDate()
                 self.pushToDatabase()
             }
             
@@ -225,13 +225,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         
     }
     
-    // Gets the Data for Sync()
-    private func thisDate() {
-        let currDate = Date()
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy/MM/dd"
-        fldDeviceSynced = formatter.string(from: currDate)
-    }
+    //     }
     
     private func pushToDatabase() {
         let urlstr : String = "https://www.uvm.edu/~bgoodwin/Restful/example.php?pmkPatientID="
@@ -525,6 +519,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     // Use the data we receive from the peripheral
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         
+ 
+        
         if error != nil {
             
             print("[ERROR] Error updating value. \(String(describing: error))")
@@ -541,7 +537,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         // Convert NSData to NSString to String
         let resultNSString = NSString(data: characteristic.value!, encoding: String.Encoding.utf8.rawValue)!
         let resultString = resultNSString as String
-        
+        print("$$$$$$$$$$$$$$$$$$$$$")
         print(resultString)
         
         // Append the data string to the data array
@@ -592,6 +588,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         var singleSessionArray = [String]()
         
         // First break up the data array by newlines to seperate out each session
+        print("===========", dataFromPeripheral);
         for myData in dataFromPeripheral{
             singleSessionArray = myData.components(separatedBy: "\n")
         }
