@@ -18,7 +18,7 @@ import CoreBluetooth
 
 // DEBUG mode flag
 let DEBUG = true
-let TEST_LOCAL_FILE_NAME = "/Users/brianjcolombini/Documents/fall_2017/CS275/rehab_tracker/data_11-4_newnewsess.csv"
+let TEST_LOCAL_FILE_NAME = "/Users/brianjcolombini/Documents/fall_2017/CS275/rehab_tracker/data_11-4_newnewnewsess.csv"
 
 protocol BLEDelegate1 {
     func bleDidUpdateState()
@@ -260,10 +260,10 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                 fldSessionCompliance = val.session_compliance
                 fldIntensity1 = val.avg_ch1_intensity!
                 fldIntensity2 = val.avg_ch2_intensity!
-                fldStartTime = toDatetime(seconds_since_1970: val.start_time)
+                fldStartTime = unixSecondsToDatetime(seconds_since_1970: val.start_time)
                 print("start time")
                 print(fldStartTime)
-                fldEndTime = toDatetime(seconds_since_1970: val.end_time)
+                fldEndTime = unixSecondsToDatetime(seconds_since_1970: val.end_time)
                 print("end time")
                 print(fldEndTime)
                 fldNote = self.comments
@@ -290,7 +290,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     }
     
     // Convert unix time (seconds - this is format sent by Arduino) to datetime format
-    private func toDatetime(seconds_since_1970:Int32) -> String {
+    private func unixSecondsToDatetime(seconds_since_1970:Int32) -> String {
         let datetime = Date(timeIntervalSince1970: Double(seconds_since_1970))
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -310,6 +310,10 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             + fldIntensity1
             + "&fldIntensity2="
             + fldIntensity2
+            + "&fldStartTime="
+            + fldStartTime
+            + "&fldEndTime="
+            + fldEndTime
             + "&fldNote="
             + fldNote
             + "&fldDeviceSynced="

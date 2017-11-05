@@ -39,6 +39,8 @@
     $fldSessionCompliance = $_GET["fldSessionCompliance"];
     $fldIntensity1 = $_GET["fldIntensity1"];
     $fldIntensity2 = $_GET["fldIntensity2"];
+    $fldStartTime = $_GET["fldStartTime"];
+    $fldEndTime = $_GET["fldEndTime"];
     $fldNote = $_GET["fldNote"];
     $fldDeviceSynced = $_GET["fldDeviceSynced"];
 
@@ -53,11 +55,20 @@
     $thisDatabaseWriter = new Database($dbUserName, $whichPass, $dbName);
     
     //build and execute the query to insert session entry
-    $sessionInsertQuery = "INSERT INTO tblSession(pmkPatientID, fldSessNum, fldSessionCompliance, fldIntensity1, fldIntensity2, fldNote) VALUES (?, ?, ?, ?, ?, ?)";
-    $sessionInsertParams = array($pmkPatientID, $fldSessNum, $fldSessionCompliance, $fldIntensity1, $fldIntensity2, $fldNote);
+    $sessionInsertQuery = "INSERT INTO tblSession(pmkPatientID, 
+                                                  fldSessNum, 
+                                                  fldSessionCompliance, 
+                                                  fldIntensity1, 
+                                                  fldIntensity2,
+                                                  fldStartTime,
+                                                  fldEndTime, 
+                                                  fldNote,
+                                                  fldDeviceSynced) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $sessionInsertParams = array($pmkPatientID, $fldSessNum, $fldSessionCompliance, $fldIntensity1, $fldIntensity2, $fldStartTime, $fldEndTime, $fldNote, $fldDeviceSynced);
     $sessionInsertResult = $thisDatabaseWriter->insert($sessionInsertQuery, $sessionInsertParams, 0,0,0,0,false,false);
     
-    //build and execute query to update fldDeviceSynched time info for patient
+    //build and execute query to update fldDeviceSynced date for patient
     $deviceSynchedUpdateQuery= "Update tblPatient set fldDeviceSynced = ? where pmkPatientID= ?";
     $deviceSynchedUpdateParams = array($fldDeviceSynced,$pmkPatientID);
     $deviceSynchedUpdateResult = $thisDatabaseWriter->update($deviceSynchedUpdateQuery, $deviceSynchedUpdateParams, 1,0,0,0,false,false);
