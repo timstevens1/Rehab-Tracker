@@ -104,9 +104,13 @@ if($tblPatient != "" && $tblSession!= ""){
 			//print '<p>Average compliance: ' . $averageCompliance/count($sessionInformation) . '</p>';
 			//if average compliance is over 70%
 			if(($averageCompliance/count($sessionInformation))>.7){
-				//now we will print out what we want to insert into tblPush
-				print '<p>fnkPatientID: ' . $thisPMK . ' Notification ID: ' . rand(1,16) . '</p>';
-			 }
+				//create the tblPush insertion query
+				$insertionQuery = 'INSERT INTO tblPush SET fnkPatientID = ?, fnkMessageID = ?';
+				//encapsulate the patient data
+				$patientDataArray = array($thisPMK, rand(1,16));
+				//here we will insert into tblPush
+				$insertion = $thisDatabaseWriter -> insert($insertionQuery, $patientDataArray, 0, 0, 0, 0, false, false);
+			}
 		}		
 	}
 }
