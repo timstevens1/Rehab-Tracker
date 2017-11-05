@@ -34,16 +34,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     // Array to hold all the session compliances to check for positive feedback
     private var lastSessionCompliance = [Double]()
     
-    // Variables to hold stats for pushToDatabase function
-    private var pmkPatientID = ""
-    private var fldSessNum = ""
-    private var fldSessionCompliance = ""
-    private var fldIntensity1 = ""
-    private var fldIntensity2 = ""
-    private var fldNote = ""
-    private var fldStartTime = ""
-    private var fldEndTime = ""
-    private var fldDeviceSynced = ""
+    // Empty dictionary to hold JSON for post to database
+    private var sessionsJson = [String: [String:Any]]()
     
     @IBAction func showInfo(_ sender: UIBarButtonItem) {
         // create the alert
@@ -95,7 +87,6 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                                         // Saves input to global comments var
                                         self.comments = textField!.text!
                                         
-                                        // Call parseCSV to grab data
                                         do {
                                             // Disconnects from the BLE Device
                                             if(self.activePeripheral != nil){
@@ -109,11 +100,13 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                                             }else{
                                                 print("[DEBUG] There is no peripheral to be disconnected")
                                                 
+                                                self.dataFromPeripheral = ["SCAR8,60,62,0.91,1509821900,1509821924","RED8,49,51,0.12,1509821800,1509821899"]
                                                // TEMP - DEBUGGING MEASURE TO CLEAR PREV USER SESSIONS
                                                 //Util.overwriteSessions()
                                                 
                                                 // Get new sessions from core data and push to db
                                                 try self.getAndSynchNewSessions()
+                                                self.pushToDatabase()
                                             }
                                             
                                             // If the average compliance is higher than 55/60 minutes, give positive feedback
@@ -159,11 +152,11 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     }
     
     // Get and set current date for fldDeviceSynced
-    private func thisDate() {
+    private func thisDate() -> String {
         let currDate = Date()
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
-        fldDeviceSynced = formatter.string(from: currDate)
+        return formatter.string(from: currDate)
     }
     
     // Convert unix time (seconds - this is format sent by Arduino) to datetime format
@@ -184,62 +177,48 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         
         do {
             sessions = try context.fetch(request)
+            print("sessions");
+            print(sessions);
             print("SESSIONS RETRIEVED FROM CORE DATA:") //DEBUG STEP
-            for val in sessions {
-                
-                // Assign values for post variables
-                fldSessNum = val.sessionID!
+            // Populate json object with data for post
+            var i = 0;
+            for session in sessions {
+                let key = String(i)
+                let thisSessionJsonObject: [String: [String:Any]] = [
+                    key : ["fldSessNum" : session.sessionID!,
+                         "fldSessionCompliance" : session.session_compliance,
+                         "fldIntensity1" : session.avg_ch1_intensity!,
+                         "fldIntensity2" : session.avg_ch2_intensity!,
+                         "fldStartTime" : unixSecondsToDatetime(seconds_since_1970: session.start_time),
+                         "fldEndTime" : unixSecondsToDatetime(seconds_since_1970: session.end_time),
+                         "fldNote" : self.comments,
+                         "fldDeviceSynced" : self.thisDate(),
+                         "pmkPatientID" : Util.returnCurrentUsersID()
+                        ]
+                ]
                 print("FLD_SESS_NUM") //DEBUG STEP
-                print(fldSessNum) //DEBUG STEP
-                fldSessionCompliance = val.session_compliance
-                fldIntensity1 = val.avg_ch1_intensity!
-                fldIntensity2 = val.avg_ch2_intensity!
-                fldStartTime = unixSecondsToDatetime(seconds_since_1970: val.start_time)
-                print("start time")
-                print(fldStartTime)
-                fldEndTime = unixSecondsToDatetime(seconds_since_1970: val.end_time)
-                print("end time")
-                print(fldEndTime)
-                fldNote = self.comments
-                pmkPatientID = Util.returnCurrentUsersID()
-                self.pushToDatabase()
+                print(session.sessionID!) //DEBUG STEP
+                sessionsJson.merge(thisSessionJsonObject) { (current, _) in current }
+                let valid = JSONSerialization.isValidJSONObject(sessionsJson)
+                print("valid json?")
+                print(valid)
+                i += 1
             }
+            print("sessionsJson")
+            print(sessionsJson)
             
         }catch {
             // Sync Error Alert
             self.syncErrorAlert()
-            
             print("Could not find new sessions. \(error)")
         }
-        
     }
     
     private func pushToDatabase() {
-        print("SESSION PUSHED TO DB")
-        print(fldSessNum)
-        let urlstr : String = "https://www.uvm.edu/~rtracker/Restful/example.php?pmkPatientID="
-            + pmkPatientID
-            + "&fldSessNum="
-            + fldSessNum
-            + "&fldSessionCompliance="
-            + fldSessionCompliance
-            + "&fldIntensity1="
-            + fldIntensity1
-            + "&fldIntensity2="
-            + fldIntensity2
-            + "&fldStartTime="
-            + fldStartTime
-            + "&fldEndTime="
-            + fldEndTime
-            + "&fldNote="
-            + fldNote
-            + "&fldDeviceSynced="
-            + fldDeviceSynced
-
-        let urlurl = urlstr.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)
+        let urlstr : String = "https://www.uvm.edu/~rtracker/Restful/sync.php"
         
         //Make url string into actual url and catch errors
-        guard let url = URL(string: urlurl!)
+        guard let url = URL(string: urlstr)
             else {
             // Sync Error Alert
             self.syncErrorAlert()
@@ -251,6 +230,15 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         // Creates urlRequest using our url
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
+
+        do {
+            urlRequest.httpBody = try JSONSerialization.data(withJSONObject: sessionsJson, options: [])
+        } catch let error {
+            print(error.localizedDescription)
+        }
+        
+        urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        urlRequest.addValue("application/json", forHTTPHeaderField: "Accept")
         
         let task = URLSession.shared.dataTask(with: urlRequest, completionHandler:{
             (data, response, error) in
@@ -267,25 +255,28 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         
         print("before pushed_to_db flag set")
         // Update pushed_to_db flag to true in core data for saved sessions
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        let context = appDelegate.persistentContainer.viewContext
-        let request: NSFetchRequest<Session> = Session.fetchRequest()
-        request.predicate = NSPredicate(format: "sessionID == %@", fldSessNum)
-        do {
-            let pushedSession = try context.fetch(request) // list of one session
-            
-            if pushedSession.count != 1 { // count != 1 for this session id in core data
-                print("count != 1 for sessionID in core data")
+        for session in sessionsJson {
+            // Set up fetch request for core data object of pushed session
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            let context = appDelegate.persistentContainer.viewContext
+            let request: NSFetchRequest<Session> = Session.fetchRequest()
+            request.predicate = NSPredicate(format: "sessionID == %@", session.1["fldSessNum"] as! CVarArg)
+            // Execute request and update pushed_to_db to true
+            do {
+                let pushedSession = try context.fetch(request) // list of one session
+                if pushedSession.count != 1 { // count != 1 for this session id in core data
+                    print("count != 1 for sessionID in core data")
+                }
+                for session in pushedSession {
+                    session.setValue(true, forKey: "pushed_to_db")
+                }
+                (UIApplication.shared.delegate as! AppDelegate).saveContext()
+                print("UPDATE PUSHED TO DB FOR SESS:")
+                print(session.1["fldSessNum"])
             }
-            for session in pushedSession {
-                session.setValue(true, forKey: "pushed_to_db")
+            catch {
+                print("Update pushed_to_db field failed")
             }
-            (UIApplication.shared.delegate as! AppDelegate).saveContext()
-            print("UPDATE PUSHED TO DB FOR SESS:")
-            print(fldSessNum)
-        }
-        catch {
-            print("Update pushed_to_db field failed")
         }
     }
     
@@ -489,8 +480,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         self.delegate?.bleDidDisconenctFromPeripheral()
         
         // Once disconnected, write all the data you got to the CSV
-        writeToCSV()
-        Util.readDataFromFile(file: "data")
+        //writeToCSV()
+        //Util.readDataFromFile(file: "data")
     }
     
     // MARK: CBPeripheral delegate
@@ -599,7 +590,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     }
     
     // Write what is in the dataFromPeripheral array to a CSV
-    func writeToCSV() {
+    /*func writeToCSV() {
         var singleSessionArray = [String]()
         
         // First break up the data array by newlines to seperate out each session
@@ -658,5 +649,5 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                 print("[ERROR] Failed writing to URL: \(fileURL), Error: " + error.localizedDescription)
             }
         }
-    }
+    }*/
 }

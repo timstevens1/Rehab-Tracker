@@ -33,46 +33,54 @@
   //Otherwise, test if we are receiving a POST request
   elseif($_SERVER['REQUEST_METHOD']=="POST")
   {
-    //extract the username and the age variable from the header
-    $pmkPatientID = $_GET["pmkPatientID"];
-    $fldSessNum = $_GET["fldSessNum"];
-    $fldSessionCompliance = $_GET["fldSessionCompliance"];
-    $fldIntensity1 = $_GET["fldIntensity1"];
-    $fldIntensity2 = $_GET["fldIntensity2"];
-    $fldStartTime = $_GET["fldStartTime"];
-    $fldEndTime = $_GET["fldEndTime"];
-    $fldNote = $_GET["fldNote"];
-    $fldDeviceSynced = $_GET["fldDeviceSynced"];
-
-    //convert fldSessNum to new format (with patientID prefix)
-    $I=  substr($pmkPatientID, 0, -8);
-    $fldSessNum=$I.$fldSessNum;
-
     //create the database writerObject
     $dbUserName = get_current_user() . '_writer';
     $whichPass = "w"; //flag for which one to use.
     $dbName = DATABASE_NAME;
     $thisDatabaseWriter = new Database($dbUserName, $whichPass, $dbName);
-    
-    //build and execute the query to insert session entry
-    $sessionInsertQuery = "INSERT INTO tblSession(pmkPatientID, 
-                                                  fldSessNum, 
-                                                  fldSessionCompliance, 
-                                                  fldIntensity1, 
-                                                  fldIntensity2,
-                                                  fldStartTime,
-                                                  fldEndTime, 
-                                                  fldNote,
-                                                  fldDeviceSynced) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    $sessionInsertParams = array($pmkPatientID, $fldSessNum, $fldSessionCompliance, $fldIntensity1, $fldIntensity2, $fldStartTime, $fldEndTime, $fldNote, $fldDeviceSynced);
-    $sessionInsertResult = $thisDatabaseWriter->insert($sessionInsertQuery, $sessionInsertParams, 0,0,0,0,false,false);
-    
-    //build and execute query to update fldDeviceSynced date for patient
-    $deviceSynchedUpdateQuery= "Update tblPatient set fldDeviceSynced = ? where pmkPatientID= ?";
-    $deviceSynchedUpdateParams = array($fldDeviceSynced,$pmkPatientID);
-    $deviceSynchedUpdateResult = $thisDatabaseWriter->update($deviceSynchedUpdateQuery, $deviceSynchedUpdateParams, 1,0,0,0,false,false);
-    
+
+    //extract the sessions info from posted json
+    $postedJson = file_get_contents('php://input');
+    //convert JSON into array
+    $sessionsData = json_decode($postedJson, TRUE);
+
+    //loop through sessions to insert session data into db
+    foreach($sessionsData as $postKey=>$session)
+    {
+      $pmkPatientID = $session["pmkPatientID"];
+      $fldSessNum = $session["fldSessNum"];
+      $fldSessionCompliance = $session["fldSessionCompliance"];
+      $fldIntensity1 = $session["fldIntensity1"];
+      $fldIntensity2 = $session["fldIntensity2"];
+      $fldStartTime = $session["fldStartTime"];
+      $fldEndTime = $session["fldEndTime"];
+      $fldNote = $session["fldNote"];
+      $fldDeviceSynced = $session["fldDeviceSynced"];
+
+      //convert fldSessNum to new format (with patientID prefix)
+      $I=  substr($pmkPatientID, 0, -8);
+      $fldSessNum=$I.$fldSessNum;
+
+      //build and execute the query to insert session entry
+      $sessionInsertQuery = "INSERT INTO tblSession(pmkPatientID, 
+                                                    fldSessNum, 
+                                                    fldSessionCompliance, 
+                                                    fldIntensity1, 
+                                                    fldIntensity2,
+                                                    fldStartTime,
+                                                    fldEndTime, 
+                                                    fldNote,
+                                                    fldDeviceSynced) 
+                              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      $sessionInsertParams = array($pmkPatientID, $fldSessNum, $fldSessionCompliance, $fldIntensity1, $fldIntensity2, $fldStartTime, $fldEndTime, $fldNote, $fldDeviceSynced);
+      $sessionInsertResult = $thisDatabaseWriter->insert($sessionInsertQuery, $sessionInsertParams, 0,0,0,0,false,false);
+      
+      //build and execute query to update fldDeviceSynced date for patient
+      $deviceSyncedUpdateQuery= "Update tblPatient set fldDeviceSynced = ? where pmkPatientID= ?";
+      $deviceSyncedUpdateParams = array($fldDeviceSynced,$pmkPatientID);
+      $deviceSyncedUpdateResult = $thisDatabaseWriter->update($deviceSyncedUpdateQuery, $deviceSyncedUpdateParams, 1,0,0,0,false,false);
+    } //end foreach session
+
     header( 'HTTP/1.1 201: Resource Created' ); 
   }
   else{
