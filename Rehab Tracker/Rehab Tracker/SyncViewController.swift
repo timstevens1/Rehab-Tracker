@@ -118,7 +118,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                                                 //Util.overwriteSessions()
                                                 
                                                 // Parses the CSV and saves it in core data
-                                                try self.parseCSV()
+                                                try self.searchForStats()
                                             }
                                             
                                             // If the average compliance is higher than 55/60 minutes, give positive feedback

@@ -27,6 +27,10 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     // The CBCentralManager install will be what you use to find, connect, and manage BLE devices. Once you are connected, and are working with a specific service, the peripheral will help you iterate characteristics and interacting with them.
     private var manager:CBCentralManager!
     private var peripheral:CBPeripheral!
+    var resultString: String!
+    private var stats:[(sessionID: String, avg_ch1_intensity:String, avg_ch2_intensity:String, session_compliance: String)] = []
+    
+
 
     // (4) UUID and Service Name
     // You will need UUID for the BLE service, and a UUID for the specific characteristic. In some cases, you will need additional UUIDs. They get used repeatedly throughout the code, so having constants for them will keep the code cleaner, and easier to maintain.
@@ -172,7 +176,8 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             //print(NSString(data: characteristic.value!, encoding: String.Encoding.utf8.rawValue)!)
             
             let resultNSString = NSString(data: characteristic.value!, encoding: String.Encoding.utf8.rawValue)!
-            let resultString = resultNSString as String
+            //let resultString = resultNSString as String
+            resultString = resultNSString as String
             
             print(resultString)
             
@@ -185,8 +190,95 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             //lblTransfer.text = NSString(format: "%llu", resultString) as String
             lblTransfer.text = resultString
             textTransfer.text = resultString
+            parseData()
         }
     }
+    
+    
+    private func parseData() {
+            do {
+            
+            // Create an array to track which sessions weve synced
+            var sessionsAdded = [Character]()
+            let newSessions = resultString.components(separatedBy: "\n")
+
+            
+            // First break up the data array by newlines to seperate out each session
+            for session in newSessions{
+                
+                let myDataArr = session.components(separatedBy: ",")
+                
+                // Get the first character of the data string which is the session Count to make sure no duplicated
+                let index = session.index(session.startIndex, offsetBy: 0)
+                
+                // Check if the array contains 6 data points and that the sessionCount isnt duplicating
+                if (myDataArr.count == 4 && !sessionsAdded.contains(session[index])){
+                    for data in myDataArr{
+                        print(data)
+                    }
+                    
+                    // Add validated data to stats array
+                    let stat = (sessionID: myDataArr[0], avg_ch1_intensity:myDataArr[1], avg_ch2_intensity:myDataArr[2], session_compliance: myDataArr[3])
+                    
+                    
+                    print(stat)
+
+                    
+                    self.stats.append(stat)
+                    
+                    print(self.stats)
+                    
+                    print(self.stats.count)
+                    
+                    sessionsAdded.append(session[index]);
+                    // append the session_compliance to the array for calculating if we should give feedback
+                    let compDouble = (myDataArr[3] as NSString).doubleValue
+                    //lastSessionCompliance.append(compDouble)
+                }else{
+                    print("[DEBUG] Invalid Data/Duplicate session number: " , session)
+                }
+            }
+            // Clear out the dataFromPeripheral array once we have the data to prevent duplication
+            resultString.removeAll()
+            sessionsAdded.removeAll()
+            self.addData()
+        }
+        /*
+        catch let error as NSError {
+            // Sync Error Alert
+            self.syncErrorAlert()
+        }
+        */
+    }
+    
+    // Function to add data from stats (parsed data received from device) array to core data
+    private func addData() {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let context = appDelegate.persistentContainer.viewContext
+        let sesEntity = NSEntityDescription.entity(forEntityName: "Session", in: context)
+        print("NEW SESSIONS TO SAVE TO CORE DATA:") //DEBUG STEP
+        for stat in stats {
+            print("in the loop")
+            let session = NSManagedObject(entity: sesEntity!, insertInto: context)as! Session
+            session.sessionID = stat.sessionID
+            print(session.sessionID) //DEBUG STEP
+            session.session_compliance = stat.session_compliance
+            session.avg_ch1_intensity = stat.avg_ch1_intensity
+            session.avg_ch2_intensity = stat.avg_ch2_intensity
+            
+            session.pushed_to_db = false
+            //session.notes = self.comments
+            session.hasUser = Util.returnCurrentUser()
+        }
+        print("after the loop")
+        //(UIApplication.shared.delegate as! AppDelegate).saveContext()
+        //self.searchForStats()
+    }
+    
+    
+    
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
