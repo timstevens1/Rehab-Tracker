@@ -102,9 +102,11 @@ if($tblPatient != "" && $tblSession!= ""){
 			}
 			//print out average compliance
 			//print '<p>Average compliance: ' . $averageCompliance/count($sessionInformation) . '</p>';
+			//if average compliance is over 70%
+			if(($averageCompliance/count($sessionInformation))>.7){
 				//now we will print out what we want to insert into tblPush
 				print '<p>fnkPatientID: ' . $thisPMK . ' Notification ID: ' . rand(1,16) . '</p>';
-			 
+			 }
 		}		
 	}
 }
