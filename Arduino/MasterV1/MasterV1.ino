@@ -9,6 +9,9 @@ boolean testMode = true;
 #include <aci_setup.h>
 #include <RBL_nRF8001.h>
 #include <RBL_services.h>
+#include <RTClib.h>
+#include <Wire.h>
+#include "RTClib.h"
 
 int buttonPin = 7; // pin for sync button
 int LED1 = 2; // Status lights
@@ -41,6 +44,10 @@ void WriteStorage();
 void ArrayAdd(float intensityValue, int channel);
 float IntensityMap(int sensorValue);
 
+int startTime;
+int endTime;
+
+RTC_DS1307 rtc;
 
 void setup(){
   // Initialize what we need in here
@@ -61,6 +68,8 @@ void setup(){
     Serial.print("SessionCount = ");
     Serial.println(sessionCount);
   }
+  rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  
   ble_begin(); //ble_begin starts the BLE stack and broadcasting the advertising packet
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -72,7 +81,7 @@ void loop()
   {
     ButtonInterrupt();
   }
-
+  DateTime now = rtc.now() + TimeSpan(1365,11,23,30);
   ButtonInterrupt();
   
   if (testMode){
@@ -82,6 +91,14 @@ void loop()
   Serial.print(analogRead(sensorPin1));
   Serial.print(" ; Pin2: ");
   Serial.println(analogRead(sensorPin2));
+ // int beginTime;
+  if(sessionCount == 1){
+    startTime = now.unixtime();
+    Serial.print("Start Time: ");
+    Serial.println(startTime);
+  //  beginTime = startTime;
+  }
+  endTime = now.unixtime();
 
   ButtonInterrupt();
 
@@ -157,15 +174,14 @@ void loop()
 
     Serial.print("SampleNumber 2 = "); 
     Serial.println(sampleNum2);
+
+    Serial.print("Start Time Recorded: ");
+    Serial.println(startTime);
+
+    Serial.print("Final Time Recorded: ");
+    Serial.println(endTime);
     Serial.println("------------Loop Complete-------------");  
 }
-
-/*
-void outputtingToApp(){
-  unsigned char thisThing[13] = {'W', 'e', ' ', 'C', 'a', 'n', ' ', 'O', 'u', 't', 'p', 'u', 't'};
-  ble_write_bytes(thisThing, 13);
-}
-*/
 
 void outputtingToApp(){
   unsigned char thisThing[13];
