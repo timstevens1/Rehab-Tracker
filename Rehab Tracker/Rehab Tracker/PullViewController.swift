@@ -90,7 +90,6 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         }
     }
     
-    
     // (7) Connect to a Device
     // When you find the device you are interested in interacting with, you will want to connect to it. This is the only place where the device name shows up in the code, but I still like to declare it as a constant with the UUIDs.
     func centralManager(_ central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
@@ -194,7 +193,6 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         }
     }
     
-    
     private func parseData() {
             do {
             
@@ -271,14 +269,9 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             session.hasUser = Util.returnCurrentUser()
         }
         print("after the loop")
+        //IMPORTANT - UNCOMMENT BELOW TO ACTUALLY SAVE TO CORE DATA
         //(UIApplication.shared.delegate as! AppDelegate).saveContext()
-        //self.searchForStats()
     }
-    
-    
-    
-    
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -290,13 +283,10 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         
         // Do any additional setup after loading the view, typically from a nib.
     }
-    
-    
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-
 
 }

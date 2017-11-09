@@ -18,7 +18,6 @@ import CoreBluetooth
 
 // DEBUG mode flag
 let DEBUG = true
-let TEST_LOCAL_FILE_NAME = "/Users/brianjcolombini/Documents/fall_2017/CS275/rehab_tracker/data_11-4_newnewnewsess.csv"
 
 protocol BLEDelegate1 {
     func bleDidUpdateState()
@@ -28,10 +27,6 @@ protocol BLEDelegate1 {
 }
 
 class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate  {
-    
-    // Array and dictionary to hold stats
-    private var sessions = [Session]()
-    private var stats:[(sessionID: String, avg_ch1_intensity:String, avg_ch2_intensity:String, session_compliance: String, start_time: String, end_time: String)]?
     
     // global variable comments to store session comments
     private var comments = "No Comments"
@@ -117,8 +112,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                                                // TEMP - DEBUGGING MEASURE TO CLEAR PREV USER SESSIONS
                                                 //Util.overwriteSessions()
                                                 
-                                                // Parses the CSV and saves it in core data
-                                                try self.searchForStats()
+                                                // Get new sessions from core data and push to db
+                                                try self.getAndSynchNewSessions()
                                             }
                                             
                                             // If the average compliance is higher than 55/60 minutes, give positive feedback
@@ -163,85 +158,24 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         self.present(alert, animated: true, completion: nil)
     }
     
-    // Function to parse data from CSV file
-    private func parseCSV() throws {
-        let fileName:String
-        let fileURL:URL = URL.init(string:"empty")!
-        let dbfile:String
-        // Name of the database file, with newline-separated records
-        if(DEBUG) {
-            fileName = TEST_LOCAL_FILE_NAME
-        } else{
-            fileName = "data"
-            let docDirectory = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        }
-        // UNCOMMENT if not debug mode
-        //if fileURL = docDirectory?.appendingPathComponent(fileName).appendingPathExtension("csv") {
-            
-            // Record field delimeter (is a comma for csv)
-            let delimeter = ","
-            self.stats = []
-        
-            do {
-                if(DEBUG) {
-                    dbfile = try String(contentsOfFile: fileName)
-                } else {
-                    dbfile = try String(contentsOf: fileURL)
-                }
-                let lines:[String] = dbfile.components(separatedBy: "\n") as [String]
-            
-                for line in lines {
-                    var fields = [String]()
-                    if(line != "") {
-                        fields = line.components(separatedBy: delimeter)
-                        let stat = (sessionID: fields[0], avg_ch1_intensity:fields[1], avg_ch2_intensity:fields[2], session_compliance: fields[3],
-                            start_time:fields[4], end_time:fields[5])
-                        self.stats?.append(stat)
-                    
-                        // append the session_compliance to the array for calculating if we should give feedback
-                        let compDouble = (fields[3] as NSString).doubleValue
-                        lastSessionCompliance.append(compDouble)
-                    }
-                }
-                self.addData()
-            }
-            catch let error as NSError {
-                // Sync Error Alert
-                self.syncErrorAlert()
-            
-                // Print error
-                print("file input failed \(error), \(error.userInfo)")
-            }
-        // UNCOMMENT if not debug mode
-        //}
+    // Get and set current date for fldDeviceSynced
+    private func thisDate() {
+        let currDate = Date()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        fldDeviceSynced = formatter.string(from: currDate)
     }
     
-    // Function to add data from csv to core data
-    private func addData() {
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        let context = appDelegate.persistentContainer.viewContext
-        let sesEntity = NSEntityDescription.entity(forEntityName: "Session", in: context)
-        print("NEW SESSIONS TO SAVE TO CORE DATA:") //DEBUG STEP
-        for stat in stats! {
-            let session = NSManagedObject(entity: sesEntity!, insertInto: context)as! Session
-            session.sessionID = stat.sessionID
-            print(session.sessionID) //DEBUG STEP
-            session.session_compliance = stat.session_compliance
-            session.avg_ch1_intensity = stat.avg_ch1_intensity
-            session.avg_ch2_intensity = stat.avg_ch2_intensity
-            session.start_time = Int32(stat.start_time)!
-            session.end_time = Int32(stat.end_time)!
-            session.pushed_to_db = false
-            session.notes = self.comments
-            session.hasUser = Util.returnCurrentUser()
-        }
-        (UIApplication.shared.delegate as! AppDelegate).saveContext()
-        self.searchForStats()
-        
+    // Convert unix time (seconds - this is format sent by Arduino) to datetime format
+    private func unixSecondsToDatetime(seconds_since_1970:Int32) -> String {
+        let datetime = Date(timeIntervalSince1970: Double(seconds_since_1970))
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return formatter.string(from: datetime)
     }
     
-    // Function to retrieve stats from core data
-    private func searchForStats() {
+    // Function to retrieve new session info from core data
+    private func getAndSynchNewSessions() {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
         let request: NSFetchRequest<Session> = Session.fetchRequest()
@@ -268,7 +202,6 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                 print(fldEndTime)
                 fldNote = self.comments
                 pmkPatientID = Util.returnCurrentUsersID()
-                //self.thisDate()
                 self.pushToDatabase()
             }
             
@@ -276,26 +209,9 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             // Sync Error Alert
             self.syncErrorAlert()
             
-            print("Could not find stats. \(error)")
+            print("Could not find new sessions. \(error)")
         }
         
-    }
-    
-
-    // Gets the Data for Sync()
-    private func thisDate() {
-        let currDate = Date()
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        fldDeviceSynced = formatter.string(from: currDate)
-    }
-    
-    // Convert unix time (seconds - this is format sent by Arduino) to datetime format
-    private func unixSecondsToDatetime(seconds_since_1970:Int32) -> String {
-        let datetime = Date(timeIntervalSince1970: Double(seconds_since_1970))
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        return formatter.string(from: datetime)
     }
     
     private func pushToDatabase() {
@@ -347,8 +263,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             }
         })
         
-        // Return value of returnedUserID
         task.resume()
+        
         print("before pushed_to_db flag set")
         // Update pushed_to_db flag to true in core data for saved sessions
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
