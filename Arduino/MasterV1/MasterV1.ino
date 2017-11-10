@@ -39,7 +39,7 @@ int maxVal1 = 0;
 int ant2 = 0;
 int next2 = 0;
 int maxVal2 = 0;
-int dayWithoutConnection = 0;
+int dayWithoutSync = 0;
 //int startTime;
 //int endTime;
 
@@ -364,6 +364,38 @@ void ButtonInterrupt() {
     ble_do_events();
 
   }
+}
+/*
+ * Fill The Sending Byte Array from the EEPROM
+ * address iterates throught he EEPROM
+ * value takes the value from the position in the EEPROM at address
+ * dayWithoutSync keeps track of how many of the data arrays need to be stored so that there can be a sync after multiple exercises without a sync
+ *      dayWithoutSync isn't stored within any of these methods and is incremented up in the case that 1)Elements are added to resultArray[][] and 2)ble_send_bytes() isn't called
+*/
+void medArr(unsigned char resultArray[][], int totalBytes, int dayWithoutSync){
+ int address;
+ int value;
+ if(dayWithoutSync > 5){
+  arrayOveruse(resultArray);
+ }
+ for(address = 0; address < totalBytes; address++){
+  value = EEPROM.readByte(address,value);
+  resultArray[dayWithoutSync][address] = value;
+  printf("Byte Array at %d is %d\n",address,byteArr[address]);
+ }
+}
+/*
+ * If resultArray[][] gets too full, it shift all the data to the left and then any more data added goes on the end
+ */
+void arrayOveruse(unsigned char resultArray[][]){
+int dayShift;
+int valShift;
+ for(dayShift = 0; dayShift < 4; dayShift++){
+  for(valShift = 0; valShift < 18; valShift++){
+   resultArray[dayShift][valShift] = resultArray[dayShift+1][valShift+18];
+  }
+ }
+ dayWithoutSync--;
 }
 ///////////////////////Writing to EEPROM///////////////////////////////////////////////////
 void WriteStorage() {
