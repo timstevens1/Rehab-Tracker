@@ -13,12 +13,10 @@ boolean testMode = true;
 #include <Wire.h>
 #include "RTClib.h"
 */
-/*
+//#include <EEPROM.h>
+
 int buttonPin = 11; // pin for sync button
-int LED1 = 5; // Status lights
-int LED2 = 10;
-int LED3 = 13;
-*/
+int LED2 = 5;
 int sensorPin1 = A0;    // select the input pin for channel 1
 int sensorPin2 = A1;    // select the input pin for channel 2
 int sensorValue = 0;  // variable to store the value coming from the sensor
@@ -45,6 +43,7 @@ void ButtonInterrupt();
 void WriteStorage();
 void ArrayAdd(float intensityValue, int channel);
 float IntensityMap(int sensorValue);
+int dayWithoutSync = 0;
 
 bool flag=false;
 
@@ -65,12 +64,7 @@ void setup(){
   sessionCount = EEPROM.readInt(0);
   currentAddress = EEPROM.readInt(2);
   
-  // UPLOAD EEPROM SHITE
-  /*
-  pinMode(LED1, OUTPUT);
-  pinMode(LED2, OUTPUT);
-  pinMode(LED3, OUTPUT);
-  */
+  //pinMode(LED2, OUTPUT);
   if (testMode){ //start serial com
     Serial.begin(57600);
     Serial.print("SessionCount = ");
@@ -231,8 +225,8 @@ void loop()
     */
     Serial.println("------------Loop Complete-------------");  
 }
-
-void outputtingToApp(){
+//It should be called regardless of BLE Connectivity
+void recordingData(){
   char output_array_avg1[10];
   char output_array_avg2[10];
   char output_session_comp[10];
@@ -244,44 +238,54 @@ void outputtingToApp(){
   float scomp;
   unsigned char output_comma[1]={','};
   unsigned char output_newline[1]={'\n'};
-  
+  unsigned char resultArray[dayWithoutSync][13];
 
+  if(dayWithoutSync > 5){
+    arrayOveruse(resultArray);
+  }
   sc = EEPROM.readInt(address);
   itoa(sc,output_session_count,10);
+  //resultArray[dayWithoutSync][address] = (unsigned char * )output_session_count;
   address = address + 3;
   
   aavg1 = EEPROM.readFloat(address);
   dtostrf(aavg1,5,2,output_array_avg1);
+  //resultArray[dayWithoutSync][address] = (unsigned char * )output_array_avg1;
   address = address + 5;
   
   aavg2 = EEPROM.readFloat(address);
   dtostrf(aavg2,5,2,output_array_avg2);
+  //resultArray[dayWithoutSync][address] = (unsigned char * )output_array_avg2;
   address = address + 5;
   
   scomp = EEPROM.readFloat(address);
   dtostrf(scomp,5,2,output_session_comp);
+  //resultArray[dayWithoutSync][address] = (unsigned char * )output_session_comp;
   address = 2;
+  dayWithoutSync++;
  
-  ble_write_bytes((unsigned char * )output_session_count,strlen(output_session_count));
+  
+}
+//This should only be called when the BLE is connected. Should be placed in a while loop iterating dayWithoutSync down until it is 0
+void BLE_OUTPUT(unsigned char resultArray[5][13], int dayWithoutSync){
+  ble_write_bytes((unsigned char * )resultArray[dayWithoutSync][2],strlen(resultArray[dayWithoutSync][2]));
   delay(500);
   ble_write_bytes(output_comma,1);
   delay(1000);
-  ble_write_bytes((unsigned char * )output_array_avg1,strlen(output_array_avg1));
+  ble_write_bytes((unsigned char * )resultArray[dayWithoutSync][5],strlen(resultArray[dayWithoutSync][5]));
   delay(500);
   ble_write_bytes(output_comma,1);
   delay(1000);
-  ble_write_bytes((unsigned char * )output_array_avg2,strlen(output_array_avg2));
+  ble_write_bytes((unsigned char * )resultArray[dayWithoutSync][10],strlen(resultArray[dayWithoutSync][10]));
   delay(500);
   ble_write_bytes(output_comma,1);
   delay(1000);
-  ble_write_bytes((unsigned char * )output_session_comp,strlen(output_session_comp));
+  ble_write_bytes((unsigned char * )resultArray[dayWithoutSync][15],strlen(resultArray[dayWithoutSync][15]));
   delay(500);
   ble_write_bytes(output_newline,1);
- 
-  
-  
-  
-  /*
+  dayWithoutSync--;
+}
+void outputTesting(){
   unsigned char thisThing[64];
   unsigned char val = '0';
   unsigned char output;
@@ -295,7 +299,6 @@ void outputtingToApp(){
   } 
   //= {'W', 'e', ' ', 'C', 'a', 'n', ' ', 'O', 'u', 't', 'p', 'u', 't'};
   ble_write_bytes(thisThing, 64);
-  */
 }
 
 ////////////Button Inter//////////////////////////////////////////////////////////
@@ -304,8 +307,6 @@ void ButtonInterrupt(){
   int address=0;
   unsigned char bytes[255];
   unsigned char value;
-
-  //analogWrite(LED2, 150);
   
   //if (digitalRead(buttonPin)==1 || sampleNum1>90 || sampleNum2>90){
   
@@ -369,18 +370,18 @@ void ButtonInterrupt(){
         //********If the app connects to the blend, it will send a value to BLE, so ble_read is not -1********
         while(ble_read()!=-1){
           Serial.println("Transfering data!!");
-          outputtingToApp();
+          recordingData();
           
           ble_do_events();
           delay(5000);
           ble_do_events();
-          outputtingToApp();
+          recordingData();
           delay(5000);
           ble_do_events();
-          outputtingToApp();
+          recordingData();
           delay(5000);
           ble_do_events();
-          outputtingToApp();
+          recordingData();
           
           flag=true;
           //analogWrite(LED3, 50);
@@ -409,6 +410,36 @@ void ButtonInterrupt(){
   ble_do_events();
   //analogWrite(LED2, 0);
 }
+}
+/*
+ * Fill The Sending Byte Array from the EEPROM
+ * address iterates throught he EEPROM
+ * value takes the value from the position in the EEPROM at address
+ * dayWithoutSync keeps track of how many of the data arrays need to be stored so that there can be a sync after multiple exercises without a sync
+ *      dayWithoutSync isn't stored within any of these methods and is incremented up in the case that 1)Elements are added to resultArray[][] and 2)ble_send_bytes() isn't called
+*/
+/*void medArr(unsigned char resultArray[][], int totalBytes, int dayWithoutSync){
+ int address;
+ int value;
+ if(dayWithoutSync > 5){
+  arrayOveruse(resultArray);
+ }
+ for(address = 0; address < totalBytes; address++){
+  value = EEPROM.readByte(address,value);
+  resultArray[dayWithoutSync][address] = value;
+  printf("Byte Array at %d is %d\n",address,byteArr[address]);
+ }
+}*/
+//If the resultArray gets too full, it shifts all the data to the left
+void arrayOveruse(unsigned char resultArray[6][13]){
+int dayShift;
+int valShift;
+ for(dayShift = 0; dayShift < 4; dayShift++){
+  for(valShift = 0; valShift < 18; valShift++){
+   resultArray[dayShift][valShift] = resultArray[dayShift+1][valShift+18];
+  }
+ }
+ dayWithoutSync--;
 }
 ///////////////////////Writing to EEPROM///////////////////////////////////////////////////
 void WriteStorage(){
