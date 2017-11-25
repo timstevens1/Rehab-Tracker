@@ -19,6 +19,11 @@ import CoreBluetooth
 // DEBUG mode flag
 let DEBUG = true
 
+// Switch for including session time tracking (start time, end time)
+// TO DO: Switch to true once real-time clock is implemented and timing data can be sent to app
+// TO DO: Consolidate with PVC - only one switch should be used
+let SESSION_TIME_TRACKING_SVC = false
+
 protocol BLEDelegate1 {
     func bleDidUpdateState()
     func bleDidConnectToPeripheral()
@@ -161,6 +166,9 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     
     // Convert unix time (seconds - this is format sent by Arduino) to datetime format
     private func unixSecondsToDatetime(seconds_since_1970:Int32) -> String {
+        if (!SESSION_TIME_TRACKING_SVC) {
+            return "0000-00-00 00:00:00"
+        }
         let datetime = Date(timeIntervalSince1970: Double(seconds_since_1970))
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -176,7 +184,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         request.returnsObjectsAsFaults = false
         
         do {
-            sessions = try context.fetch(request)
+            let sessions = try context.fetch(request)
             print("sessions");
             print(sessions);
             print("SESSIONS RETRIEVED FROM CORE DATA:") //DEBUG STEP
@@ -478,10 +486,6 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         self.characteristics.removeAll(keepingCapacity: false)
         
         self.delegate?.bleDidDisconenctFromPeripheral()
-        
-        // Once disconnected, write all the data you got to the CSV
-        //writeToCSV()
-        //Util.readDataFromFile(file: "data")
     }
     
     // MARK: CBPeripheral delegate
@@ -524,8 +528,6 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     
     // Use the data we receive from the peripheral
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-        
- 
         
         if error != nil {
             
@@ -588,66 +590,4 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         self.RSSICompletionHandler = completion
         self.activePeripheral?.readRSSI()
     }
-    
-    // Write what is in the dataFromPeripheral array to a CSV
-    /*func writeToCSV() {
-        var singleSessionArray = [String]()
-        
-        // First break up the data array by newlines to seperate out each session
-        print("===========", dataFromPeripheral);
-        for myData in dataFromPeripheral{
-            singleSessionArray = myData.components(separatedBy: "\n")
-        }
-        
-        // Initialize variables to hold what we will be writing
-        var csvText = ""
-        var newLine = ""
-        
-        // Create an array to track which sessions weve synced
-        var sessionsAdded = [Character]()
-        
-        for session in singleSessionArray{
-            let myDataArr = session.components(separatedBy: ",")
-            
-            // Get the first character of the data string which is the session Count to make sure no duplicated
-            let index = session.index(session.startIndex, offsetBy: 0)
-            
-            // Check if the array contains 4 data points and that the sessionCount isnt duplicating
-            if (myDataArr.count == 4 && !sessionsAdded.contains(session[index])){
-                // Add validated data to what will be written to csv
-                newLine = "\(session)\n"
-                csvText.append(newLine)
-                sessionsAdded.append(session[index]);
-            }else{
-                print("[DEBUG] Invalid Data/Duplicate session number: " , session)
-            }
-        }
-        
-        // Clear out the dataFromPeripheral array once we have the data to prevent duplication
-        dataFromPeripheral.removeAll()
-        singleSessionArray.removeAll()
-        sessionsAdded.removeAll()
-        
-        // Writing time!
-        let fileName = "data"
-        let docDirectory = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        if let fileURL = docDirectory?.appendingPathComponent(fileName).appendingPathExtension("csv") {
-            
-            // Write to a file on disk
-            do {
-                print("[DEBUG] Attempting to write to file!")
-                
-                // Print out the csvTest
-                print("[DEBUG] What we are writing:\n", csvText)
-                
-                try csvText.write(to: fileURL, atomically: true, encoding: .utf8)
-                
-                // NEED TO CHANGE THIS - DEBUGGING MEASURE TO CLEAR PREV USER SESSIONS
-                //Util.overwriteSessions()
-                
-            } catch {
-                print("[ERROR] Failed writing to URL: \(fileURL), Error: " + error.localizedDescription)
-            }
-        }
-    }*/
 }

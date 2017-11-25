@@ -19,6 +19,11 @@ import UIKit
 import CoreData
 import CoreBluetooth
 
+// Switch for including session time tracking (start time, end time)
+// TO DO: Switch to true once real-time clock is implemented and timing data can be sent to app
+// TO DO: Consolidate with SVC - only one switch should be used
+let SESSION_TIME_TRACKING_PVC = false
+
 // (2) Delegates
 // Eventually you are going to want to get callbacks from some functionality. There are two delegates to implement: CBCentralManagerDelegate, and CBPeripheralDelegate.
 class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate {
@@ -28,7 +33,7 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     private var manager:CBCentralManager!
     private var peripheral:CBPeripheral!
     var resultString: String!
-    private var stats:[(sessionID: String, avg_ch1_intensity:String, avg_ch2_intensity:String, session_compliance: String)] = []
+    private var stats:[(sessionID: String, avg_ch1_intensity:String, avg_ch2_intensity:String, session_compliance: String, start_time: String, end_time: String)] = []
     
 
 
@@ -49,7 +54,6 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     @IBAction func btnScan(_ sender: Any) {
         print("!!!!!!!!!!!!!!!!!!!!")
         lblTransfer.text="Hello"
-        
         // (5) Instantiate Manager
         // One-liner to create an instance of CBCentralManager. It takes the delegate as an argument, and options, which in most cases are not needed. This is also the jumping off point for what effectively becomes a chain of the remaining seven waterfall steps.
         manager = CBCentralManager (delegate: self, queue: nil)
@@ -195,7 +199,6 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     
     private func parseData() {
             do {
-            
             // Create an array to track which sessions weve synced
             var sessionsAdded = [Character]()
             let newSessions = resultString.components(separatedBy: "\n")
@@ -209,34 +212,32 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                 // Get the first character of the data string which is the session Count to make sure no duplicated
                 let index = session.index(session.startIndex, offsetBy: 0)
                 
-                // Check if the array contains 6 data points and that the sessionCount isnt duplicating
-                if (myDataArr.count == 4 && !sessionsAdded.contains(session[index])){
-                    for data in myDataArr{
-                        print(data)
-                    }
-                    
+                // Check if the array contains correct number of data points and that the sessionCount isnt duplicating
+                if ((SESSION_TIME_TRACKING_PVC && myDataArr.count == 6) || (!SESSION_TIME_TRACKING_PVC && myDataArr.count == 4)) {
+                    let sess_start_time = SESSION_TIME_TRACKING_PVC ? myDataArr[4] : "0"
+                    let sess_end_time = SESSION_TIME_TRACKING_PVC ? myDataArr[5] : "0"
                     // Add validated data to stats array
-                    let stat = (sessionID: myDataArr[0], avg_ch1_intensity:myDataArr[1], avg_ch2_intensity:myDataArr[2], session_compliance: myDataArr[3])
-                    
-                    
-                    print(stat)
-
-                    
+                    let stat = (sessionID: myDataArr[0], avg_ch1_intensity:myDataArr[1], avg_ch2_intensity:myDataArr[2], session_compliance: myDataArr[3],
+                        start_time:sess_start_time, end_time:sess_end_time)
                     self.stats.append(stat)
-                    
-                    print(self.stats)
-                    
-                    print(self.stats.count)
-                    
                     sessionsAdded.append(session[index]);
                     // append the session_compliance to the array for calculating if we should give feedback
                     let compDouble = (myDataArr[3] as NSString).doubleValue
                     //lastSessionCompliance.append(compDouble)
-                }else{
+                } else {
                     print("[DEBUG] Invalid Data/Duplicate session number: " , session)
                 }
+                print("STATS")
+                print(self.stats)
+                print("STATS COUNT")
+                print(self.stats.count)
+                    
+                sessionsAdded.append(session[index]);
+                // append the session_compliance to the array for calculating if we should give feedback
+                let compDouble = (myDataArr[3] as NSString).doubleValue
+                //lastSessionCompliance.append(compDouble)
             }
-            // Clear out the dataFromPeripheral array once we have the data to prevent duplication
+            // Clear out the resultString and sessionsAdded array once we have the data to prevent duplication
             resultString.removeAll()
             sessionsAdded.removeAll()
             self.addData()
@@ -263,14 +264,15 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             session.session_compliance = stat.session_compliance
             session.avg_ch1_intensity = stat.avg_ch1_intensity
             session.avg_ch2_intensity = stat.avg_ch2_intensity
-            
+            session.start_time = Int32(stat.start_time)!
+            session.end_time = Int32(stat.end_time)!
             session.pushed_to_db = false
             //session.notes = self.comments
             session.hasUser = Util.returnCurrentUser()
         }
         print("after the loop")
         //IMPORTANT - UNCOMMENT BELOW TO ACTUALLY SAVE TO CORE DATA
-        //(UIApplication.shared.delegate as! AppDelegate).saveContext()
+        (UIApplication.shared.delegate as! AppDelegate).saveContext()
     }
     
     override func viewDidLoad() {
