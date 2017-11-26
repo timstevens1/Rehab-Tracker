@@ -33,9 +33,7 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     private var manager:CBCentralManager!
     private var peripheral:CBPeripheral!
     var resultString: String!
-    private var stats:[(sessionID: String, avg_ch1_intensity:String, avg_ch2_intensity:String, session_compliance: String, start_time: String, end_time: String)] = []
-    
-
+    private var stats:[(avg_ch1_intensity:String, avg_ch2_intensity:String, session_compliance: String, start_time: String, end_time: String)] = []
 
     // (4) UUID and Service Name
     // You will need UUID for the BLE service, and a UUID for the specific characteristic. In some cases, you will need additional UUIDs. They get used repeatedly throughout the code, so having constants for them will keep the code cleaner, and easier to maintain.
@@ -54,6 +52,7 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     @IBAction func btnScan(_ sender: Any) {
         print("!!!!!!!!!!!!!!!!!!!!")
         lblTransfer.text="Hello"
+        // parseData() FOR LOCAL TESTING
         // (5) Instantiate Manager
         // One-liner to create an instance of CBCentralManager. It takes the delegate as an argument, and options, which in most cases are not needed. This is also the jumping off point for what effectively becomes a chain of the remaining seven waterfall steps.
         manager = CBCentralManager (delegate: self, queue: nil)
@@ -199,6 +198,7 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     
     private func parseData() {
             do {
+            // resultString = "85,85,0.95\n92,92,0.65" FOR LOCAL TESTING
             // Create an array to track which sessions weve synced
             var sessionsAdded = [Character]()
             let newSessions = resultString.components(separatedBy: "\n")
@@ -210,19 +210,18 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                 let myDataArr = session.components(separatedBy: ",")
                 
                 // Get the first character of the data string which is the session Count to make sure no duplicated
-                let index = session.index(session.startIndex, offsetBy: 0)
+                //let index = session.index(session.startIndex, offsetBy: 0)
                 
-                // Check if the array contains correct number of data points and that the sessionCount isnt duplicating
-                if ((SESSION_TIME_TRACKING_PVC && myDataArr.count == 6) || (!SESSION_TIME_TRACKING_PVC && myDataArr.count == 4)) {
-                    let sess_start_time = SESSION_TIME_TRACKING_PVC ? myDataArr[4] : "0"
-                    let sess_end_time = SESSION_TIME_TRACKING_PVC ? myDataArr[5] : "0"
+                // Check if the array contains correct number of data points
+                if ((SESSION_TIME_TRACKING_PVC && myDataArr.count == 5) || (!SESSION_TIME_TRACKING_PVC && myDataArr.count == 3)) {
+                    let sess_start_time = SESSION_TIME_TRACKING_PVC ? myDataArr[3] : "0"
+                    let sess_end_time = SESSION_TIME_TRACKING_PVC ? myDataArr[4] : "0"
                     // Add validated data to stats array
-                    let stat = (sessionID: myDataArr[0], avg_ch1_intensity:myDataArr[1], avg_ch2_intensity:myDataArr[2], session_compliance: myDataArr[3],
-                        start_time:sess_start_time, end_time:sess_end_time)
+                    let stat = (avg_ch1_intensity:myDataArr[0], avg_ch2_intensity:myDataArr[1], session_compliance: myDataArr[2], start_time:sess_start_time, end_time:sess_end_time)
                     self.stats.append(stat)
-                    sessionsAdded.append(session[index]);
+                    //sessionsAdded.append(session[index]);
                     // append the session_compliance to the array for calculating if we should give feedback
-                    let compDouble = (myDataArr[3] as NSString).doubleValue
+                    let compDouble = (myDataArr[2] as NSString).doubleValue
                     //lastSessionCompliance.append(compDouble)
                 } else {
                     print("[DEBUG] Invalid Data/Duplicate session number: " , session)
@@ -231,11 +230,6 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                 print(self.stats)
                 print("STATS COUNT")
                 print(self.stats.count)
-                    
-                sessionsAdded.append(session[index]);
-                // append the session_compliance to the array for calculating if we should give feedback
-                let compDouble = (myDataArr[3] as NSString).doubleValue
-                //lastSessionCompliance.append(compDouble)
             }
             // Clear out the resultString and sessionsAdded array once we have the data to prevent duplication
             resultString.removeAll()
@@ -250,17 +244,34 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         */
     }
     
+    // Get number of sessions in core data
+    private func getNumSessionsInCD() -> Int {
+        var num_sessions_in_CD = 0
+        do {
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            let context = appDelegate.persistentContainer.viewContext
+            let request: NSFetchRequest<Session> = Session.fetchRequest()
+            num_sessions_in_CD = try context.count(for: request)
+        } catch {
+            // SyncViewController.syncErrorAlert()
+            print("Could not get count of sessions from CD")
+        }
+        return num_sessions_in_CD
+    }
+    
     // Function to add data from stats (parsed data received from device) array to core data
     private func addData() {
+        var current_session_id = getNumSessionsInCD()
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
         let sesEntity = NSEntityDescription.entity(forEntityName: "Session", in: context)
         print("NEW SESSIONS TO SAVE TO CORE DATA:") //DEBUG STEP
         for stat in stats {
             print("in the loop")
+            current_session_id = current_session_id + 1
             let session = NSManagedObject(entity: sesEntity!, insertInto: context)as! Session
-            session.sessionID = stat.sessionID
-            print(session.sessionID) //DEBUG STEP
+            session.sessionID = String(current_session_id)
+            print(current_session_id) //DEBUG STEP
             session.session_compliance = stat.session_compliance
             session.avg_ch1_intensity = stat.avg_ch1_intensity
             session.avg_ch2_intensity = stat.avg_ch2_intensity

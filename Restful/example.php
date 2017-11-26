@@ -58,8 +58,7 @@
       $fldDeviceSynced = $session["fldDeviceSynced"];
 
       //convert fldSessNum to new format (with patientID prefix)
-      $I=  substr($pmkPatientID, 0, -8);
-      $fldSessNum=$I.$fldSessNum;
+      $fldSessNum = $pmkPatientID."_".$fldSessNum;
 
       //build and execute the query to insert session entry
       $sessionInsertQuery = "INSERT INTO tblSession(pmkPatientID, 
