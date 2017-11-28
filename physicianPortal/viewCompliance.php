@@ -70,7 +70,7 @@ if($tblPatient != "" && $tblSession!= ""){
 	//get the current date
 	$currentDate = date('Y-m-d');	
 	//generate a date  prior and parse it into a form the database can recognize
-	$priorDate = date_format(date_modify(date_create($currentDate), '-7 month'),'Y-m-d');
+	$priorDate = date_format(date_modify(date_create($currentDate), '-2 day'),'Y-m-d');
 	//this query select pmkS from tblPatient
 	$tblPatientQuery = 'SELECT pmkPatientID FROM tblPatient';
 	//get the patient primary key array
@@ -102,8 +102,8 @@ if($tblPatient != "" && $tblSession!= ""){
 			}
 			//print out average compliance
 			//print '<p>Average compliance: ' . $averageCompliance/count($sessionInformation) . '</p>';
-			//if average compliance is over 70%
-			if(($averageCompliance/count($sessionInformation))>.7){
+			//option to test average compliance
+			if(($averageCompliance/count($sessionInformation))>0){
 				//create the tblPush insertion query
 				$insertionQuery = 'INSERT INTO tblPush SET fnkPatientID = ?, fnkMessageID = ?';
 				//encapsulate the patient data
@@ -111,6 +111,13 @@ if($tblPatient != "" && $tblSession!= ""){
 				//here we will insert into tblPush
 				$insertion = $thisDatabaseWriter -> insert($insertionQuery, $patientDataArray, 0, 0, 0, 0, false, false);
 			}
+		} else {
+			//crate the tblPush insertion query for non compliance within two days
+			$insertionQueryNonComp = 'INSERT INTO tblPush SET fnkPatientID = ?, fnkMessageID = ?';
+			//encapsulate the patient data
+			$patientDataNonCompArray = array($thisPMK, rand(17,18));
+			//insert into tblPush
+			$insertionNonComp = $thisDatabaseWriter -> insert($insertionQueryNonComp, $patientDataNonCompArray, 0, 0, 0, 0, false, false);	
 		}		
 	}
 }
