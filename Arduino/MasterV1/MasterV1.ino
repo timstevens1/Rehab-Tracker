@@ -12,28 +12,30 @@ boolean testMode = true;
 
 #include <Wire.h>
 #include "RTClib.h"
+
 int sensorPin1 = A0;    // select the input pin for channel 1
 int sensorPin2 = A1;    // select the input pin for channel 2
 int sensorValue = 0;  // variable to store the value coming from the sensor
 int sampleNum1 = 0;  // Sample number
 int sampleNum2 = 0;  // Sample number
-int sampleArray1[140]; // Should be 90 samples in an hour long session (one each 40 seconds). Extras to be safe.
+int sampleArray1[100]; // Should be 90 samples in an hour long session (one each 40 seconds). Extras to be safe.
 long arrayTot1 = 0; // A running sum of the contents of sampleArray to be divided by sampleNum for averaging
 float arrayAvg1 = 0; // A running avg of the above
-int sampleArray2[140]; // Should be 90 samples in an hour long session (one each 40 seconds). Extras to be safe.
+int sampleArray2[100]; // Should be 90 samples in an hour long session (one each 40 seconds). Extras to be safe.
 long arrayTot2 = 0; // A running sum of the contents of sampleArray to be divided by sampleNum for averaging
 float arrayAvg2 = 0; // A running avg of the above
 int sessionCount; //= EEPROM.write(0, 0x00);
 int currentAddress; //= EEPROM.write(1,0x15);
-char comma = ',';
-char newline = '\n';
-float sessionComp;
+
+float sessionComp=0;
 int ant1 = 0;
 int next1 = 0;
 int maxVal1 = 0;
 int ant2 = 0;
 int next2 = 0;
 int maxVal2 = 0;
+
+void initialize();
 void ButtonInterrupt();
 void WriteStorage();
 void ArrayAdd(float intensityValue, int channel);
@@ -51,9 +53,8 @@ void setup() {
   EEPROM.setMaxAllowedWrites(32768);
   //EEPROM.setMaxAllowedWrites(EEPROMSizeUno);
 
-  EEPROM.writeInt(0, 0);
+  EEPROM.updateInt(0, 0);
   EEPROM.writeInt(2, 2);
-
 
   //currentAddress = EEPROM.readInt(2);
   currentAddress = 2;
@@ -90,28 +91,29 @@ void setup() {
 void loop()
 {
   //analogWrite(LED1, 10);
-
-  int i = 0;
-  while (analogRead(sensorPin1) <= 10 && analogRead(sensorPin2) <= 10) {
+  long i = 0;
+  while ((analogRead(sensorPin1) <= 10 && analogRead(sensorPin2) <= 10) || (sampleNum1 >= 90 || sampleNum2 >= 90)) {
     Serial.println("Not running");
     ButtonInterrupt();
-
+    Serial.print("While-loop at:");
+    Serial.println(i);
     delay(1);
     i++;
     if (i == 120000) {
-      EEPROM.writeInt(0, sessionCount);
+      EEPROM.updateInt(0, sessionCount);
       sessionCount++;
+      initialize();
+      Serial.println("If Statement Complete!");
     }
-
-
   }
 
-  //EEPROM only stores one session. We will change this later
-  while (sampleNum1 > 90 || sampleNum2 > 90) {
+  /*
+    //EEPROM only stores one session. We will change this later
+    while (sampleNum1 > 90 || sampleNum2 > 90) {
     ButtonInterrupt();
     Serial.println("This session has finished.");
-  }
-
+    }
+  */
 
   /*
     while(1)
@@ -125,49 +127,32 @@ void loop()
     startTime = now.unixtime();
   }
 
-
-  /*
-    //while(1){
-    Serial.println("**********");
-    //DateTime now = rtc.now();
-
-    Serial.print(now.year(), DEC);
-    Serial.print('/');
-    Serial.print(now.month(), DEC);
-    Serial.print('/');
-    Serial.println(now.day(), DEC);
-
-    Serial.print(now.hour(), DEC);
-    Serial.print(':');
-    Serial.print(now.minute(), DEC);
-    Serial.print(':');
-    Serial.print(now.second(), DEC);
-    Serial.println();
-    Serial.println("**********");
-    //}
-  */
+  //Store the start time when a session starts
+  if (sampleNum1 == 0 || sampleNum2 == 0) {
+    now = rtc.now();
+    startTime = now.unixtime();
+  }
 
   ButtonInterrupt();
 
   if (testMode) {
     Serial.println("TEST MODE ACTIVE");
   }
-  Serial.print("Pin1: ");
-  Serial.print(analogRead(sensorPin1));
-  Serial.print(" ; Pin2: ");
-  Serial.println(analogRead(sensorPin2));
-
 
   ButtonInterrupt();
   // Comparison Loop
   // Channel 1
   ant1 = next1;
   next1 = analogRead(sensorPin1);
+  
+  Serial.print("Pin1: ");
+  Serial.println(next1);
+  
   delay(1000);
 
   if (ant1 > next1) {
     if (maxVal1 > ant1) {
-      maxVal1 = ant1;
+      //maxVal1 = ant1;
       //SEND
       Serial.print("MaxDigiVoltage = ");
       Serial.println(maxVal1);
@@ -177,8 +162,7 @@ void loop()
       ButtonInterrupt();
       delay(500);
 
-
-      if (((sampleNum1+1) % 10) == 0){
+      if (((sampleNum1 + 1) % 10) == 0) {
         WriteStorage();
         ButtonInterrupt();
       }
@@ -192,9 +176,13 @@ void loop()
   // Channel 2
   ant2 = next2;
   next2 = analogRead(sensorPin2);
+
+  Serial.print("Pin2: ");
+  Serial.println(next2);
+  
   if (ant2 > next2) {
     if (maxVal2 > ant2) {
-      maxVal2 = ant2;
+      //maxVal2 = ant2;
       //SEND
       Serial.print("MaxDigiVoltage = ");
       Serial.println(maxVal2);
@@ -203,7 +191,7 @@ void loop()
       maxVal2 = 0;
       delay(500);
 
-      if (((sampleNum2+1) % 10) == 0){
+      if (((sampleNum2 + 1) % 10) == 0) {
         WriteStorage();
         ButtonInterrupt();
       }
@@ -241,6 +229,53 @@ void outputtingToApp() {
     char output_array_avg2[10];
     char output_session_comp[10];
     char output_session_count[10];
+
+  Serial.print("SampleNumber 1 = ");
+  Serial.println(sampleNum1);
+
+  Serial.print("SampleNumber 2 = ");
+  Serial.println(sampleNum2);
+
+  Serial.print("Start Time Recorded: ");
+  Serial.println(startTime);
+
+  Serial.print("Final Time Recorded: ");
+  Serial.println(endTime);
+
+  Serial.println("------------Loop Complete-------------");
+}
+
+void initialize() {
+  sampleNum1 = 0;  // Sample number
+  sampleNum2 = 0;  // Sample number
+  arrayTot1 = 0; // A running sum of the contents of sampleArray to be divided by sampleNum for averaging
+  arrayAvg1 = 0; // A running avg of the above
+  arrayTot2 = 0; // A running sum of the contents of sampleArray to be divided by sampleNum for averaging
+  arrayAvg2 = 0; // A running avg of the above
+  sessionComp = 0;
+  ant1 = 0;
+  next1 = 0;
+  maxVal1 = 0;
+  ant2 = 0;
+  next2 = 0;
+  maxVal2 = 0;
+
+  for (int i=0; i<140; i++){
+    sampleArray1[i] = 0;
+    sampleArray2[i] = 0;
+  }
+}
+
+
+void outputtingToApp() {
+
+  int address = 2;
+  for (int i = 0; i <= sessionCount; i++) {
+
+    char output_array_avg1[6];
+    char output_array_avg2[6];
+    char output_session_comp[5];
+    char output_session_count[2];
     //int address = 2;
     int sc = 0;
     float aavg1;
@@ -248,11 +283,10 @@ void outputtingToApp() {
     float scomp;
     unsigned char output_comma[1] = {','};
     unsigned char output_newline[1] = {'\n'};
-    int startT=0;
-    int endT=0;
-    char output_start_time[10];
-    char output_end_time[10];
-
+    long startT = 0;
+    long endT = 0;
+    char output_start_time[11];
+    char output_end_time[11];
 
     sc = EEPROM.readInt(address);
     itoa(sc, output_session_count, 10);
@@ -271,12 +305,12 @@ void outputtingToApp() {
     address = address + 5;
 
     startT = EEPROM.readLong(address);
-    itoa(sc, output_start_time, 10);
+    ltoa(startT, output_start_time, 10);
     address = address + 5;
 
     endT = EEPROM.readLong(address);
-    itoa(sc, output_end_time, 10);
-    address = 2;
+    ltoa(endT, output_end_time, 10);
+    address = address + 5;
 
     //ble_write_bytes((unsigned char * )output_session_count, strlen(output_session_count));
     //delay(500);
@@ -295,25 +329,28 @@ void outputtingToApp() {
     ble_write_bytes(output_comma, 1);
     delay(1000);
     ble_write_bytes((unsigned char * )output_start_time, strlen(output_start_time));
-    delay(500);
+
+    Serial.println(strlen(output_start_time));
+    delay(1000);
     ble_write_bytes(output_comma, 1);
     delay(1000);
     ble_write_bytes((unsigned char * )output_end_time, strlen(output_end_time));
-    delay(500); 
+    delay(1000);
     ble_write_bytes(output_newline, 1);
 
   }
   sessionCount = 0;
-  EEPROM.writeInt(0, sessionCount);
 
+  EEPROM.updateInt(0, sessionCount);
+  address = 2;
 }
 
 ////////////Button Inter//////////////////////////////////////////////////////////
 void ButtonInterrupt() {
   /*
-  int address = 0;
-  unsigned char bytes[255];
-  unsigned char value;
+    int address = 0;
+    unsigned char bytes[255];
+    unsigned char value;
   */
   //analogWrite(LED2, 150);
 
@@ -353,14 +390,6 @@ void ButtonInterrupt() {
 
         ble_do_events();
         delay(5000);
-        ble_do_events();
-        outputtingToApp();
-        delay(5000);
-        ble_do_events();
-        outputtingToApp();
-        delay(5000);
-        ble_do_events();
-        outputtingToApp();
 
         flag = true;
         //analogWrite(LED3, 50);
@@ -371,7 +400,7 @@ void ButtonInterrupt() {
       //Serial.println("***************");
 
       //address = 0;
-      delay(1000); // We wait for an answer if its true, he has receive it so we go out of the loop, if not, we send it again
+      //delay(1000); // We wait for an answer if its true, he has receive it so we go out of the loop, if not, we send it again
 
     }
     //}
@@ -382,6 +411,9 @@ void ButtonInterrupt() {
 }
 ///////////////////////Writing to EEPROM///////////////////////////////////////////////////
 void WriteStorage() {
+  char comma = ',';
+  char newline = '\n';
+
   now = rtc.now();
   endTime = now.unixtime();
 
@@ -389,27 +421,29 @@ void WriteStorage() {
   Serial.println(sessionCount);
   Serial.print("********currentAddress = ");
   Serial.println(currentAddress);
-  EEPROM.writeInt(27 * sessionCount + currentAddress, sessionCount);
+
+  currentAddress = 27 * sessionCount + currentAddress;
+  EEPROM.updateInt(currentAddress, sessionCount);
   currentAddress = currentAddress + 2;//increase by int
   //EEPROM.updateByte(currentAddress,comma);
   //currentAddress = currentAddress + 1;
-  EEPROM.writeFloat(currentAddress, arrayAvg1);
+  EEPROM.updateFloat(currentAddress, arrayAvg1);
   currentAddress = currentAddress + 4;//increase by float
   EEPROM.updateByte(currentAddress, comma);
   currentAddress = currentAddress + 1;
-  EEPROM.writeFloat(currentAddress, arrayAvg2);
+  EEPROM.updateFloat(currentAddress, arrayAvg2);
   currentAddress = currentAddress + 4;//increase by float
   EEPROM.updateByte(currentAddress, comma);
   currentAddress = currentAddress + 1;
-  EEPROM.writeFloat(currentAddress, sessionComp);
+  EEPROM.updateFloat(currentAddress, sessionComp);
   currentAddress = currentAddress + 4;//increase by float
   EEPROM.updateByte(currentAddress, comma);
   currentAddress = currentAddress + 1;
-  EEPROM.writeLong(currentAddress, startTime);
+  EEPROM.updateLong(currentAddress, startTime);
   currentAddress = currentAddress + 4;//increase by int
   EEPROM.updateByte(currentAddress, comma);
   currentAddress = currentAddress + 1;
-  EEPROM.writeLong(currentAddress, endTime);
+  EEPROM.updateLong(currentAddress, endTime);
   currentAddress = currentAddress + 4;//increase by int
   EEPROM.updateByte(currentAddress, newline);
   currentAddress = currentAddress + 1;
@@ -445,7 +479,7 @@ void WriteStorage() {
     } else { //session is done
       EEPROM.updateInt(0, sessionCount);
       sessionCount++;
-      
+
     }
     if (testMode) {
       Serial.print(sessionCount);
@@ -498,218 +532,13 @@ void ArrayAdd(float intensityValue, int channel) {
 ///////////////////////////////////////////////////////////////////////////////////////////
 float IntensityMap(int sensorValue) {
   float intensity;
-  // Nested if’s/elseif reduce processor load and speed up the cycle time
-  if (sensorValue < 683)
-  {
-    if (sensorValue < 393)
-    {
-      if (sensorValue < 203)
-      {
-        if (sensorValue < 101)
-        {
-          if (sensorValue < 50)
-          {
-            intensity = .0;
-          }
-          else if (sensorValue >= 50)
-          {
-            intensity = 1.0;
-          }
-        }
-        else if (sensorValue >= 101)
-        {
-          if (sensorValue < 151)
-          {
-            intensity = 1.5;
-          }
-          else if (sensorValue >= 151)
-          {
-            intensity = 2.0;
-          }
-        }
-      }
-      else if (sensorValue >= 203)
-      {
-        if (sensorValue < 299)
-        {
-          if (sensorValue < 251)
-          {
-            intensity = 2.5;
-          }
-          else if (sensorValue >= 251)
-          {
-            intensity = 3.0;
-          }
-        }
-        else if (sensorValue >= 299)
-        {
-          if (sensorValue < 345)
-          {
-            intensity = 3.5;
-          }
-          else if (sensorValue >= 345)
-          {
-            intensity = 4.0;
-          }
-        }
-      }
-    }
-    else if (sensorValue >= 393)
-    {
-      if (sensorValue < 594)
-      {
-        if (sensorValue < 479)
-        {
-          if (sensorValue < 438)
-          {
-            intensity = 4.5;
-          }
-          else if (sensorValue >= 438)
-          {
-            intensity = 5.0;
-          }
-        }
-        else if (sensorValue >= 479)
-        {
-          if (sensorValue < 538)
-          {
-            intensity = 5.5;
-          }
-          else if (sensorValue >= 538)
-          {
-            intensity = 6.0;
-          }
 
-        }
-      }
-      else if (sensorValue >= 594)
-      {
-        if (sensorValue < 658)
-        {
-          if (sensorValue < 627)
-          {
-            intensity = 6.5;
-          }
-          else if (sensorValue >= 627)
-          {
-            intensity = 7.0;
-          }
-        }
-        else if (sensorValue >= 658)
-        {
-          intensity = 7.5;
-        }
-      }
-    }
-  }
-  else if (sensorValue >= 683)
-  {
-    if (sensorValue < 876)
-    {
-      if (sensorValue < 786)
-      {
-        if (sensorValue < 737)
-        {
-          if (sensorValue < 706)
-          {
-            intensity = 8.0;
-          }
-          else if (sensorValue >= 706)
-          {
-            if (sensorValue < 724)
-            {
-              intensity = 8.5;
-            }
-            else if (sensorValue >= 724)
-            {
-              intensity = 9.0;
-            }
-          }
-        }
-        else if (sensorValue >= 737)
-        {
-          if (sensorValue < 758)
-          {
-            intensity = 9.5;
-          }
-          else if (sensorValue >= 758)
-          {
-            intensity = 10.0;
-          }
-        }
-      }
-      else if (sensorValue >= 786)
-      {
-        if (sensorValue < 816)
-        {
-          intensity = 11.0;
-        }
-        else if (sensorValue >= 816)
-        {
-          if (sensorValue < 847)
-          {
-            intensity = 12.0;
-          }
-          else if (sensorValue >= 847)
-          {
-            intensity = 13.0;
-          }
-        }
-      }
-    }
-    else if (sensorValue >= 876)
-    {
-      if (sensorValue < 961)
-      {
-        if (sensorValue < 933)
-        {
-          if (sensorValue < 905)
-          {
-            intensity = 14.0;
-          }
-          else if (sensorValue >= 905)
-          {
-            intensity = 15.0;
-          }
-        }
-        else if (sensorValue >= 933)
-        {
-          intensity = 16.0;
-        }
-      }
-      else if (sensorValue >= 961)
-      {
-        if (sensorValue < 1010)
-        {
-          if (sensorValue < 989)
-          {
-            intensity = 17.0;
-          }
-          else if (sensorValue >= 989)
-          {
-            intensity = 18.0;
-          }
-        }
-        else if (sensorValue >= 1010)
-        {
-          if (sensorValue < 1020)
-          {
-            intensity = 19.0;
-          }
-          else if (sensorValue >= 1020)
-          {
-            intensity = 20.0;
-          }
-        }
-      }
+  intensity = (float) sensorValue / 10.0;
 
-    }
-  }
-  intensity = (intensity * 2);
   if (testMode) {
     Serial.print("Intensity = ");
     Serial.println(intensity);
   }
+
   return intensity;
 }
-

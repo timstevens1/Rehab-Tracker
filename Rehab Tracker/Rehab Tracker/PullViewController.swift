@@ -40,13 +40,12 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
 
     // (4) UUID and Service Name
     // You will need UUID for the BLE service, and a UUID for the specific characteristic. In some cases, you will need additional UUIDs. They get used repeatedly throughout the code, so having constants for them will keep the code cleaner, and easier to maintain.
-    let RT_NAME = "RehabTracker"
+    let RT_NAME = "RT"
     let RT_SERVICE_UUID = CBUUID(string: "713D0000-503E-4C75-BA94-3148F18D941E")
     let RT_CHAR_TX_UUID = CBUUID(string: "713D0002-503E-4C75-BA94-3148F18D941E")
     let RT_CHAR_RX_UUID = CBUUID(string: "713D0003-503E-4C75-BA94-3148F18D941E")
     
-    
-    
+    var flag = false
     
     @IBOutlet weak var textTransfer: UITextView!
     // Label
@@ -54,11 +53,25 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     // Button
     @IBAction func btnScan(_ sender: Any) {
         print("!!!!!!!!!!!!!!!!!!!!")
+        textTransfer.text = nil
         lblTransfer.text="Hello"
         //parseData() //FOR LOCAL TESTING
+        
+        if flag == true {
+            if manager.state != .poweredOn {
+                print("[ERROR] Couldn´t disconnect from peripheral")
+            }
+            else if peripheral != nil{
+                print("[DEBUG] Disconnecting from the BLE")
+                manager.cancelPeripheralConnection(peripheral!)
+            }
+        }
+      
         // (5) Instantiate Manager
         // One-liner to create an instance of CBCentralManager. It takes the delegate as an argument, and options, which in most cases are not needed. This is also the jumping off point for what effectively becomes a chain of the remaining seven waterfall steps.
         manager = CBCentralManager (delegate: self, queue: nil)
+
+        flag = true;
         
     }
     
@@ -103,9 +116,6 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         
         print("[DEBUG] Looking for the device and trying to connect.")
         
-        //let device = (advertisementData as NSDictionary).object(forKey: CBAdvertisementDataLocalNameKey)as? NSString
-        
-        
         print("[DEBUG] Found the device: ", peripheral.identifier.uuidString)
         self.manager.stopScan()
             
@@ -115,7 +125,12 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         manager.connect(peripheral, options: nil)
         
         
+        //If there are multiple devices, we can use RT_NAME to recognize the specific device
+        
         /*
+        let device = (advertisementData as NSDictionary).object(forKey: CBAdvertisementDataLocalNameKey)as? NSString
+        
+        
         if device?.contains(RT_NAME) == true {
             print("[DEBUG] Found the device.")
             self.manager.stopScan()
@@ -149,6 +164,7 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             
             if service.uuid == RT_SERVICE_UUID {
                 print("[DEBUG] In this service:")
+                
                 peripheral.discoverCharacteristics(nil, for: thisService)
                 //peripheral.discoverCharacteristics([RT_CHAR_TX_UUID], for: thisService)
             }
@@ -159,12 +175,28 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     // There are different ways to approach getting data from the BLE device. One approach would be to read changes incrementally. Another approach, the approach I used in my application, would be to have the BLE device notify you whenever a characteristic value has changed.
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?) {
         print("[DEBUG] Setup notifications.")
+      
+        //let data: NSData = "R".data(using: String.Encoding.utf8)! as NSData
+        /*
+        var flag = true;
+        */
+        let data = NSData(bytes: &flag, length: MemoryLayout<Bool>.size)
+ 
+
         for characteristic in service.characteristics! {
             let thisCharacteristic = characteristic as CBCharacteristic
             
             if thisCharacteristic.uuid == RT_CHAR_TX_UUID {
                 self.peripheral.setNotifyValue(true, for: thisCharacteristic)
             }
+            else if thisCharacteristic.uuid == RT_CHAR_RX_UUID {
+                print("rx")
+                if flag == true{
+                    // Write true to the Blend so it knows app is ready to receive data
+                    peripheral.writeValue(data as Data, for: characteristic, type: CBCharacteristicWriteType.withoutResponse)
+                }
+            }
+            
         }
     }
     
@@ -182,10 +214,10 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             
             let resultNSString = NSString(data: characteristic.value!, encoding: String.Encoding.utf8.rawValue)!
             //let resultString = resultNSString as String
+            
             resultString = resultNSString as String
             
             print(resultString)
-            
             
             print("[DEBUG] Changing the text: ", NSString(format: "%llu", resultString) as String)
             
@@ -194,9 +226,16 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             
             //lblTransfer.text = NSString(format: "%llu", resultString) as String
             lblTransfer.text = resultString
-            textTransfer.text = resultString
-            parseData()
+            
+            textTransfer.text = textTransfer.text + resultString
+            
+            //textTransfer.text = resultString
+            
+            //parseData()
+        
+            //flag = false
         }
+
     }
     
     private func parseData() {
@@ -354,8 +393,7 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         textTransfer.isEditable = false
         textTransfer.text = nil
         
-        //manager = CBCentralManager (delegate: self, queue: nil)
-        
+        flag = false
         // Do any additional setup after loading the view, typically from a nib.
     }
 
