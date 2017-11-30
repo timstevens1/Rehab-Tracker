@@ -22,7 +22,7 @@ let DEBUG = true
 // Switch for including session time tracking (start time, end time)
 // TO DO: Switch to true once real-time clock is implemented and timing data can be sent to app
 // TO DO: Consolidate with PVC - only one switch should be used
-let SESSION_TIME_TRACKING_SVC = false
+let SESSION_TIME_TRACKING_SVC = true
 
 protocol BLEDelegate1 {
     func bleDidUpdateState()
@@ -171,6 +171,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         }
         let datetime = Date(timeIntervalSince1970: Double(seconds_since_1970))
         let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         return formatter.string(from: datetime)
     }

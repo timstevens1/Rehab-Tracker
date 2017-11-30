@@ -220,30 +220,6 @@ void loop()
   Serial.println("------------Loop Complete-------------");
 }
 
-void outputtingToApp() {
-
-  int address = 2;
-  for (int i = 0; i < sessionCount; i++) {
-
-    char output_array_avg1[10];
-    char output_array_avg2[10];
-    char output_session_comp[10];
-    char output_session_count[10];
-
-  Serial.print("SampleNumber 1 = ");
-  Serial.println(sampleNum1);
-
-  Serial.print("SampleNumber 2 = ");
-  Serial.println(sampleNum2);
-
-  Serial.print("Start Time Recorded: ");
-  Serial.println(startTime);
-
-  Serial.print("Final Time Recorded: ");
-  Serial.println(endTime);
-
-  Serial.println("------------Loop Complete-------------");
-}
 
 void initialize() {
   sampleNum1 = 0;  // Sample number
@@ -301,7 +277,7 @@ void outputtingToApp() {
     address = address + 5;
 
     scomp = EEPROM.readFloat(address);
-    dtostrf(scomp, 5, 2, output_session_comp);
+    dtostrf(scomp, 4, 2, output_session_comp);
     address = address + 5;
 
     startT = EEPROM.readLong(address);

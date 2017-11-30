@@ -22,7 +22,7 @@ import CoreBluetooth
 // Switch for including session time tracking (start time, end time)
 // TO DO: Switch to true once real-time clock is implemented and timing data can be sent to app
 // TO DO: Consolidate with SVC - only one switch should be used
-let SESSION_TIME_TRACKING_PVC = false
+let SESSION_TIME_TRACKING_PVC = true
 
 // Last session number for this user
 var maxUserSessionNum = 0 // If no user sessions, start with 0
@@ -231,7 +231,11 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             
             //textTransfer.text = resultString
             
-            //parseData()
+            print("TEXT_TRANSFER_TEXT")
+            print(textTransfer.text)
+            if (textTransfer.text.hasSuffix("\n")) {
+                parseData()
+            }
         
             //flag = false
         }
@@ -243,7 +247,7 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             //resultString = "85,85,0.95\n92,92,0.65" //FOR LOCAL TESTING
             // Create an array to track which sessions weve synced
             var sessionsAdded = [Character]()
-            let newSessions = resultString.components(separatedBy: "\n")
+            let newSessions = textTransfer.text.components(separatedBy: "\n")
 
             
             // First break up the data array by newlines to seperate out each session
@@ -266,7 +270,11 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                     let compDouble = (myDataArr[2] as NSString).doubleValue
                     //lastSessionCompliance.append(compDouble)
                 } else {
-                    print("[DEBUG] Invalid Data/Duplicate session number: " , session)
+                    print("[DEBUG] Invalid Data/Duplicate session:")
+                    for data in myDataArr {
+                        print(data)
+                    }
+                    print("end data in myDataArr")
                 }
                 print("STATS")
                 print(self.stats)

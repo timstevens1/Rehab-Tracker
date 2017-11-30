@@ -8,7 +8,7 @@
 // Need to give website props for the tab bar icon
 // <a href="https://icons8.com/web-app/7318/Flex-Biceps">Flex biceps icon credits</a>
 //
-
+/*
 import UIKit
 import Charts
 import Foundation
@@ -118,4 +118,4 @@ class StatsViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-}
+}*/
