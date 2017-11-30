@@ -24,6 +24,9 @@ import CoreBluetooth
 // TO DO: Consolidate with SVC - only one switch should be used
 let SESSION_TIME_TRACKING_PVC = false
 
+// Last session number for this user
+var maxUserSessionNum = 0 // If no user sessions, start with 0
+
 // (2) Delegates
 // Eventually you are going to want to get callbacks from some functionality. There are two delegates to implement: CBCentralManagerDelegate, and CBPeripheralDelegate.
 class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate {
@@ -52,7 +55,7 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     @IBAction func btnScan(_ sender: Any) {
         print("!!!!!!!!!!!!!!!!!!!!")
         lblTransfer.text="Hello"
-        // parseData() FOR LOCAL TESTING
+        //parseData() //FOR LOCAL TESTING
         // (5) Instantiate Manager
         // One-liner to create an instance of CBCentralManager. It takes the delegate as an argument, and options, which in most cases are not needed. This is also the jumping off point for what effectively becomes a chain of the remaining seven waterfall steps.
         manager = CBCentralManager (delegate: self, queue: nil)
@@ -198,7 +201,7 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     
     private func parseData() {
             do {
-            // resultString = "85,85,0.95\n92,92,0.65" FOR LOCAL TESTING
+            //resultString = "85,85,0.95\n92,92,0.65" //FOR LOCAL TESTING
             // Create an array to track which sessions weve synced
             var sessionsAdded = [Character]()
             let newSessions = resultString.components(separatedBy: "\n")
@@ -234,7 +237,7 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             // Clear out the resultString and sessionsAdded array once we have the data to prevent duplication
             resultString.removeAll()
             sessionsAdded.removeAll()
-            self.addData()
+            self.syncSessionsToCoreData()
         }
         /*
         catch let error as NSError {
@@ -260,8 +263,68 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     }
     
     // Function to add data from stats (parsed data received from device) array to core data
+    // Add sessions to core data and database
+    private func syncSessionsToCoreData() {
+        /* First, get max session number for this user from db
+           Use this to determine new session numbers */
+        // Create urlstr string with current userID
+        let urlstr : String = "https://www.uvm.edu/~rtracker/Restful/sync.php?pmkPatientID=" + Util.returnCurrentUsersID()
+        // Make url string into actual url
+        let url = URL(string: urlstr)
+        // Create urlRequest using our url
+        let urlRequest = URLRequest(url: url!)
+        
+        let task = URLSession.shared.dataTask(with: urlRequest, completionHandler: {
+            (data, response, error) in
+            // If number of last user session exists, grab it and set it to our variable
+            if (error == nil) {
+                let jo : NSDictionary
+                do {
+                    jo =
+                    try JSONSerialization.jsonObject(with: data!, options: []) as! NSDictionary
+                    print(jo)
+                }
+                catch {
+                    return
+                }
+                maxUserSessionNum = jo.value(forKey: "maxUserSessionNumber") as! Int
+                print("MAX_USER_SESS_NUM_IN_DB")
+                print(maxUserSessionNum)
+            }
+            else {
+                print(error as! String)
+            }
+            /* Add sessions to core data and database */
+            DispatchQueue.main.async {
+                self.addData()
+                // If the average compliance is higher than 55/60 minutes, give positive feedback
+                //if ( Util.average(array: self.lastSessionCompliance) >= 0.9167 ){
+                //    self.positiveFeedbackAlert()
+                //}
+                // see what's in core data - DEBUG STEP
+                let appDelegate = UIApplication.shared.delegate as! AppDelegate
+                let context = appDelegate.persistentContainer.viewContext
+                let request: NSFetchRequest<Session> = Session.fetchRequest()
+                request.returnsObjectsAsFaults = false
+                do {
+                    let cd_sessions = try context.fetch(request)
+                    print("ALL SESSIONS IN CORE DATA:") //DEBUG STEP
+                    for val in cd_sessions {
+                        let num = val.sessionID!
+                        print("FLD_SESS_NUM") //DEBUG STEP
+                        print(num)
+                    }
+                } catch {
+                    // Sync Error Alert
+                    //self.syncErrorAlert()
+                    print("Could not find stats. \(error)")
+                }
+            }
+        })
+        task.resume()
+    }
     private func addData() {
-        var current_session_id = getNumSessionsInCD()
+        var current_session_id = maxUserSessionNum
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
         let sesEntity = NSEntityDescription.entity(forEntityName: "Session", in: context)
@@ -282,7 +345,6 @@ class PullViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             session.hasUser = Util.returnCurrentUser()
         }
         print("after the loop")
-        //IMPORTANT - UNCOMMENT BELOW TO ACTUALLY SAVE TO CORE DATA
         (UIApplication.shared.delegate as! AppDelegate).saveContext()
     }
     
