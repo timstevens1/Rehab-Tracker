@@ -9,29 +9,51 @@
 // <a href="https://icons8.com">Icon pack by Icons8</a>
 //
 
-// The purpose of this file is for Syncing data to the database, and the BLE Code
+// The purpose of this file is to pull data from the device and sync to core data and db
 
+// Reference: 12 steps of bluetooth
+// Kevin Hoyt
+// http://www.kevinhoyt.com/2016/05/20/the-12-steps-of-bluetooth-swift/
+
+
+// (1) Import
+// Unlike beacons, which use Core Location, if you are communicating to a BLE device, you will use CoreBluetooth.
+import Foundation
 import UIKit
 import CoreData
-import Foundation
 import CoreBluetooth
 
 // DEBUG mode flag
 let DEBUG = true
 
 // Switch for including session time tracking (start time, end time)
-// TO DO: Switch to true once real-time clock is implemented and timing data can be sent to app
-// TO DO: Consolidate with PVC - only one switch should be used
-let SESSION_TIME_TRACKING_SVC = true
+let SESSION_TIME_TRACKING = true
 
-protocol BLEDelegate1 {
-    func bleDidUpdateState()
-    func bleDidConnectToPeripheral()
-    func bleDidDisconenctFromPeripheral()
-    func bleDidReceiveData(data: NSData?)
-}
+// Last session number for this user
+var maxUserSessionNum = 0 // If no user sessions, start with 0
 
+// String to hold session info received from device
+var sessionsStringFromDevice = ""
+
+// (2) Delegates
+// Eventually you are going to want to get callbacks from some functionality. There are two delegates to implement: CBCentralManagerDelegate, and CBPeripheralDelegate.
 class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate  {
+    
+    //(3) Declare Manager and Peripheral
+    // The CBCentralManager install will be what you use to find, connect, and manage BLE devices. Once you are connected, and are working with a specific service, the peripheral will help you iterate characteristics and interacting with them.
+    private var manager:CBCentralManager!
+    private var peripheral:CBPeripheral!
+    var resultString: String!
+    private var stats:[(avg_ch1_intensity:String, avg_ch2_intensity:String, session_compliance: String, start_time: String, end_time: String)] = []
+    
+    // (4) UUID and Service Name
+    // You will need UUID for the BLE service, and a UUID for the specific characteristic. In some cases, you will need additional UUIDs. They get used repeatedly throughout the code, so having constants for them will keep the code cleaner, and easier to maintain.
+    let RT_NAME = "RT"
+    let RT_SERVICE_UUID = CBUUID(string: "713D0000-503E-4C75-BA94-3148F18D941E")
+    let RT_CHAR_TX_UUID = CBUUID(string: "713D0002-503E-4C75-BA94-3148F18D941E")
+    let RT_CHAR_RX_UUID = CBUUID(string: "713D0003-503E-4C75-BA94-3148F18D941E")
+    
+    var flag = false
     
     // global variable comments to store session comments
     private var comments = "No Comments"
@@ -92,32 +114,30 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                                         // Saves input to global comments var
                                         self.comments = textField!.text!
                                         
+                                        // Reset sessionsString
+                                        sessionsStringFromDevice = ""
+                                       
                                         do {
-                                            // Disconnects from the BLE Device
-                                            if(self.activePeripheral != nil){
-                                                // Write true to the Blend so it knows we are disconnecting
-                                                // var flag = true;
-                                                // let data = NSData(bytes: &flag, length: MemoryLayout<Bool>.size)
-                                                // self.write(data: data)
-                                                    
-                                                // Disconnect
-                                                _ = self.disconnectFromPeripheral(peripheral: self.activePeripheral!)
-                                            }else{
-                                                print("[DEBUG] There is no peripheral to be disconnected")
-                                                
-                                                self.dataFromPeripheral = ["SCAR8,60,62,0.91,1509821900,1509821924","RED8,49,51,0.12,1509821800,1509821899"]
-                                               // TEMP - DEBUGGING MEASURE TO CLEAR PREV USER SESSIONS
-                                                //Util.overwriteSessions()
-                                                
-                                                // Get new sessions from core data and push to db
-                                                try self.getAndSynchNewSessions()
-                                                self.pushToDatabase()
+                                            if self.flag == true {
+                                                if self.manager.state != .poweredOn {
+                                                    print("[ERROR] Couldn´t disconnect from peripheral")
+                                                }
+                                                else if self.peripheral != nil{
+                                                    print("[DEBUG] Disconnecting from the BLE")
+                                                    self.manager.cancelPeripheralConnection(self.peripheral!)
+                                                }
                                             }
                                             
+                                            // (5) Instantiate Manager
+                                            // One-liner to create an instance of CBCentralManager. It takes the delegate as an argument, and options, which in most cases are not needed. This is also the jumping off point for what effectively becomes a chain of the remaining seven waterfall steps.
+                                            self.manager = CBCentralManager (delegate: self, queue: nil)
+                                            
+                                            self.flag = true;
+                                            
                                             // If the average compliance is higher than 55/60 minutes, give positive feedback
-                                            if ( Util.average(array: self.lastSessionCompliance) >= 0.9167 ){
-                                                self.positiveFeedbackAlert()
-                                            }
+                                            //if ( Util.average(array: self.lastSessionCompliance) >= 0.9167 ){
+                                                //self.positiveFeedbackAlert()
+                                            //}
                                             
                                             // see what's in core data - DEBUG STEP
                                             let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -166,7 +186,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     
     // Convert unix time (seconds - this is format sent by Arduino) to datetime format
     private func unixSecondsToDatetime(seconds_since_1970:Int32) -> String {
-        if (!SESSION_TIME_TRACKING_SVC) {
+        if (!SESSION_TIME_TRACKING) {
             return "0000-00-00 00:00:00"
         }
         let datetime = Date(timeIntervalSince1970: Double(seconds_since_1970))
@@ -177,8 +197,149 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         return formatter.string(from: datetime)
     }
     
-    // Function to retrieve new session info from core data
-    private func getAndSynchNewSessions() {
+    // Parse sessionsStringFromDevice to extract session info
+    private func parseData() {
+        do {
+            //resultString = "85,85,0.95\n92,92,0.65" //FOR LOCAL TESTING
+            // Create an array to track which sessions weve synced
+            var sessionsAdded = [Character]()
+            let newSessions = sessionsStringFromDevice.components(separatedBy: "\n")
+            
+            
+            // First break up the data array by newlines to seperate out each session
+            for session in newSessions{
+                
+                let myDataArr = session.components(separatedBy: ",")
+                
+                // Get the first character of the data string which is the session Count to make sure no duplicated
+                //let index = session.index(session.startIndex, offsetBy: 0)
+                
+                // Check if the array contains correct number of data points
+                if ((SESSION_TIME_TRACKING && myDataArr.count == 5) || (!SESSION_TIME_TRACKING && myDataArr.count == 3)) {
+                    let sess_start_time = SESSION_TIME_TRACKING ? myDataArr[3] : "0"
+                    let sess_end_time = SESSION_TIME_TRACKING ? myDataArr[4] : "0"
+                    // Add validated data to stats array
+                    let stat = (avg_ch1_intensity:myDataArr[0], avg_ch2_intensity:myDataArr[1], session_compliance: myDataArr[2], start_time:sess_start_time, end_time:sess_end_time)
+                    self.stats.append(stat)
+                    //sessionsAdded.append(session[index]);
+                    // append the session_compliance to the array for calculating if we should give feedback
+                    let compDouble = (myDataArr[2] as NSString).doubleValue
+                    //lastSessionCompliance.append(compDouble)
+                } else {
+                    print("[DEBUG] Invalid Data/Duplicate session:")
+                    for data in myDataArr {
+                        print(data)
+                    }
+                    print("end data in myDataArr")
+                }
+                print("STATS")
+                print(self.stats)
+                print("STATS COUNT")
+                print(self.stats.count)
+            }
+            // Clear out the resultString and sessionsAdded array once we have the data to prevent duplication
+            resultString.removeAll()
+            sessionsAdded.removeAll()
+        }
+        /*
+         catch let error as NSError {
+         // Sync Error Alert
+         self.syncErrorAlert()
+         }
+         */
+    }
+    
+    // Add parsed sessions to core data (via call to addData()) and database (via call to pushToDatabase())
+    private func syncSessions() {
+        /* First, get max session number for this user from db
+         Use this to determine new session numbers */
+        // Create urlstr string with current userID
+        let urlstr : String = "https://www.uvm.edu/~rtracker/Restful/sync.php?pmkPatientID=" + Util.returnCurrentUsersID()
+        // Make url string into actual url
+        let url = URL(string: urlstr)
+        // Create urlRequest using our url
+        let urlRequest = URLRequest(url: url!)
+        
+        let task = URLSession.shared.dataTask(with: urlRequest, completionHandler: {
+            (data, response, error) in
+            // If number of last user session exists, grab it and set it to our variable
+            if (error == nil) {
+                let jo : NSDictionary
+                do {
+                    jo =
+                        try JSONSerialization.jsonObject(with: data!, options: []) as! NSDictionary
+                    print(jo)
+                }
+                catch {
+                    return
+                }
+                maxUserSessionNum = jo.value(forKey: "maxUserSessionNumber") as! Int
+                print("MAX_USER_SESS_NUM_IN_DB")
+                print(maxUserSessionNum)
+            }
+            else {
+                print(error as! String)
+            }
+            /* Add sessions to core data and database */
+            DispatchQueue.main.async {
+                self.addData()
+                // If the average compliance is higher than 55/60 minutes, give positive feedback
+                //if ( Util.average(array: self.lastSessionCompliance) >= 0.9167 ){
+                //    self.positiveFeedbackAlert()
+                //}
+                // see what's in core data - DEBUG STEP
+                let appDelegate = UIApplication.shared.delegate as! AppDelegate
+                let context = appDelegate.persistentContainer.viewContext
+                let request: NSFetchRequest<Session> = Session.fetchRequest()
+                request.returnsObjectsAsFaults = false
+                do {
+                    let cd_sessions = try context.fetch(request)
+                    print("ALL SESSIONS IN CORE DATA:") //DEBUG STEP
+                    for val in cd_sessions {
+                        let num = val.sessionID!
+                        print("FLD_SESS_NUM") //DEBUG STEP
+                        print(num)
+                    }
+                } catch {
+                    // Sync Error Alert
+                    //self.syncErrorAlert()
+                    print("Could not find stats. \(error)")
+                }
+                self.prepareNewSessionsJSON()
+                self.pushToDatabase()
+            }
+        })
+        task.resume()
+    }
+    
+    // Save sessions in core data
+    private func addData() {
+        var current_session_id = maxUserSessionNum
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let context = appDelegate.persistentContainer.viewContext
+        let sesEntity = NSEntityDescription.entity(forEntityName: "Session", in: context)
+        print("NEW SESSIONS TO SAVE TO CORE DATA:") //DEBUG STEP
+        for stat in stats {
+            print("in the loop")
+            current_session_id = current_session_id + 1
+            let session = NSManagedObject(entity: sesEntity!, insertInto: context)as! Session
+            session.sessionID = String(current_session_id)
+            print(current_session_id) //DEBUG STEP
+            session.session_compliance = stat.session_compliance
+            session.avg_ch1_intensity = stat.avg_ch1_intensity
+            session.avg_ch2_intensity = stat.avg_ch2_intensity
+            session.start_time = Int32(stat.start_time)!
+            session.end_time = Int32(stat.end_time)!
+            session.pushed_to_db = false
+            //session.notes = self.comments
+            session.hasUser = Util.returnCurrentUser()
+        }
+        print("after the loop")
+        (UIApplication.shared.delegate as! AppDelegate).saveContext()
+    }
+
+    // Retrieve new session info from core data and prepare JSON object for db push
+    private func prepareNewSessionsJSON() {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
         let request: NSFetchRequest<Session> = Session.fetchRequest()
@@ -217,13 +378,14 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             print("sessionsJson")
             print(sessionsJson)
             
-        }catch {
+        } catch {
             // Sync Error Alert
             self.syncErrorAlert()
             print("Could not find new sessions. \(error)")
         }
     }
     
+    // Push new sessions to database via JSON object
     private func pushToDatabase() {
         let urlstr : String = "https://www.uvm.edu/~rtracker/Restful/sync.php"
         
@@ -290,306 +452,173 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         }
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view.
-        self.centralManager = CBCentralManager(delegate: self, queue: nil)
-        self.data = NSMutableData()
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    //***************************//
-    // MARK: Bluetooth (BLE) Code
-    
-    /*
-     CoreBluetooth Process:
-     1. When view loads, centralManager is declared and checks the centralManager.state,
-        If and only if the state = .poweredOn can the centralManager do anything.
-        To check for the state, centralManagerDidUpdateState is called and updates state.
-     2. To scan for BLE, startScanning() is called as long as state = .poweredOn
-     3. The centralManager then calls scanForPeripherals(services) which scans for BLE devices with specific services.
-        These services are determined by the UUID string on the BLE device.
-     4. If a device is found with that service, then didDiscoverPeripheral() is called.
-     5. didDiscoverPeripheral() then attempts to connect to the peripheral that was discovered, if the connect is
-        successful, didConnect() is called. If its unsuccessful, didFailToConnect() is called.\
-     6. In the event of a successful connection (didConnect()) we then query the peripheral for the services,
-        and for the characteristics of those services using the didDiscoverServices() and didDiscoverCharacteristics()
-     7.
-    */
- 
-    // Initialize the UUID's
-    let RBL_SERVICE_UUID = "713D0000-503E-4C75-BA94-3148F18D941E"
-    let RBL_CHAR_TX_UUID = "713D0002-503E-4C75-BA94-3148F18D941E"
-    let RBL_CHAR_RX_UUID = "713D0003-503E-4C75-BA94-3148F18D941E"
-    let RBL_BLE_FRAMEWORK_VER = 0x0200
-
-    //let my_UUID = "023DD007-7C99-447F-BE6A-9B9F18287FFB"
-    
-    // Initialize the BLEDelgate as delegate
-    var delegate: BLEDelegate1?
-    
-    // Initialize all needed variables (make private)
-    private      var centralManager:   CBCentralManager!
-    private      var activePeripheral: CBPeripheral?
-    private      var characteristics = [String : CBCharacteristic]()
-    private      var data:             NSMutableData?
-    private(set) var peripherals     = [CBPeripheral]()
-    private      var RSSICompletionHandler: ((NSNumber?, NSError?) -> ())?
-    
-    var dataFromPeripheral = [String]()
-    
-    // Private function to stop the scan after the scan has timed-out
-    @objc private func scanTimeout() {
-        self.centralManager.stopScan()
-        if activePeripheral == nil {
-            print("[DEBUG] No peripherals were found, stopping scan")
-        }
-    }
-    
-    // Function that gets called when the connect button is clicked on the screen
-    // Starts scanning for periferals
-    @IBAction func connectBLE(_ sender: Any) {
-        _ = self.startScanning(timeout: 10)
-    }
-    
-    // MARK: Public methods
-    
-    // Function to start scanning for BLE's, takes the timeout as a boolean, returns boolean
-    func startScanning(timeout: Double) -> Bool {
-        
-        if self.centralManager.state != .poweredOn {
-            print("[ERROR] Couldn´t start scanning")
-            return false
-        }
-        
-        print("**************************")
-        print("[DEBUG] Scanning started")
-        
-        // CBCentralManagerScanOptionAllowDuplicatesKey
-        
-        // Creates a timer to check the time
-        Timer.scheduledTimer(timeInterval: timeout, target: self, selector: #selector(self.scanTimeout), userInfo: nil, repeats: false)
-        
-        // Initialize the services and call the scanForPeripherals functions with the services
-        let services:[CBUUID] = [CBUUID(string: RBL_SERVICE_UUID)]
-        self.centralManager.scanForPeripherals(withServices: services, options: nil)
-        
-        // return true if the scanning happened
-        return true
-    }
-    
-    // Method to connect to peripheral that we have found
-    func connectToPeripheral(peripheral: CBPeripheral) -> Bool {
-        
-        if self.centralManager.state != .poweredOn {
-            
-            print("[ERROR] Couldn´t connect to peripheral")
-            return false
-        }
-        
-        print("[DEBUG] Connecting to peripheral: \(peripheral.identifier.uuidString)")
-        
-        self.centralManager.connect(peripheral, options: [CBConnectPeripheralOptionNotifyOnDisconnectionKey : NSNumber(value: true)])
-        
-        return true
-    }
-    
-    // Method to disconnect from the peripheral
-    func disconnectFromPeripheral(peripheral: CBPeripheral) -> Bool {
-        if self.centralManager.state != .poweredOn {
-            
-            print("[ERROR] Couldn´t disconnect from peripheral")
-            return false
-        }
-        
-        self.centralManager.cancelPeripheralConnection(peripheral)
-        
-        return true
-    }
-    
-    // MARK: CBCentralManager delegate
+    // (6) Scan for Devices
+    // Once the CBCentralManager instance is finished creating, it will call centralManagerDidUpdateState on the delegate class. From there, if Bluetooth is available (as in "turned on"), you can start scanning for devices.
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        
+        print("[DEBUG] CentralManager is initialized")
         
         switch central.state {
         case .poweredOn:
             print("[DEBUG] Central manager state: Powered on")
             break
-            
-        case .unknown:
-            print("[DEBUG] Central manager state: Unknown")
+        case .poweredOff:
+            print("[DEBUG] Central manager state: Powered off")
             break
-            
-        case .resetting:
-            print("[DEBUG] Central manager state: Resseting")
-            break
-            
-        case .unsupported:
-            print("[DEBUG] Central manager state: Unsopported")
-            break
-            
         case .unauthorized:
             print("[DEBUG] Central manager state: Unauthorized")
             break
             
-        case .poweredOff:
-            print("[DEBUG] Central manager state: Powered off")
-            break
+        default: break
         }
         
-        self.delegate?.bleDidUpdateState()
-    }
-    
-    // Function called if peripherals are discovered during scanForPeripherals() function call with specific services
-    func centralManager(_ central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject],RSSI: NSNumber) {
-        print("[DEBUG] Found peripheral:", peripheral.identifier.uuidString, "With RSSI:", RSSI)
-        
-        if (!peripherals.contains(peripheral)){
-            peripherals.append(peripheral)
-        }
-        
-        // Try to connect to the peripheral
-        _ = self.connectToPeripheral(peripheral: peripheral)
-    }
-    
-    // If the connection was unsuccessful, print an error saying we failed to connect
-    func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
-        print("[ERROR] Could not connect to peripheral \(peripheral.identifier.uuidString) error: \(String(describing: error))")
-    }
-    
-    // If the connection was successful, set the activePeripheral to peripheral and discoverServices()
-    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-        
-        print("[DEBUG] Connected to peripheral \(peripheral.identifier.uuidString)")
-        
-        self.activePeripheral = peripheral
-        
-        self.activePeripheral?.delegate = self
-        self.activePeripheral?.discoverServices([CBUUID(string: RBL_SERVICE_UUID)])
-        
-        self.delegate?.bleDidConnectToPeripheral()
-    }
-    
-    func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
-        
-        var text = "[DEBUG] Disconnected from peripheral: \(peripheral.identifier.uuidString)"
-        
-        if error != nil {
-            text += ". Error: \(String(describing: error))"
-        }
-        
-        print(text)
-        
-        self.activePeripheral?.delegate = nil
-        self.activePeripheral = nil
-        self.characteristics.removeAll(keepingCapacity: false)
-        
-        self.delegate?.bleDidDisconenctFromPeripheral()
-    }
-    
-    // MARK: CBPeripheral delegate
-    
-    // didDiscoverServices() is called once a connection is formed with the peripheral
-    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
-        
-        if error != nil {
-            print("[ERROR] Error discovering services. \(String(describing: error))")
-            return
-        }
-        
-        print("[DEBUG] Found services for peripheral: \(peripheral.identifier.uuidString)")
-        
-        
-        for service in peripheral.services! {
-            let theCharacteristics = [CBUUID(string: RBL_CHAR_RX_UUID), CBUUID(string: RBL_CHAR_TX_UUID)]
+        if central.state == .poweredOn {
+            //Scan for devices
+            //central.scanForPeripherals(withServices: nil, options: nil)
+            //print(central.scanForPeripherals(withServices: nil, options: nil))
             
-            peripheral.discoverCharacteristics(theCharacteristics, for: service)
+            central.scanForPeripherals(withServices: [RT_SERVICE_UUID], options: nil)
+            
+            
+            
+        } else {
+            print("[DEBUG] Bluetooth not available.")
         }
     }
     
-    // didDiscoverCharacteristics is called if services are found on the peripheral, we want those characteristics
-    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+    // (7) Connect to a Device
+    // When you find the device you are interested in interacting with, you will want to connect to it. This is the only place where the device name shows up in the code, but I still like to declare it as a constant with the UUIDs.
+    func centralManager(_ central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
         
-        if error != nil {
-            print("[ERROR] Error discovering characteristics. \(String(describing: error))")
-            return
+        
+        print("[DEBUG] Looking for the device and trying to connect.")
+        
+        print("[DEBUG] Found the device: ", peripheral.identifier.uuidString)
+        self.manager.stopScan()
+        
+        self.peripheral = peripheral
+        self.peripheral.delegate = self
+        
+        manager.connect(peripheral, options: nil)
+        
+        
+        //If there are multiple devices, we can use RT_NAME to recognize the specific device
+        
+        /*
+         let device = (advertisementData as NSDictionary).object(forKey: CBAdvertisementDataLocalNameKey)as? NSString
+         
+         
+         if device?.contains(RT_NAME) == true {
+         print("[DEBUG] Found the device.")
+         self.manager.stopScan()
+         
+         self.peripheral = peripheral
+         self.peripheral.delegate = self
+         
+         manager.connect(peripheral, options: nil)
+         }
+         else{
+         print("No")
+         
+         }
+         */
+    }
+    
+    // (8) Get Services
+    // Once you are connected to a device, you can get a list of services on that device.
+    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+        print("[DEBUG] Connected to the device and discovering services.")
+        peripheral.discoverServices(nil)
+    }
+    
+    // (9) Get Characteristics
+    // Once you get a list of the services offered by the device, you will want to get a list of the characteristics.
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
+        print("[DEBUG] Geting a list of characteristics.")
+        for service in peripheral.services! {
+            print("[DEBUG] In one of the services:")
+            let thisService = service as CBService
+            
+            if service.uuid == RT_SERVICE_UUID {
+                print("[DEBUG] In this service:")
+                
+                peripheral.discoverCharacteristics(nil, for: thisService)
+                //peripheral.discoverCharacteristics([RT_CHAR_TX_UUID], for: thisService)
+            }
         }
+    }
+    
+    // (10) Setup Notifications
+    // There are different ways to approach getting data from the BLE device. One approach would be to read changes incrementally. Another approach, the approach I used in my application, would be to have the BLE device notify you whenever a characteristic value has changed.
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?) {
+        print("[DEBUG] Setup notifications.")
         
-        print("[DEBUG] Found characteristics for peripheral: \(peripheral.identifier.uuidString)")
+        //let data: NSData = "R".data(using: String.Encoding.utf8)! as NSData
+        /*
+         var flag = true;
+         */
+        let data = NSData(bytes: &flag, length: MemoryLayout<Bool>.size)
+        
         
         for characteristic in service.characteristics! {
-            self.characteristics[characteristic.uuid.uuidString] = characteristic
-        }
-        
-        enableNotifications(enable: true)
-        read()
-    }
-    
-    // Use the data we receive from the peripheral
-    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-        
-        if error != nil {
+            let thisCharacteristic = characteristic as CBCharacteristic
             
-            print("[ERROR] Error updating value. \(String(describing: error))")
-            return
-        }
-
-        if characteristic.uuid.uuidString == RBL_CHAR_TX_UUID {
-            self.delegate?.bleDidReceiveData(data: characteristic.value as NSData?)
+            if thisCharacteristic.uuid == RT_CHAR_TX_UUID {
+                self.peripheral.setNotifyValue(true, for: thisCharacteristic)
+            }
+            else if thisCharacteristic.uuid == RT_CHAR_RX_UUID {
+                print("rx")
+                if flag == true{
+                    // Write true to the Blend so it knows app is ready to receive data
+                    peripheral.writeValue(data as Data, for: characteristic, type: CBCharacteristicWriteType.withoutResponse)
+                }
+            }
             
-        }else{
-            print("[DEBUG] characteristic UUID is wrong")
         }
-        
-        // Convert NSData to NSString to String
-        let resultNSString = NSString(data: characteristic.value!, encoding: String.Encoding.utf8.rawValue)!
-        let resultString = resultNSString as String
-        print("$$$$$$$$$$$$$$$$$$$$$")
-        print(resultString)
-        
-        // Append the data string to the data array
-        dataFromPeripheral.append(resultString)
-        
     }
     
-    // didReadRSSI function
-    func peripheral(_ peripheral: CBPeripheral, didReadRSSI RSSI: NSNumber, error: Error?) {
-        self.RSSICompletionHandler?(RSSI, error as NSError?)
-        self.RSSICompletionHandler = nil
+    // (11) Changes Are Coming
+    // Any characteristic changes you have setup to receive notifications for will call this delegate method. You will want to be sure and filter them out to take the appropriate action for the specific change.
+    func peripheral(_ peripheral: CBPeripheral, didUpdateValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
+        
+        print("[DEBUG] Characteristic is changed.")
+        //var count:UInt32 = 0;
+        
+        if characteristic.uuid == RT_CHAR_TX_UUID {
+            
+            //print(characteristic.value!)
+            //print(NSString(data: characteristic.value!, encoding: String.Encoding.utf8.rawValue)!)
+            
+            let resultNSString = NSString(data: characteristic.value!, encoding: String.Encoding.utf8.rawValue)!
+            //let resultString = resultNSString as String
+            
+            resultString = resultNSString as String
+            
+            print(resultString)
+            
+            print("[DEBUG] Changing the text: ", NSString(format: "%llu", resultString) as String)
+            
+            sessionsStringFromDevice = sessionsStringFromDevice + resultString
+            
+            print("SESSIONS_STRING_FROM_DEVICE")
+            print(sessionsStringFromDevice)
+            if (sessionsStringFromDevice.hasSuffix("\n")) {
+                parseData()
+                syncSessions()
+            }
+            
+            //flag = false
+        }
     }
     
-    // Reads value of the characteristic from the peripheral
-    func read() {
-        
-        print("[DEBUG] Reading characteristic from the peripheral")
-        
-        guard let char = self.characteristics[RBL_CHAR_RX_UUID] else { return }
-        
-        self.activePeripheral?.readValue(for: char)
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view.
+        flag = false
     }
     
-    // Writes data
-    func write(data: NSData) {
-        print("Write function activated!")
-        guard let char = self.characteristics[RBL_CHAR_RX_UUID] else { return }
-        
-        self.activePeripheral?.writeValue(data as Data, for: char, type: .withoutResponse)
-    }
-    
-    func enableNotifications(enable: Bool) {
-        
-        guard let char = self.characteristics[RBL_CHAR_TX_UUID] else { return }
-        
-        self.activePeripheral?.setNotifyValue(enable, for: char)
-    }
-    
-    // Reads the RSSI from the peripheral and updates the field
-    func readRSSI(completion: @escaping (_ RSSI: NSNumber?, _ error: NSError?) -> ()) {
-        
-        self.RSSICompletionHandler = completion
-        self.activePeripheral?.readRSSI()
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
     }
 }

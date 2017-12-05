@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		253F54820F106EFAB202EDA9 /* Pods_Rehab_TrackerUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B4F1967C44C3AC89C57BF4B /* Pods_Rehab_TrackerUITests.framework */; };
-		34C5B8851FABA4D600011DCF /* PullViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C5B8841FABA4D600011DCF /* PullViewController.swift */; };
 		4221681C1DF9A069008FDDF8 /* StatsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4221681B1DF9A069008FDDF8 /* StatsViewController.swift */; };
 		42378C6C1E53D39C005575D6 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42378C6B1E53D39C005575D6 /* Util.swift */; };
 		42A0D50E1E5259960003A96B /* Rehab_Tracker.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 42A0D50C1E5259960003A96B /* Rehab_Tracker.xcdatamodeld */; };
@@ -90,7 +89,6 @@
 
 /* Begin PBXFileReference section */
 		19CED83F4022241E44F1F882 /* Pods_Rehab_TrackerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Rehab_TrackerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		34C5B8841FABA4D600011DCF /* PullViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PullViewController.swift; sourceTree = "<group>"; };
 		3800A0281F1D695800AD52DC /* Rehab Tracker.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Rehab Tracker.entitlements"; sourceTree = "<group>"; };
 		4221681B1DF9A069008FDDF8 /* StatsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatsViewController.swift; sourceTree = "<group>"; };
 		42378C6B1E53D39C005575D6 /* Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
@@ -196,7 +194,6 @@
 				42F252B21DC8F42300C79D99 /* Assets.xcassets */,
 				42CCA4271E39456F009CB0DE /* LaunchScreen.xib */,
 				42F252AC1DC8F42300C79D99 /* Main.storyboard */,
-				34C5B8841FABA4D600011DCF /* PullViewController.swift */,
 				42A0D50C1E5259960003A96B /* Rehab_Tracker.xcdatamodeld */,
 			);
 			path = "Rehab Tracker";
@@ -514,7 +511,6 @@
 				42B654C61DCA90DA0031C21F /* SyncViewController.swift in Sources */,
 				42A96A9A1DF5E7FC0016FD5B /* Session+CoreDataClass.swift in Sources */,
 				4221681C1DF9A069008FDDF8 /* StatsViewController.swift in Sources */,
-				34C5B8851FABA4D600011DCF /* PullViewController.swift in Sources */,
 				42378C6C1E53D39C005575D6 /* Util.swift in Sources */,
 				42A96A9C1DF5E7FC0016FD5B /* User+CoreDataClass.swift in Sources */,
 				42A0D50E1E5259960003A96B /* Rehab_Tracker.xcdatamodeld in Sources */,
