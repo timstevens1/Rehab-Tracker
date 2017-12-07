@@ -201,18 +201,22 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="252" verticalCompressionResistancePriority="751" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="imC-Ye-3Nv">
-                                <rect key="frame" x="95" y="330" width="130" height="64"/>
+                                <rect key="frame" x="95" y="376" width="130" height="64"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                 <state key="normal" title="Sync" backgroundImage="SmallButton"/>
-                                <state key="highlighted" title="Sync">
+                                <state key="highlighted">
                                     <color key="titleShadowColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
                                 <connections>
                                     <action selector="Sync:" destination="vbo-sO-2Vi" eventType="touchUpInside" id="Cvz-qR-DP4"/>
                                 </connections>
                             </button>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="v34-06-eIz">
+                                <rect key="frame" x="136" y="260" width="49" height="49"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="246" misplaced="YES" text="Sync your new NMES sessions" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3uv-wr-Rrg">
-                                <rect key="frame" x="23" y="188" width="274.5" height="24"/>
+                                <rect key="frame" x="23" y="176" width="274.5" height="24"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <color key="textColor" red="0.001153659326" green="0.001153659326" blue="0.001153659326" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
@@ -239,6 +243,10 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="sync_button" destination="imC-Ye-3Nv" id="s4d-Zm-Uot"/>
+                        <outlet property="sync_image" destination="v34-06-eIz" id="Pcy-oE-0iB"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="YhO-B3-aNk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
