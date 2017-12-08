@@ -8,7 +8,7 @@
 // Need to give website props for the tab bar icon
 // <a href="https://icons8.com/web-app/7318/Flex-Biceps">Flex biceps icon credits</a>
 //
-/*
+
 import UIKit
 import Charts
 import Foundation
@@ -43,7 +43,7 @@ class StatsViewController: UIViewController {
             dataEntries.append(dataEntry)
         }
         
-        let chartDataSet = BarChartDataSet(values: dataEntries, label: "Session Intensity")
+        let chartDataSet = BarChartDataSet(values: dataEntries, label: "Average Session Intensity")
         let chartData = BarChartData(dataSet: chartDataSet)
         barChartView.data = chartData
         
@@ -58,9 +58,90 @@ class StatsViewController: UIViewController {
         let targetIntensity = ChartLimitLine(limit: limit, label: "Target Intensity")
         barChartView.rightAxis.addLimitLine(targetIntensity)
     }
-    
-    // Function to retrieve stats from core data
+ 
+    // Function to get current user's session stats from db via ReST
     private func getStats() {
+        // Create urlstr string with current userID
+        let urlstr : String = "https://www.uvm.edu/~rtracker/Restful/getUserSessionsStats.php?pmkPatientID=" + Util.returnCurrentUsersID()
+        // Make url string into actual url
+        let url = URL(string: urlstr)
+        // Create urlRequest using our url
+        let urlRequest = URLRequest(url: url!)
+        
+        let task = URLSession.shared.dataTask(with: urlRequest, completionHandler: {
+            (data, response, error) in
+            // If user sessions exist, save them
+            if (error == nil) {
+                let jo : NSDictionary
+                do {
+                    jo =
+                        try JSONSerialization.jsonObject(with: data!, options: []) as! NSDictionary
+                    print("JSON OBJECT RETURNED FROM REST")
+                    print(jo)
+                }
+                catch {
+                    return
+                }
+                let userSessions = jo.value(forKey: "userSessions") as! NSArray
+                
+                print("USER SESSIONS ARRAY")
+                print(userSessions)
+                
+                for userSession in userSessions {
+                    let userSessionDict = userSession as! NSDictionary
+                    print("Session")
+                    print(userSessionDict)
+                    for session_data in userSessionDict {
+                        print("data piece")
+                        print(session_data)
+                    }
+                    let sessionTime = userSessionDict["fldStartTime"] as! String
+                    let sessionID = userSessionDict["fldSessNum"] as! String
+                    print("SESSION ID")
+                    print(sessionID)
+                    let userID = Util.returnCurrentUsersID()
+                    if (sessionID.count > userID.count) {
+                        print("SESSION NUM STRING")
+                        print(sessionID.suffix(sessionID.count - userID.count - 1))
+                    }
+                    if (sessionID.range(of:"_") != nil) {
+                        let sessionNum = Double(sessionID.suffix(sessionID.count - userID.count - 1))
+                        let sessionIntensity1 = Double(userSessionDict["fldIntensity1"] as! String)
+                        let sessionIntensity2 = Double(userSessionDict["fldIntensity2"] as! String)
+                        print("SESSION NUM")
+                        print(sessionNum)
+                        print("SESSION INTENSITY 1")
+                        print(sessionIntensity1)
+                        print ("SESSION INTENSITY 2")
+                        print(sessionIntensity2)
+                        if (sessionNum != nil && sessionIntensity1 != nil && sessionIntensity2 != nil) {
+                            let sessionIntensityAvg = Double((sessionIntensity1! + sessionIntensity2!)/2)
+                            print("SESS INTENSITY AVG")
+                            print(sessionIntensityAvg)
+                            
+                            // Append gathered data to the respective global arrays
+                            self.sessions.append( sessionNum! )
+                            print("SESSIONS")
+                            print(self.sessions)
+                            self.intensity.append( sessionIntensityAvg )
+                            print("INTENSITIES")
+                            print(self.intensity)
+                        }
+                    }
+                }
+                // Send data to charts
+                self.setBarChart(dataPoints: self.sessions, values: self.intensity)
+            }
+            else {
+                print(error as! String)
+            }
+        })
+        task.resume()
+    }
+    
+    // TO DO - use core data if no internet connection!!!
+    // Function to retrieve stats from core data
+    /*private func getStats() {
         // Set up the request for Sessions
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
@@ -94,7 +175,7 @@ class StatsViewController: UIViewController {
         catch {
             print("Could not find stats. \(error)")
         }
-    }
+    }*/
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -109,13 +190,10 @@ class StatsViewController: UIViewController {
         // Only reflects on graph if target intensity in in the data range
         limit = Util.returnTargetIntensity()
         
-        // Send data to charts
-        setBarChart(dataPoints: sessions, values: intensity)
-        
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-}*/
+}
