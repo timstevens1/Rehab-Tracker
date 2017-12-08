@@ -43,8 +43,9 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     // The CBCentralManager install will be what you use to find, connect, and manage BLE devices. Once you are connected, and are working with a specific service, the peripheral will help you iterate characteristics and interacting with them.
     private var manager:CBCentralManager!
     private var peripheral:CBPeripheral!
-    var resultString: String!
+    private var resultString: String!
     private var stats:[(avg_ch1_intensity:String, avg_ch2_intensity:String, session_compliance: String, start_time: String, end_time: String)] = []
+    private var failed_sync = false
     
     // (4) UUID and Service Name
     // You will need UUID for the BLE service, and a UUID for the specific characteristic. In some cases, you will need additional UUIDs. They get used repeatedly throughout the code, so having constants for them will keep the code cleaner, and easier to maintain.
@@ -58,8 +59,11 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     // global variable comments to store session comments
     private var comments = "No Comments"
     
-    // Array to hold all the session compliances to check for positive feedback
-    private var lastSessionCompliance = [Double]()
+    // Sync image outlet
+    @IBOutlet weak var sync_image: UIImageView!
+    
+    // Sync button outlet
+    @IBOutlet weak var sync_button: UIButton!
     
     // Empty dictionary to hold JSON for post to database
     private var sessionsJson = [String: [String:Any]]()
@@ -75,28 +79,26 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         self.present(alert, animated: true, completion: nil)
     }
     
-    // Show an alert if there was an error with syncing the data
-    private func syncErrorAlert() {
-        // create the alert
-        let alert = UIAlertController(title: "Sync Error", message: "There was an error syncing your data, please try again!", preferredStyle: UIAlertControllerStyle.alert)
-        
-        // add an action (button)
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
-        
-        // show the alert
-        self.present(alert, animated: true, completion: nil)
-    }
-    
-    // Show an alert with positive feedback after the sync
-    private func positiveFeedbackAlert() {
-        // create the alert
-        let alert = UIAlertController(title: "Keep it up!", message: Util.getPositiveFeedback(), preferredStyle: UIAlertControllerStyle.alert)
-        
-        // add an action (button)
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
-        
-        // show the alert
-        self.present(alert, animated: true, completion: nil)
+    // Reset sync UI and create post-sync alert - feedback on success or failure
+    private func syncResetUIAndFeedbackAlert() {
+        // Reset image and button
+        self.sync_image.stopAnimating()
+        self.sync_image.image = UIImage(named: "Tab-Sync-Highlighted")
+        self.sync_button.isEnabled = true
+        self.sync_button.setTitle("Sync", for: .normal)
+        // Create sync feedback alert
+        var alert_title = "Success!"
+        var alert_message = "Your latest sessions have been logged."
+        if (self.failed_sync) {
+            alert_title = "Sync Failed"
+            alert_message = "Please try again."
+        }
+        let post_sync_alert = UIAlertController(title: alert_title, message: alert_message, preferredStyle: UIAlertControllerStyle.alert)
+        // OK button on alert box
+        post_sync_alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: { (action:UIAlertAction) -> Void in
+            self.sync_image.image = UIImage(named: "Tab-Sync")}))
+        // Show sync feedback alert
+        self.present(post_sync_alert, animated: true, completion: nil)
     }
     
     @IBAction func Sync(_ sender: UIButton) {
@@ -109,10 +111,24 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         let saveAction = UIAlertAction(title: "Continue",
                                        style: .default,
                                        handler: { (action:UIAlertAction) -> Void in
-                                        let textField = alert.textFields!.first
                                         
-                                        // Saves input to global comments var
+                                        // Save input
+                                        let textField = alert.textFields!.first
                                         self.comments = textField!.text!
+                                        
+                                        // Set failure flag to false - nothing wrong yet
+                                        self.failed_sync = false
+                                        
+                                        // Update sync button and animate image
+                                        self.sync_button.isEnabled = false
+                                        self.sync_button.setTitle("...", for: .normal)
+                                        var imageList = [UIImage]()
+                                        let image1:UIImage = UIImage(named: "Tab-Sync-Highlighted")!
+                                        let image2:UIImage = UIImage(named: "Tab-Sync")!
+                                        imageList = [image1, image2];
+                                        self.sync_image.animationImages = imageList
+                                        self.sync_image.animationDuration = 1.0
+                                        self.sync_image.startAnimating()
                                         
                                         // Reset sessionsString
                                         sessionsStringFromDevice = ""
@@ -134,13 +150,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                                             
                                             self.flag = true;
                                             
-                                            // If the average compliance is higher than 55/60 minutes, give positive feedback
-                                            //if ( Util.average(array: self.lastSessionCompliance) >= 0.9167 ){
-                                                //self.positiveFeedbackAlert()
-                                            //}
-                                            
                                             // see what's in core data - DEBUG STEP
-                                            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+                                            /*let appDelegate = UIApplication.shared.delegate as! AppDelegate
                                             let context = appDelegate.persistentContainer.viewContext
                                             let request: NSFetchRequest<Session> = Session.fetchRequest()
                                             request.returnsObjectsAsFaults = false
@@ -160,13 +171,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                                                 self.syncErrorAlert()
                                                 
                                                 print("Could not find stats. \(error)")
-                                            }
-                                        }
-                                        catch {
-                                            print("Could not find stats. \(error)")
-                                            
-                                            // Sync Error Alert
-                                            self.syncErrorAlert()
+                                            }*/
                                         }
         })
         
@@ -200,13 +205,13 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     // Parse sessionsStringFromDevice to extract session info
     private func parseData() {
         do {
-            //resultString = "85,85,0.95\n92,92,0.65" //FOR LOCAL TESTING
-            // Create an array to track which sessions weve synced
-            var sessionsAdded = [Character]()
-            let newSessions = sessionsStringFromDevice.components(separatedBy: "\n")
+            // New sessions string to array
+            var newSessions = sessionsStringFromDevice.components(separatedBy: "\n")
+            newSessions.remove(at: newSessions.count-1)
+            print("NEW SESSIONS COUNT")
+            print(newSessions.count)
             
-            
-            // First break up the data array by newlines to seperate out each session
+            // Data array for each session - append each session data array to stats array
             for session in newSessions{
                 
                 let myDataArr = session.components(separatedBy: ",")
@@ -221,15 +226,13 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                     // Add validated data to stats array
                     let stat = (avg_ch1_intensity:myDataArr[0], avg_ch2_intensity:myDataArr[1], session_compliance: myDataArr[2], start_time:sess_start_time, end_time:sess_end_time)
                     self.stats.append(stat)
-                    //sessionsAdded.append(session[index]);
-                    // append the session_compliance to the array for calculating if we should give feedback
-                    let compDouble = (myDataArr[2] as NSString).doubleValue
-                    //lastSessionCompliance.append(compDouble)
                 } else {
                     print("[DEBUG] Invalid Data/Duplicate session:")
                     for data in myDataArr {
                         print(data)
                     }
+                    // failure
+                    failed_sync = true
                     print("end data in myDataArr")
                 }
                 print("STATS")
@@ -237,9 +240,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                 print("STATS COUNT")
                 print(self.stats.count)
             }
-            // Clear out the resultString and sessionsAdded array once we have the data to prevent duplication
+            // Clear out the resultString once we have the data to prevent duplication
             resultString.removeAll()
-            sessionsAdded.removeAll()
         }
         /*
          catch let error as NSError {
@@ -279,14 +281,11 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             }
             else {
                 print(error as! String)
+                self.failed_sync = true
             }
             /* Add sessions to core data and database */
             DispatchQueue.main.async {
                 self.addData()
-                // If the average compliance is higher than 55/60 minutes, give positive feedback
-                //if ( Util.average(array: self.lastSessionCompliance) >= 0.9167 ){
-                //    self.positiveFeedbackAlert()
-                //}
                 // see what's in core data - DEBUG STEP
                 let appDelegate = UIApplication.shared.delegate as! AppDelegate
                 let context = appDelegate.persistentContainer.viewContext
@@ -301,12 +300,16 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                         print(num)
                     }
                 } catch {
-                    // Sync Error Alert
-                    //self.syncErrorAlert()
+                    // failure
+                    self.failed_sync = true
                     print("Could not find stats. \(error)")
                 }
-                self.prepareNewSessionsJSON()
-                self.pushToDatabase()
+                if (!self.failed_sync) {
+                    self.prepareNewSessionsJSON()
+                }
+                if (!self.failed_sync) {
+                    self.pushToDatabase()
+                }
             }
         })
         task.resume()
@@ -379,8 +382,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             print(sessionsJson)
             
         } catch {
-            // Sync Error Alert
-            self.syncErrorAlert()
+            // failure
+            self.failed_sync = true
             print("Could not find new sessions. \(error)")
         }
     }
@@ -392,8 +395,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         //Make url string into actual url and catch errors
         guard let url = URL(string: urlstr)
             else {
-            // Sync Error Alert
-            self.syncErrorAlert()
+            // failure
+            self.failed_sync = true
             
             print("Error: cannot create URL")
             return
@@ -416,8 +419,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             (data, response, error) in
             if error != nil {
                 // Sync Error Alert
-                self.syncErrorAlert()
-                
+                self.failed_sync = true
                 print("[ERROR] There was an error with the URL/Sync")
                 return;
             }
@@ -483,6 +485,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             
         } else {
             print("[DEBUG] Bluetooth not available.")
+            self.failed_sync = true
+            self.syncResetUIAndFeedbackAlert()
         }
     }
     
@@ -604,7 +608,11 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             print(sessionsStringFromDevice)
             if (sessionsStringFromDevice.hasSuffix("\n")) {
                 parseData()
-                syncSessions()
+                if (!self.failed_sync) {
+                    syncSessions()
+                }
+                // Reset sync UI and launch feedback alert
+                self.syncResetUIAndFeedbackAlert()
             }
             
             //flag = false
@@ -613,7 +621,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        self.sync_image.image = UIImage(named: "Tab-Sync")
         flag = false
     }
     

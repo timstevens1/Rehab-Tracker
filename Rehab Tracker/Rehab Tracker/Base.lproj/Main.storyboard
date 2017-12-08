@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Cld-m7-iJA">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Cld-m7-iJA">
     <device id="retina4_0" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -244,8 +244,8 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="sync_button" destination="imC-Ye-3Nv" id="s4d-Zm-Uot"/>
-                        <outlet property="sync_image" destination="v34-06-eIz" id="Pcy-oE-0iB"/>
+                        <outlet property="sync_button" destination="imC-Ye-3Nv" id="buT-jv-HCt"/>
+                        <outlet property="sync_image" destination="v34-06-eIz" id="szh-55-r4G"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="YhO-B3-aNk" userLabel="First Responder" sceneMemberID="firstResponder"/>
