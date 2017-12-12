@@ -20,16 +20,17 @@ class Util {
         let context = appDelegate.persistentContainer.viewContext
         let request: NSFetchRequest<User>=User.fetchRequest()
         request.returnsObjectsAsFaults = false
+        var ret = "No User"
         do {
             let results = try context.fetch(request)
             for item in results {
-                return item.userID!
+                ret =  item.userID!
             }
         }catch {
             print("Could not find stats. \(error)")
-            return "No userID"
         }
-        return "Didnt Work"
+        if ret == "" { ret = "No User" }
+        return ret
     }
     
     // Returns the current User as a NSManagedObject

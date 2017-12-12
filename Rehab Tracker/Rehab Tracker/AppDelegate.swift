@@ -43,7 +43,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // rootViewController from StoryBoard
         let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let navigationController = storyboard.instantiateViewController( withIdentifier: "homeNavigation" )
+        var navigationController : UIViewController
+        print(Util.returnCurrentUsersID())
+        print(Util.getDatabaseUsername())
+        if Util.numberOfUsers() > 0 {
+            Util.pushRegistration()
+            navigationController = storyboard.instantiateViewController( withIdentifier:"Sync")
+        }
+        else{
+            navigationController = storyboard.instantiateViewController( withIdentifier: "homeNavigation" )
+        }
         self.window!.rootViewController = navigationController
         
         // logo mask

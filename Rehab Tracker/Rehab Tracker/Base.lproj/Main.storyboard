@@ -13,7 +13,7 @@
         <!--About-->
         <scene sceneID="U4x-qb-tlB">
             <objects>
-                <viewController id="9Uq-XS-RJg" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="settings" useStoryboardIdentifierAsRestorationIdentifier="YES" id="9Uq-XS-RJg" customClass="SettingsViewController" customModule="Rehab_Tracker" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Zdb-ps-W36"/>
                         <viewControllerLayoutGuide type="bottom" id="qFY-qI-PGe"/>
@@ -22,8 +22,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Rehab Tracker" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yOt-Qu-tRb">
-                                <rect key="frame" x="57" y="134" width="206" height="57"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Rehab Tracker" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yOt-Qu-tRb">
+                                <rect key="frame" x="57" y="79" width="206" height="57"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="57" id="8eu-VI-9qv"/>
                                 </constraints>
@@ -31,8 +31,8 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="CS 275" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kHH-sj-1hL">
-                                <rect key="frame" x="131" y="239" width="58" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="CS 275" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kHH-sj-1hL">
+                                <rect key="frame" x="131" y="155" width="58" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="58" id="FyC-XO-26O"/>
                                 </constraints>
@@ -40,8 +40,8 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sean, Meaghan, and Brandon" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="w7n-hS-v3Q">
-                                <rect key="frame" x="79" y="309" width="161" height="40"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Sean, Meaghan,  Brandon, Tim, Xavier, Chia-Chun, Yifan, Luke, Brian" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="243" translatesAutoresizingMaskIntoConstraints="NO" id="w7n-hS-v3Q">
+                                <rect key="frame" x="39" y="196" width="243" height="52"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="ucu-I2-dpB"/>
                                 </constraints>
@@ -49,11 +49,18 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="This app is designed to increase patient compliance during rehab" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="koU-br-wff">
-                                <rect key="frame" x="61" y="417" width="197" height="89"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="89" id="AkS-1W-j3W"/>
-                                </constraints>
+                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eOl-qr-7as">
+                                <rect key="frame" x="57" y="415" width="206" height="64"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="35"/>
+                                <state key="normal" title="Logout" backgroundImage="SmallButton"/>
+                                <connections>
+                                    <action selector="Continue:" destination="BYZ-38-t0r" eventType="touchUpInside" id="lZv-hY-0N4"/>
+                                    <action selector="Logout:" destination="9Uq-XS-RJg" eventType="touchUpInside" id="IV9-oO-3YN"/>
+                                    <segue destination="Cld-m7-iJA" kind="show" id="Myt-Sp-jyx"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Contact us at rtracker@uvm.edu" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="koU-br-wff">
+                                <rect key="frame" x="33" y="301" width="249" height="35"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -61,31 +68,32 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="qFY-qI-PGe" firstAttribute="top" secondItem="koU-br-wff" secondAttribute="bottom" constant="62" id="0ki-OI-LcA"/>
                             <constraint firstItem="w7n-hS-v3Q" firstAttribute="centerX" secondItem="kHH-sj-1hL" secondAttribute="centerX" id="71D-vu-CRn"/>
                             <constraint firstItem="yOt-Qu-tRb" firstAttribute="centerX" secondItem="vl7-4n-hHC" secondAttribute="centerX" id="7Yf-Ei-mTS"/>
+                            <constraint firstItem="eOl-qr-7as" firstAttribute="top" relation="greaterThanOrEqual" secondItem="koU-br-wff" secondAttribute="bottom" constant="20" id="A0R-Fz-1aa"/>
                             <constraint firstItem="yOt-Qu-tRb" firstAttribute="leading" secondItem="vl7-4n-hHC" secondAttribute="leadingMargin" constant="41" id="ASj-ak-BsU"/>
-                            <constraint firstItem="w7n-hS-v3Q" firstAttribute="leading" secondItem="vl7-4n-hHC" secondAttribute="leadingMargin" constant="63" id="NUF-gc-gTv"/>
                             <constraint firstItem="yOt-Qu-tRb" firstAttribute="top" secondItem="Zdb-ps-W36" secondAttribute="bottom" constant="70" id="R4E-2V-PCF"/>
+                            <constraint firstItem="eOl-qr-7as" firstAttribute="centerX" secondItem="koU-br-wff" secondAttribute="centerX" id="Tjq-cC-3YV"/>
                             <constraint firstItem="kHH-sj-1hL" firstAttribute="top" secondItem="yOt-Qu-tRb" secondAttribute="bottom" constant="48" id="UB7-wU-lCv"/>
                             <constraint firstItem="koU-br-wff" firstAttribute="leading" secondItem="vl7-4n-hHC" secondAttribute="leadingMargin" constant="45" id="ZvJ-bh-dHH"/>
                             <constraint firstItem="yOt-Qu-tRb" firstAttribute="centerX" secondItem="vl7-4n-hHC" secondAttribute="centerX" id="a4I-mP-4fx"/>
                             <constraint firstItem="w7n-hS-v3Q" firstAttribute="top" secondItem="kHH-sj-1hL" secondAttribute="bottom" constant="49" id="khd-VO-EPW"/>
                             <constraint firstItem="koU-br-wff" firstAttribute="centerX" secondItem="w7n-hS-v3Q" secondAttribute="centerX" id="km6-MY-vGc"/>
                             <constraint firstItem="kHH-sj-1hL" firstAttribute="centerX" secondItem="vl7-4n-hHC" secondAttribute="centerX" id="omT-3E-xY1"/>
+                            <constraint firstItem="koU-br-wff" firstAttribute="top" secondItem="w7n-hS-v3Q" secondAttribute="bottom" constant="53" id="pBW-0L-FNE"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="About" id="Hq9-gK-FU8">
                         <barButtonItem key="leftBarButtonItem" title="Back" id="etq-tr-Fu0">
                             <connections>
-                                <segue destination="Cld-m7-iJA" kind="presentation" id="duJ-8B-7c8"/>
+                                <segue destination="uFE-9B-9Z5" kind="show" id="NH2-DQ-me7"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uY7-oL-LCd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="94" y="931"/>
+            <point key="canvasLocation" x="93.75" y="930.63380281690138"/>
         </scene>
         <!--Home-->
         <scene sceneID="tne-QT-ifu">
@@ -99,18 +107,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Welcome to the Rehab Tracker!" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cfY-rs-1tj">
-                                <rect key="frame" x="25.5" y="85" width="269.5" height="44"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Home-Logo" translatesAutoresizingMaskIntoConstraints="NO" id="Zuj-el-AZZ">
-                                <rect key="frame" x="38" y="176" width="243" height="231"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="231" id="AxF-E7-Uij"/>
-                                </constraints>
-                            </imageView>
                             <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jRF-0o-OyD">
                                 <rect key="frame" x="56" y="455" width="206" height="57"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="35"/>
@@ -119,33 +115,39 @@
                                     <action selector="Continue:" destination="BYZ-38-t0r" eventType="touchUpInside" id="k1i-89-Lyb"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Enter Username:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a1u-80-juH">
+                                <rect key="frame" x="95" y="232" width="128" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Home-Logo" translatesAutoresizingMaskIntoConstraints="NO" id="Aym-0I-KVd">
+                                <rect key="frame" x="100" y="89" width="119" height="113"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Hlp-v0-UId">
+                                <rect key="frame" x="77" y="269" width="165" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <action selector="enterUserID:" destination="BYZ-38-t0r" eventType="editingDidEnd" id="0kq-MF-8pE"/>
+                                </connections>
+                            </textField>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="Zuj-el-AZZ" firstAttribute="centerX" secondItem="cfY-rs-1tj" secondAttribute="centerX" id="4Vu-p1-p7D"/>
-                            <constraint firstItem="Zuj-el-AZZ" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" constant="176" id="7xx-vx-5k9"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="jRF-0o-OyD" secondAttribute="bottom" constant="56" id="HGQ-BO-1L4"/>
-                            <constraint firstItem="jRF-0o-OyD" firstAttribute="top" secondItem="Zuj-el-AZZ" secondAttribute="bottom" constant="48" id="YD9-pg-Zvh"/>
-                            <constraint firstItem="Zuj-el-AZZ" firstAttribute="top" secondItem="cfY-rs-1tj" secondAttribute="bottom" constant="47" id="cn7-ej-CvI"/>
-                            <constraint firstItem="Zuj-el-AZZ" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="22" id="coA-Rf-arY"/>
-                            <constraint firstItem="cfY-rs-1tj" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="liE-VN-ALF"/>
-                            <constraint firstItem="cfY-rs-1tj" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="21" id="pyQ-9I-5Da"/>
                             <constraint firstItem="jRF-0o-OyD" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="41" id="zf2-nv-58g"/>
                             <constraint firstItem="jRF-0o-OyD" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="zl3-nV-sVR"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Rehab Tracker" id="gUa-JC-Y20">
-                        <barButtonItem key="leftBarButtonItem" title="About" id="UNZ-uo-hGZ">
-                            <connections>
-                                <segue destination="axa-Ap-EpL" kind="presentation" id="8bc-S4-5Ns"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Login" id="M5O-4F-Dtd">
-                            <connections>
-                                <action selector="AddUser:" destination="BYZ-38-t0r" id="ox4-tM-hS4"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Rehab Tracker" id="gUa-JC-Y20"/>
+                    <connections>
+                        <outlet property="loginBar" destination="Hlp-v0-UId" id="1KG-Eo-4m4"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
@@ -232,9 +234,9 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Sync" id="se7-Cu-KdY">
-                        <barButtonItem key="leftBarButtonItem" title="Back" id="LQP-2j-JFI">
+                        <barButtonItem key="leftBarButtonItem" title="Settings" id="LQP-2j-JFI">
                             <connections>
-                                <segue destination="Cld-m7-iJA" kind="presentation" id="1Q0-dN-yeM"/>
+                                <segue destination="axa-Ap-EpL" kind="show" id="FtS-cU-vym"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" image="InfoButton" id="wpC-dV-FpI">
@@ -355,6 +357,6 @@
         <image name="Tab-Sync-Highlighted" width="30" height="30"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="1Q0-dN-yeM"/>
+        <segue reference="NH2-DQ-me7"/>
     </inferredMetricsTieBreakers>
 </document>

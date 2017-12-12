@@ -15,6 +15,18 @@ import UserNotifications
 // This is the main page, allows users to login and get into the app
 class ViewController: UIViewController {
 
+    @IBOutlet weak var loginBar: UITextField!
+    @IBAction func enterUserID(_ sender: Any) {
+        self.updateUserID(ID: loginBar.text!)
+    }
+    private func updateUserID(ID: String){
+        while Util.numberOfUsers() != 0 {
+            // Delete all core data
+            Util.deleteData()
+        }
+        self.saveUserID(ID);
+        self.viewDidLoad();
+    }
     // Function to create a User and add in their userID
     private func saveUserID(_ thisUserID: String) {
         // Save entered userID to persistent core data
@@ -23,7 +35,7 @@ class ViewController: UIViewController {
         user.userID = thisUserID
         (UIApplication.shared.delegate as! AppDelegate).saveContext()
         //COMPLETE ME!
-        print(Util.pushRegistration())
+        print()
         // register new user for push notifications
        
     }
@@ -124,13 +136,15 @@ class ViewController: UIViewController {
 
     @IBAction func Continue(_ sender: UIButton) {
         // If username is valid, allows the user to continue into the app
+        if !(loginBar.text == ""){ self.updateUserID(ID: loginBar.text!)}
         print("Database")
         print(Util.getDatabaseUsername())
         print("persistent")
         print(Util.returnCurrentUsersID())
-        if Util.getDatabaseUsername() == Util.returnCurrentUsersID() {
+        print(Util.numberOfUsers())
+        if (Util.returnCurrentUsersID() == Util.getDatabaseUsername()){
             // Continues on to the syncviewcontroller
-            
+            Util.pushRegistration()
             let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
             let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Sync")
             self.present(nextViewController, animated:true, completion:nil)
@@ -138,7 +152,7 @@ class ViewController: UIViewController {
         else {
             // Alert to tell user they arent properly logged in
             let alert = UIAlertController(title: "Invalid Login",
-                                          message: "Sorry, you are logged in with an invalid username. Please enter a valid username by clicking the 'Add User' button on the top right of the screen.",
+                                          message: "Could not find userID",
                                           preferredStyle: .alert)
             
             // Creates the okay button in the alert
@@ -154,7 +168,7 @@ class ViewController: UIViewController {
     }
     
     // Global variable to store returned userID check from database
-    private var returnedUserID = "DEFAULTVALUE"
+    private var returnedUserID = ""
     
     // Function to check if a username is in the database, if yes, returns the name as string
     
@@ -162,10 +176,19 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.returnedUserID = Util.getDatabaseUsername()
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
         
+        //Uncomment the line below if you want the tap not not interfere and cancel other interactions.
+        //tap.cancelsTouchesInView = false
+        
+        view.addGestureRecognizer(tap)
         // Do any additional setup after loading the view, typically from a nib.
+        
     }
-
+    func dismissKeyboard() {
+        //Causes the view (or one of its embedded text fields) to resign the first responder status.
+        view.endEditing(true)
+    }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
