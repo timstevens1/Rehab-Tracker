@@ -23,14 +23,18 @@
     $userSessionsSelectResults = $thisDatabaseReader->select($userSessionsSelectQuery, $userSessionsSelectParams, 1, 0, 0, 0, false, false);
     
     //extract the results and write them to a string for packaging to JSON
-    $userSessionNumbers = array();
-    foreach($userSessionsSelectResults as $userSessionResult){
-      $userSessionID = $userSessionResult[0];
-      $userPrefixCharCount = strlen($name) + 1;
-      $userSessionNumber = substr($userSessionID, $userPrefixCharCount);
+    if (empty($userSessionsSelectResults)) {
+      $maxUserSessionNumber = 0;
+    } else {
+      $userSessionNumbers = array();
+      foreach($userSessionsSelectResults as $userSessionResult){
+        $userSessionID = $userSessionResult[0];
+        $userPrefixCharCount = strlen($name) + 1;
+        $userSessionNumber = substr($userSessionID, $userPrefixCharCount);
         $userSessionNumbers[] = (int)$userSessionNumber;
+      }
+      $maxUserSessionNumber = max($userSessionNumbers);
     }
-    $maxUserSessionNumber = max($userSessionNumbers);
     echo json_encode(array('maxUserSessionNumber' => $maxUserSessionNumber));
   }
   //Otherwise, test if we are receiving a POST request

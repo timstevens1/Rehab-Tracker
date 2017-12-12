@@ -30,10 +30,13 @@ let DEBUG = true
 let SESSION_TIME_TRACKING = true
 
 // Last session number for this user
-var maxUserSessionNum = 0 // If no user sessions, start with 0
+var maxUserSessionNum:Int? = nil
 
 // String to hold session info received from device
 var sessionsStringFromDevice = ""
+
+// Set of positive feedback messages for successful sync alert
+let positiveFeedbackMessages = ["By completing your NMES session, you are preventing your muscles from atrophying and getting weaker.", "Good job completing your NMES session!", "Keep up the good work on your NMES sessions!", "By completing your NMES session, you are being proactive in preventing muscle atrophy and maintaining your muscle strength."]
 
 // (2) Delegates
 // Eventually you are going to want to get callbacks from some functionality. There are two delegates to implement: CBCentralManagerDelegate, and CBPeripheralDelegate.
@@ -46,6 +49,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     private var resultString: String!
     private var stats:[(avg_ch1_intensity:String, avg_ch2_intensity:String, session_compliance: String, start_time: String, end_time: String)] = []
     private var failed_sync = false
+    private var feedback_message:String = ""
+    private var finished_parsing_data = false
     
     // (4) UUID and Service Name
     // You will need UUID for the BLE service, and a UUID for the specific characteristic. In some cases, you will need additional UUIDs. They get used repeatedly throughout the code, so having constants for them will keep the code cleaner, and easier to maintain.
@@ -88,12 +93,10 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         self.sync_button.setTitle("Sync", for: .normal)
         // Create sync feedback alert
         var alert_title = "Success!"
-        var alert_message = "Your latest sessions have been logged."
         if (self.failed_sync) {
             alert_title = "Sync Failed"
-            alert_message = "Please try again."
         }
-        let post_sync_alert = UIAlertController(title: alert_title, message: alert_message, preferredStyle: UIAlertControllerStyle.alert)
+        let post_sync_alert = UIAlertController(title: alert_title, message: feedback_message, preferredStyle: UIAlertControllerStyle.alert)
         // OK button on alert box
         post_sync_alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: { (action:UIAlertAction) -> Void in
             self.sync_image.image = UIImage(named: "Tab-Sync")}))
@@ -150,6 +153,16 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                                             
                                             self.flag = true;
                                             
+                                            // Timeout if data not correctly synced from NMES device after 10 seconds
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0, execute: {
+                                                if (sessionsStringFromDevice == "" || !sessionsStringFromDevice.contains("\n") || !self.finished_parsing_data) {
+                                                    self.failed_sync = true
+                                                    self.feedback_message = "Error finding data on NMES device. Please reboot your NMES device and try again."
+                                                    print("[DEBUG] Problem syncing data from NMES device")
+                                                    self.syncResetUIAndFeedbackAlert()
+                                                }
+                                            })
+                                            
                                             // see what's in core data - DEBUG STEP
                                             /*let appDelegate = UIApplication.shared.delegate as! AppDelegate
                                             let context = appDelegate.persistentContainer.viewContext
@@ -171,6 +184,33 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                                                 self.syncErrorAlert()
                                                 
                                                 print("Could not find stats. \(error)")
+                                            }*/
+                                            
+                                            // LOCAL TESTING
+                                            /*
+                                            self.resultString = ""
+                                            sessionsStringFromDevice = "90,90,0.10,1513027000,1513027272\n93,93,0.99,1513027272,1513027500\n"
+                                            
+                                            print("SESSIONS_STRING_FROM_DEVICE")
+                                            print(sessionsStringFromDevice)
+                                            if (sessionsStringFromDevice.hasSuffix("\n")) {
+                                                // Set feedback message to positive message
+                                                let randomPositiveMessageIndex = Int(arc4random_uniform(UInt32(positiveFeedbackMessages.count)))
+                                                self.feedback_message = positiveFeedbackMessages[randomPositiveMessageIndex]
+                                                self.parseData()
+                                                print("DATA PARSED")
+                                                // It no failure yet, sync sessions to core data and db
+                                                if (!self.failed_sync) {
+                                                    self.syncSessions()
+                                                    print("SESSIONS SYNCED")
+                                                    // If failure in parseData(), update error message and launch alert
+                                                } else {
+                                                    self.feedback_message = "Error syncing data from NMES device. Please reboot your NMES device and try again."
+                                                    self.syncResetUIAndFeedbackAlert()
+                                                    return
+                                                }
+                                                // Reset sync UI and launch feedback alert
+                                                self.syncResetUIAndFeedbackAlert()
                                             }*/
                                         }
         })
@@ -242,6 +282,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             }
             // Clear out the resultString once we have the data to prevent duplication
             resultString.removeAll()
+            // Set flag for finished parsing data from NMES device
+            self.finished_parsing_data = true
         }
         /*
          catch let error as NSError {
@@ -282,10 +324,17 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             else {
                 print(error as! String)
                 self.failed_sync = true
+                self.feedback_message = "Error determining session number. Please try again."
+            }
+            if (maxUserSessionNum == nil) {
+                self.failed_sync = true
+                self.feedback_message = "Error determining session number. Please try again."
             }
             /* Add sessions to core data and database */
             DispatchQueue.main.async {
-                self.addData()
+                if (!self.failed_sync) {
+                    self.addData()
+                }
                 // see what's in core data - DEBUG STEP
                 let appDelegate = UIApplication.shared.delegate as! AppDelegate
                 let context = appDelegate.persistentContainer.viewContext
@@ -300,8 +349,6 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                         print(num)
                     }
                 } catch {
-                    // failure
-                    self.failed_sync = true
                     print("Could not find stats. \(error)")
                 }
                 if (!self.failed_sync) {
@@ -317,7 +364,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     
     // Save sessions in core data
     private func addData() {
-        var current_session_id = maxUserSessionNum
+        var current_session_id = maxUserSessionNum!
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
         let sesEntity = NSEntityDescription.entity(forEntityName: "Session", in: context)
@@ -384,6 +431,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         } catch {
             // failure
             self.failed_sync = true
+            self.feedback_message = "Error finding new session data on phone. Please try again."
             print("Could not find new sessions. \(error)")
         }
     }
@@ -397,7 +445,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             else {
             // failure
             self.failed_sync = true
-            
+            self.feedback_message = "Error linking to network. Please try again."
             print("Error: cannot create URL")
             return
         }
@@ -409,6 +457,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         do {
             urlRequest.httpBody = try JSONSerialization.data(withJSONObject: sessionsJson, options: [])
         } catch let error {
+            self.feedback_message = "Error linking to network. Please try again."
             print(error.localizedDescription)
         }
         
@@ -420,6 +469,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             if error != nil {
                 // Sync Error Alert
                 self.failed_sync = true
+                self.feedback_message = "Error syncing sessions to network. Please try again."
                 print("[ERROR] There was an error with the URL/Sync")
                 return;
             }
@@ -434,7 +484,9 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             let appDelegate = UIApplication.shared.delegate as! AppDelegate
             let context = appDelegate.persistentContainer.viewContext
             let request: NSFetchRequest<Session> = Session.fetchRequest()
-            request.predicate = NSPredicate(format: "sessionID == %@", session.1["fldSessNum"] as! CVarArg)
+            print("fldSessNum before predicate")
+            print(session.1["fldSessNum"]!)
+            request.predicate = NSPredicate(format: "sessionID == %@", session.1["fldSessNum"]! as! CVarArg)
             // Execute request and update pushed_to_db to true
             do {
                 let pushedSession = try context.fetch(request) // list of one session
@@ -486,6 +538,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         } else {
             print("[DEBUG] Bluetooth not available.")
             self.failed_sync = true
+            self.feedback_message = "Bluetooth is not enabled."
             self.syncResetUIAndFeedbackAlert()
         }
     }
@@ -607,9 +660,20 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             print("SESSIONS_STRING_FROM_DEVICE")
             print(sessionsStringFromDevice)
             if (sessionsStringFromDevice.hasSuffix("\n")) {
+                // Set feedback message to positive message
+                let randomPositiveMessageIndex = Int(arc4random_uniform(UInt32(positiveFeedbackMessages.count)))
+                feedback_message = positiveFeedbackMessages[randomPositiveMessageIndex]
                 parseData()
+                print("DATA PARSED")
+                // It no failure yet, sync sessions to core data and db
                 if (!self.failed_sync) {
                     syncSessions()
+                    print("SESSIONS SYNCED")
+                // If failure in parseData(), update error message and launch alert
+                } else {
+                    feedback_message = "Error syncing data from NMES device. Please reboot your NMES device and try again."
+                    self.syncResetUIAndFeedbackAlert()
+                    return
                 }
                 // Reset sync UI and launch feedback alert
                 self.syncResetUIAndFeedbackAlert()
