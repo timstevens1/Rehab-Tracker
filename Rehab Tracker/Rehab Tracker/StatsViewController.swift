@@ -17,13 +17,15 @@ import CoreBluetooth
 
 // This pulls all the stats from Core Data
 class StatsViewController: UIViewController {
-    
-    @IBOutlet weak var pieChartView: PieChartView!
-    @IBOutlet weak var barChartView: BarChartView!
+
+    @IBOutlet weak var lineChartView: LineChartView!
     
     // Variables to hold data arrays
     private var sessions: [Double] = []
+    private var dates: [String] = []
     private var intensity: [Double] = []
+    private var dataPoints: [(Double,Double)] = []
+    //private var dataPoints: [(Double,String,Double)] = []
     
     // Variable to hold the 
     private var limit = Util.returnTargetIntensity()
@@ -34,29 +36,35 @@ class StatsViewController: UIViewController {
     private var fldIntensity2 = ""
     
     // Set chart function to create a chart from session data
-    private func setBarChart(dataPoints: [Double], values: [Double]) {
-        barChartView.noDataText = "You need to provide data for the chart."
-        var dataEntries: [BarChartDataEntry] = []
+    private func setLineChart(dataPoints: [Double], values: [Double]) {
+        lineChartView.noDataText = "Loading..."
+        var dataEntries: [ChartDataEntry] = []
         
         for i in 0..<dataPoints.count {
-            let dataEntry = BarChartDataEntry(x: dataPoints[i], y: values[i])
+            let dataEntry = ChartDataEntry(x: dataPoints[i], y: values[i])
             dataEntries.append(dataEntry)
         }
         
-        let chartDataSet = BarChartDataSet(values: dataEntries, label: "Average Session Intensity")
-        let chartData = BarChartData(dataSet: chartDataSet)
-        barChartView.data = chartData
+        let chartDataSet = LineChartDataSet(values: dataEntries, label: "Average Session Intensity")
+        let chartData = LineChartData(dataSet: chartDataSet)
+        lineChartView.data = chartData
         
         // Aesthetic options for the chart
-        barChartView.chartDescription?.text = "Intensity by Session"
-        barChartView.xAxis.labelPosition = .bottom
-        barChartView.backgroundColor = UIColor(red: 189/255, green: 195/255, blue: 199/255, alpha: 1)
-        barChartView.animate(xAxisDuration: 2.0, yAxisDuration: 2.0)
-        barChartView.rightAxis.enabled = false
+        lineChartView.chartDescription?.text = ""
+        lineChartView.xAxis.labelPosition = .bottom
+        lineChartView.backgroundColor = UIColor(red: 189/255, green: 195/255, blue: 199/255, alpha: 1)
+        lineChartView.animate(xAxisDuration: 2.0, yAxisDuration: 2.0)
+        lineChartView.rightAxis.enabled = false
+        lineChartView.xAxis.granularity = 1
+        /*print("DATES")
+        print(self.dates)
+        lineChartView.xAxis.setLabelCount(self.dates.count, force: true)
+        lineChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values:self.dates)*/
         
-        // Sets the target intensity and makes a get request for doctors input on intensity
+        // Sets the target intensity
         let targetIntensity = ChartLimitLine(limit: limit, label: "Target Intensity")
-        barChartView.rightAxis.addLimitLine(targetIntensity)
+        targetIntensity.labelPosition = .leftTop
+        lineChartView.leftAxis.addLimitLine(targetIntensity)
     }
  
     // Function to get current user's session stats from db via ReST
@@ -115,22 +123,43 @@ class StatsViewController: UIViewController {
                         print ("SESSION INTENSITY 2")
                         print(sessionIntensity2)
                         if (sessionNum != nil && sessionIntensity1 != nil && sessionIntensity2 != nil) {
-                            let sessionIntensityAvg = Double((sessionIntensity1! + sessionIntensity2!)/2)
+                            var sessionIntensityAvg = 0.0
+                            if (sessionIntensity1! == 0) {
+                                sessionIntensityAvg = sessionIntensity2!
+                            } else if (sessionIntensity2! == 0){
+                                sessionIntensityAvg = sessionIntensity1!
+                            } else {
+                                sessionIntensityAvg = Double((sessionIntensity1! + sessionIntensity2!)/2)
+                            }
                             print("SESS INTENSITY AVG")
                             print(sessionIntensityAvg)
                             
-                            // Append gathered data to the respective global arrays
-                            self.sessions.append( sessionNum! )
-                            print("SESSIONS")
-                            print(self.sessions)
-                            self.intensity.append( sessionIntensityAvg )
-                            print("INTENSITIES")
-                            print(self.intensity)
+                            // Append data for this session to dataPoints
+                            self.dataPoints.append((sessionNum!,sessionIntensityAvg))
+                            //self.dataPoints.append((sessionNum!,sessionTime,sessionIntensityAvg))
+                            print("DATA BEFORE SORT")
+                            print(self.dataPoints)
                         }
                     }
                 }
+                // Sort data points by session number (ascending)
+                self.dataPoints.sort {$0.0 < $1.0}
+                print("DATA AFTER SORT")
+                print(self.dataPoints)
+                // Append sorted data to the respective global arrays
+                for dataPoint in self.dataPoints {
+                    self.sessions.append(dataPoint.0)
+                    //let sessionTimeNoYear = dataPoint.1.substring(from: String.Index(5))
+                    //let sessionDate = sessionTimeNoYear.substring(to: String.Index(5))
+                    //self.dates.append(sessionDate)
+                    self.intensity.append(dataPoint.1)
+                }
+                print("SESSIONS")
+                print(self.sessions)
+                print("INTENSITIES")
+                print(self.intensity)
                 // Send data to charts
-                self.setBarChart(dataPoints: self.sessions, values: self.intensity)
+                self.setLineChart(dataPoints: self.sessions, values: self.intensity)
             }
             else {
                 print(error as! String)
@@ -189,7 +218,6 @@ class StatsViewController: UIViewController {
         // Set the global variable limit to the target intensity in core data
         // Only reflects on graph if target intensity in in the data range
         limit = Util.returnTargetIntensity()
-        
     }
     
     override func didReceiveMemoryWarning() {

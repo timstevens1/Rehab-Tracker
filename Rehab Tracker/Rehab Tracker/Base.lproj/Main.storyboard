@@ -165,17 +165,25 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="411"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="52d-74-Pe4" customClass="BarChartView" customModule="Charts">
-                                <rect key="frame" x="12" y="20" width="296" height="371"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yc1-pI-EEa" customClass="LineChartView" customModule="Charts">
+                                <rect key="frame" x="9" y="45" width="301" height="358"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Intensity By Session" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yO9-2l-PNS">
+                                <rect key="frame" x="82" y="15" width="154" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="52d-74-Pe4" firstAttribute="trailing" secondItem="VwA-CH-zj4" secondAttribute="trailingMargin" constant="4" id="EkD-HS-EYx"/>
-                            <constraint firstItem="52d-74-Pe4" firstAttribute="leading" secondItem="VwA-CH-zj4" secondAttribute="leadingMargin" constant="-4" id="U9Q-F0-A2N"/>
-                            <constraint firstItem="52d-74-Pe4" firstAttribute="top" secondItem="bOd-Sa-3jV" secondAttribute="bottom" constant="20" id="jK9-Ty-htg"/>
-                            <constraint firstAttribute="bottom" secondItem="52d-74-Pe4" secondAttribute="bottom" constant="20" symbolic="YES" id="mtS-Wh-L4k"/>
+                            <constraint firstItem="yc1-pI-EEa" firstAttribute="centerX" secondItem="VwA-CH-zj4" secondAttribute="centerX" id="4hY-2s-24U"/>
+                            <constraint firstItem="yO9-2l-PNS" firstAttribute="centerX" secondItem="yc1-pI-EEa" secondAttribute="centerX" id="YQy-BZ-7dj"/>
+                            <constraint firstItem="yO9-2l-PNS" firstAttribute="top" secondItem="bOd-Sa-3jV" secondAttribute="bottom" constant="15" id="Zuy-Im-gyt"/>
+                            <constraint firstItem="yc1-pI-EEa" firstAttribute="leading" secondItem="VwA-CH-zj4" secondAttribute="leadingMargin" constant="-7" id="dkz-eF-uHm"/>
+                            <constraint firstItem="yc1-pI-EEa" firstAttribute="top" secondItem="yO9-2l-PNS" secondAttribute="bottom" constant="9" id="il4-Aw-JuS"/>
+                            <constraint firstItem="Z8Q-w9-aBC" firstAttribute="top" secondItem="yc1-pI-EEa" secondAttribute="bottom" constant="8" symbolic="YES" id="jEb-bb-CnK"/>
                         </constraints>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
@@ -183,12 +191,12 @@
                     <navigationItem key="navigationItem" title="Stats" id="Q7L-hU-Qa8"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
-                        <outlet property="barChartView" destination="52d-74-Pe4" id="Pit-TZ-xRm"/>
+                        <outlet property="lineChartView" destination="yc1-pI-EEa" id="Bhi-4b-ZCj"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4Ww-BL-WEq" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4864.8000000000002" y="428.63568215892059"/>
+            <point key="canvasLocation" x="4863.75" y="427.81690140845069"/>
         </scene>
         <!--Sync-->
         <scene sceneID="s63-xD-ga7">
