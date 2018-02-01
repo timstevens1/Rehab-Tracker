@@ -151,8 +151,10 @@ class ViewController: UIViewController {
         }
         else {
             // Alert to tell user they arent properly logged in
+            var Message = "Could not find userID: "
+            Message += Util.returnCurrentUsersID()
             let alert = UIAlertController(title: "Invalid Login",
-                                          message: "Could not find userID",
+                                          message: Message,
                                           preferredStyle: .alert)
             
             // Creates the okay button in the alert

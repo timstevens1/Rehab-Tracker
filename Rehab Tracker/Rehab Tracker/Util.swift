@@ -11,9 +11,12 @@ import CoreData
 import Foundation
 var UDID = ""
 var DBuser = ""
+
 // This is a bunch of utility functions used throughout the code
 class Util {
-
+    class func getHOST() -> String{
+        return "https://rehabtracker.med.uvm.edu/"
+    }
     // Returns current User's userID as a string
     class func returnCurrentUsersID() -> String {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -139,7 +142,7 @@ class Util {
     class func updateTargetIntensity() {
         
         // Create urlstr string with current userID
-        let urlstr : String = "https://www.uvm.edu/~rtracker/Restful/getTargetIntensity.php?pmkPatientID="
+        let urlstr : String = Util.getHOST() + "Restful/getTargetIntensity.php?pmkPatientID="
             + Util.returnCurrentUsersID()
         
         // Make url string into actual url and catch errors
@@ -284,18 +287,19 @@ class Util {
     class func findDatabaseUsername(){
         
         // Create urlstr string with current userID
-        let urlstr : String = "https://www.uvm.edu/~rtracker/Restful/example.php?pmkPatientID=" + Util.returnCurrentUsersID()
+        let urlstr : String = Util.getHOST() + "Restful/example.php?pmkPatientID=" + Util.returnCurrentUsersID()
         
         // Make url string into actual url and catch errors
         guard let url = URL(string: urlstr)
             else {
-                print("Error: cannot create URL")
+                print("Error: cannot create URL1")
                 return
         }
         
         // Creates urlRequest using our url
         // Let urlRequest = NSMutableURLRequest(url: url)
         var urlRequest = URLRequest(url: url)
+        print(urlstr)
         var task = URLSession.shared.dataTask(with: urlRequest, completionHandler: {
             (data, response, error) in
             // If data exists, grab it and set it to our global variable
@@ -314,7 +318,7 @@ class Util {
                 }
             }
             else {
-                print(error as! String)
+                print(error)
             }
         })
         // Return value of returnedUserID
@@ -323,7 +327,7 @@ class Util {
     }
     class func pushRegistration() -> String {
     
-        let earl = "http://rtracker.w3.uvm.edu/restful.py"
+        let earl = Util.getHOST() + "Restful/restful.php"
         var urlRequest: URLRequest
         guard let url2 = URL(string: earl)
             else {
@@ -339,7 +343,7 @@ class Util {
         }
         urlRequest.httpMethod = "POST"
         let json: [String: Any] = [
-            "ID": Util.returnCurrentUsersID(),
+            "pmkPatientID": Util.returnCurrentUsersID(),
             "UDID": Util.getUDID()
         ]
         do {

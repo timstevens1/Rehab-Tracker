@@ -298,7 +298,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         /* First, get max session number for this user from db
          Use this to determine new session numbers */
         // Create urlstr string with current userID
-        let urlstr : String = "https://www.uvm.edu/~rtracker/Restful/sync.php?pmkPatientID=" + Util.returnCurrentUsersID()
+        let urlstr : String = Util.getHOST() + "Restful/sync.php?pmkPatientID=" + Util.returnCurrentUsersID()
         // Make url string into actual url
         let url = URL(string: urlstr)
         // Create urlRequest using our url
@@ -438,7 +438,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     
     // Push new sessions to database via JSON object
     private func pushToDatabase() {
-        let urlstr : String = "https://www.uvm.edu/~rtracker/Restful/sync.php"
+        let urlstr : String = Util.getHOST() + "Restful/sync.php"
         
         //Make url string into actual url and catch errors
         guard let url = URL(string: urlstr)

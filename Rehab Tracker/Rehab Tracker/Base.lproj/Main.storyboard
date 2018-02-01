@@ -10,7 +10,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--About-->
+        <!--User-->
         <scene sceneID="U4x-qb-tlB">
             <objects>
                 <viewController storyboardIdentifier="settings" useStoryboardIdentifierAsRestorationIdentifier="YES" id="9Uq-XS-RJg" customClass="SettingsViewController" customModule="Rehab_Tracker" customModuleProvider="target" sceneMemberID="viewController">
@@ -22,35 +22,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Rehab Tracker" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yOt-Qu-tRb">
-                                <rect key="frame" x="57" y="79" width="206" height="57"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="57" id="8eu-VI-9qv"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="32"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="CS 275" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kHH-sj-1hL">
-                                <rect key="frame" x="131" y="155" width="58" height="21"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="58" id="FyC-XO-26O"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Sean, Meaghan,  Brandon, Tim, Xavier, Chia-Chun, Yifan, Luke, Brian" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="243" translatesAutoresizingMaskIntoConstraints="NO" id="w7n-hS-v3Q">
-                                <rect key="frame" x="39" y="196" width="243" height="52"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="ucu-I2-dpB"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eOl-qr-7as">
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eOl-qr-7as">
                                 <rect key="frame" x="57" y="415" width="206" height="64"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="35"/>
                                 <state key="normal" title="Logout" backgroundImage="SmallButton"/>
                                 <connections>
@@ -59,37 +33,37 @@
                                     <segue destination="Cld-m7-iJA" kind="show" id="Myt-Sp-jyx"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Contact us at rtracker@uvm.edu" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="koU-br-wff">
-                                <rect key="frame" x="33" y="301" width="249" height="35"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="271-uB-P4c">
+                                <rect key="frame" x="57" y="319" width="206" height="64"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="35"/>
+                                <state key="normal" title="Feedback" backgroundImage="SmallButton"/>
+                                <connections>
+                                    <action selector="Continue:" destination="BYZ-38-t0r" eventType="touchUpInside" id="t8i-MZ-qzm"/>
+                                    <action selector="Feedback:" destination="9Uq-XS-RJg" eventType="touchUpInside" id="bdb-wi-A4d"/>
+                                    <action selector="Logout:" destination="9Uq-XS-RJg" eventType="touchUpInside" id="a3G-dG-hzo"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Welcome:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UCM-wZ-Jhv">
+                                <rect key="frame" x="85" y="142" width="149" height="49"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstItem="w7n-hS-v3Q" firstAttribute="centerX" secondItem="kHH-sj-1hL" secondAttribute="centerX" id="71D-vu-CRn"/>
-                            <constraint firstItem="yOt-Qu-tRb" firstAttribute="centerX" secondItem="vl7-4n-hHC" secondAttribute="centerX" id="7Yf-Ei-mTS"/>
-                            <constraint firstItem="eOl-qr-7as" firstAttribute="top" relation="greaterThanOrEqual" secondItem="koU-br-wff" secondAttribute="bottom" constant="20" id="A0R-Fz-1aa"/>
-                            <constraint firstItem="yOt-Qu-tRb" firstAttribute="leading" secondItem="vl7-4n-hHC" secondAttribute="leadingMargin" constant="41" id="ASj-ak-BsU"/>
-                            <constraint firstItem="yOt-Qu-tRb" firstAttribute="top" secondItem="Zdb-ps-W36" secondAttribute="bottom" constant="70" id="R4E-2V-PCF"/>
-                            <constraint firstItem="eOl-qr-7as" firstAttribute="centerX" secondItem="koU-br-wff" secondAttribute="centerX" id="Tjq-cC-3YV"/>
-                            <constraint firstItem="kHH-sj-1hL" firstAttribute="top" secondItem="yOt-Qu-tRb" secondAttribute="bottom" constant="48" id="UB7-wU-lCv"/>
-                            <constraint firstItem="koU-br-wff" firstAttribute="leading" secondItem="vl7-4n-hHC" secondAttribute="leadingMargin" constant="45" id="ZvJ-bh-dHH"/>
-                            <constraint firstItem="yOt-Qu-tRb" firstAttribute="centerX" secondItem="vl7-4n-hHC" secondAttribute="centerX" id="a4I-mP-4fx"/>
-                            <constraint firstItem="w7n-hS-v3Q" firstAttribute="top" secondItem="kHH-sj-1hL" secondAttribute="bottom" constant="49" id="khd-VO-EPW"/>
-                            <constraint firstItem="koU-br-wff" firstAttribute="centerX" secondItem="w7n-hS-v3Q" secondAttribute="centerX" id="km6-MY-vGc"/>
-                            <constraint firstItem="kHH-sj-1hL" firstAttribute="centerX" secondItem="vl7-4n-hHC" secondAttribute="centerX" id="omT-3E-xY1"/>
-                            <constraint firstItem="koU-br-wff" firstAttribute="top" secondItem="w7n-hS-v3Q" secondAttribute="bottom" constant="53" id="pBW-0L-FNE"/>
-                        </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="About" id="Hq9-gK-FU8">
+                    <navigationItem key="navigationItem" title="User" id="Hq9-gK-FU8">
                         <barButtonItem key="leftBarButtonItem" title="Back" id="etq-tr-Fu0">
                             <connections>
                                 <segue destination="uFE-9B-9Z5" kind="show" id="NH2-DQ-me7"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="UserName" destination="UCM-wZ-Jhv" id="nlb-AC-Ifx"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uY7-oL-LCd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -242,7 +216,7 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Sync" id="se7-Cu-KdY">
-                        <barButtonItem key="leftBarButtonItem" title="Settings" id="LQP-2j-JFI">
+                        <barButtonItem key="leftBarButtonItem" title="User" id="LQP-2j-JFI">
                             <connections>
                                 <segue destination="axa-Ap-EpL" kind="show" id="FtS-cU-vym"/>
                             </connections>

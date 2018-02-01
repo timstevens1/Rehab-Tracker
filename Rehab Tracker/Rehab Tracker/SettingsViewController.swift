@@ -11,7 +11,13 @@ import UIKit
 
 class SettingsViewController: UIViewController {
     
+    @IBAction func Feedback(_ sender: Any) {
+        if let url = URL(string: "https://goo.gl/forms/jeWGFdvACDlcg2Br1"){
+            UIApplication.shared.openURL(url)
+        }
+    }
     
+    @IBOutlet weak var UserName: UILabel!
     @IBAction func Logout(_ sender: Any) {
         print(Util.numberOfUsers())
         while Util.numberOfUsers() != 0 {
@@ -22,6 +28,7 @@ class SettingsViewController: UIViewController {
     }
     
     override func viewDidLoad() {
+        UserName.text = "Welcome: "+Util.returnCurrentUsersID();
         super.viewDidLoad()
 
     }

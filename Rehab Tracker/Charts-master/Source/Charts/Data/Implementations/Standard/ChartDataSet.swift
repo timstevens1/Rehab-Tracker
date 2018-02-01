@@ -184,7 +184,10 @@ open class ChartDataSet: ChartBaseDataSet
     /// if `i` is out of bounds, it may throw an out-of-bounds exception
     open override func entryForIndex(_ i: Int) -> ChartDataEntry?
     {
-        return _values[i]
+        if (entryCount > 0){
+            return _values[i]
+        }
+        return nil;
     }
     
     /// - returns: The first Entry object found at the given x-value with binary search.

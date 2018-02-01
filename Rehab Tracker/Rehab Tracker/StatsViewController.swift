@@ -70,7 +70,7 @@ class StatsViewController: UIViewController {
     // Function to get current user's session stats from db via ReST
     private func getStats() {
         // Create urlstr string with current userID
-        let urlstr : String = "https://www.uvm.edu/~rtracker/Restful/getUserSessionsStats.php?pmkPatientID=" + Util.returnCurrentUsersID()
+        let urlstr : String = Util.getHOST() + "Restful/getUserSessionsStats.php?pmkPatientID=" + Util.returnCurrentUsersID()
         // Make url string into actual url
         let url = URL(string: urlstr)
         // Create urlRequest using our url
@@ -103,7 +103,7 @@ class StatsViewController: UIViewController {
                         print("data piece")
                         print(session_data)
                     }
-                    let sessionTime = userSessionDict["fldStartTime"] as! String
+                    //let sessionTime = userSessionDict["fldStartTime"] as! String
                     let sessionID = userSessionDict["fldSessNum"] as! String
                     print("SESSION ID")
                     print(sessionID)
@@ -162,7 +162,7 @@ class StatsViewController: UIViewController {
                 self.setLineChart(dataPoints: self.sessions, values: self.intensity)
             }
             else {
-                print(error as! String)
+                print(error)
             }
         })
         task.resume()
