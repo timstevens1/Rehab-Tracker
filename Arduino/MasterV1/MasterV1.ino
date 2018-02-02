@@ -1,6 +1,7 @@
 // EMPI Usage Monitoring
 // Blake Hewgill & Javier Bunuel, University of Vermont
 // Capstone Design, Spring 2017
+// Chia-Chun Chao, Yifan Zhang, and Xaview Stevens, Universiaty of Vermont
 boolean testMode = true;
 
 #include <EEPROMex.h>
@@ -9,25 +10,23 @@ boolean testMode = true;
 #include <aci_setup.h>
 #include <RBL_nRF8001.h>
 #include <RBL_services.h>
-
 #include <Wire.h>
 #include "RTClib.h"
-
+/*
 int sensorPin1 = A0;    // select the input pin for channel 1
 int sensorPin2 = A1;    // select the input pin for channel 2
-int sensorValue = 0;  // variable to store the value coming from the sensor
+*/
 int sampleNum1 = 0;  // Sample number
 int sampleNum2 = 0;  // Sample number
-int sampleArray1[100]; // Should be 90 samples in an hour long session (one each 40 seconds). Extras to be safe.
+int sampleArray1[90]; // Should be 90 samples in an hour long session (one each 40 seconds). Extras to be safe.
 long arrayTot1 = 0; // A running sum of the contents of sampleArray to be divided by sampleNum for averaging
 float arrayAvg1 = 0; // A running avg of the above
-int sampleArray2[100]; // Should be 90 samples in an hour long session (one each 40 seconds). Extras to be safe.
+int sampleArray2[90]; // Should be 90 samples in an hour long session (one each 40 seconds). Extras to be safe.
 long arrayTot2 = 0; // A running sum of the contents of sampleArray to be divided by sampleNum for averaging
 float arrayAvg2 = 0; // A running avg of the above
 int sessionCount; //= EEPROM.write(0, 0x00);
-int currentAddress; //= EEPROM.write(1,0x15);
 
-float sessionComp=0;
+float sessionComp = 0;
 int ant1 = 0;
 int next1 = 0;
 int maxVal1 = 0;
@@ -35,47 +34,51 @@ int ant2 = 0;
 int next2 = 0;
 int maxVal2 = 0;
 
-void initialize();
-void ButtonInterrupt();
-void WriteStorage();
-void ArrayAdd(float intensityValue, int channel);
-float IntensityMap(int sensorValue);
-
-bool flag = false;
+bool sendFlag = false; //If blend has sent data to the app, the sendFlag is set to true
+bool startFlag = false; //If a session starts, the startFlag is set to true
 
 long startTime;
 long endTime;
 DateTime now;
 RTC_DS1307 rtc;
 
+void initialize();
+void ButtonInterrupt();
+void WriteStorage();
+void ArrayAdd(float intensityValue, int channel);
+float IntensityMap(int sensorValue);
+
+
 void setup() {
   // Initialize what we need in here
-  EEPROM.setMaxAllowedWrites(32768);
-  //EEPROM.setMaxAllowedWrites(EEPROMSizeUno);
 
-  EEPROM.updateInt(0, 0);
-  EEPROM.writeInt(2, 2);
+  //Set the maximum number of writes
+  //EEPROM.setMaxAllowedWrites(32768);
+  EEPROM.setMaxAllowedWrites(EEPROMSizeUno);
 
-  //currentAddress = EEPROM.readInt(2);
-  currentAddress = 2;
+  //Set sessionCount
+  //This is the first time using this blend
+  if (EEPROM.readInt(2) != 1) {
+    EEPROM.updateInt(0, 0);
+  }
+  //The first two bytes are used to store an integer of the total session count in EEPROM
   sessionCount = EEPROM.readInt(0);
 
   if (testMode) { //start serial com
     Serial.begin(57600);
-    Serial.print("SessionCount = ");
-    Serial.println(sessionCount);
+    //Serial.print("SessionCount = ");
+    //Serial.println(sessionCount);
   }
-
 
   Serial.begin(57600);
 
+  //Set real time clock
   if (! rtc.begin()) {
-    Serial.println("Couldn't find RTC");
+    //Serial.println("Couldn't find RTC");
     //while (1);
   }
-
   if (! rtc.isrunning()) {
-    Serial.println("RTC is NOT running!");
+    //Serial.println("RTC is NOT running");
     // following line sets the RTC to the date & time this sketch was compiled
     rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
     // This line sets the RTC with an explicit date & time, for example to set
@@ -83,52 +86,67 @@ void setup() {
     // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
   }
 
-
+  //RT is the name of this blend. We can use this name for the app to only recognize this blend
   ble_set_name("RT");
-  ble_begin(); //ble_begin starts the BLE stack and broadcasting the advertising packet
+  ble_begin(); //ble_begin starts the BLE stack and broadcasting the advertising packet  
 }
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
 void loop()
-{
-  //analogWrite(LED1, 10);
-  long i = 0;
-  while ((analogRead(sensorPin1) <= 10 && analogRead(sensorPin2) <= 10) || (sampleNum1 >= 90 || sampleNum2 >= 90)) {
-    Serial.println("Not running");
+{ 
+  //rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  
+  int sensorPin1 = A0;    // select the input pin for channel 1
+  int sensorPin2 = A1;    // select the input pin for channel 2
+  long i = 0; //i is used as a timer
+
+  //***********************************Not running***********************************
+
+  //When the input is too low, this blend should not continue computing the intensity
+  while ((analogRead(sensorPin1) <= 2 && analogRead(sensorPin2) <= 2)) {
+    Serial.println(F("Low input"));
     ButtonInterrupt();
-    Serial.print("While-loop at:");
-    Serial.println(i);
-    delay(1);
-    i++;
-    if (i == 120000) {
-      EEPROM.updateInt(0, sessionCount);
-      sessionCount++;
+    if (sampleNum1 >= 9 || sampleNum2 >= 9) {
+      //Serial.println("Finish the session");
       initialize();
-      Serial.println("If Statement Complete!");
+      startFlag = false;
     }
   }
 
-  /*
-    //EEPROM only stores one session. We will change this later
-    while (sampleNum1 > 90 || sampleNum2 > 90) {
+  //When there are already 90 samples, this session has finished
+  while (sampleNum1 >= 90 || sampleNum2 >= 90) {
+    Serial.println(F("Completed"));
     ButtonInterrupt();
-    Serial.println("This session has finished.");
+    //Serial.print("While-loop at:");
+    //Serial.println(i);
+    delay(1);
+    i++;
+    //When a session has finished after 120 seconds, we initialize all related variables
+    if (i == 120000 || (analogRead(sensorPin1) <= 2 && analogRead(sensorPin2) <= 2)) {
+      initialize();
+      startFlag = false;
     }
-  */
+  }
 
-  /*
-    while(1)
-    {
-    ButtonInterrupt();
-    }
-  */
+  //***********************************Session starts***********************************
+
   //Store the start time when a session starts
-  if (sampleNum1 == 0 || sampleNum2 == 0) {
+  if (sampleNum1 == 0 && sampleNum2 == 0) {
     now = rtc.now();
     startTime = now.unixtime();
   }
 
-  //Store the start time when a session starts
-  if (sampleNum1 == 0 || sampleNum2 == 0) {
+  //Store the start time and increase the session count if this session starts
+  if (startFlag == false) {
+    sessionCount++;
+    EEPROM.updateInt(0, sessionCount);
+    startFlag = true;
+  }
+  //Patient is doing a session, but data has been sent out and sessionCount has been set to zero
+  //Start a new session
+  else if ((sampleNum1 >=9 || sampleNum2 >=9) && sessionCount == 0){
+    sessionCount++;
+    EEPROM.updateInt(0, sessionCount);
+    initialize();
     now = rtc.now();
     startTime = now.unixtime();
   }
@@ -136,25 +154,25 @@ void loop()
   ButtonInterrupt();
 
   if (testMode) {
-    Serial.println("TEST MODE ACTIVE");
+    Serial.println(F("TEST MODE"));
   }
 
-  ButtonInterrupt();
+  //***********************************Find the vertex***********************************
+  delay(1000);
+
   // Comparison Loop
   // Channel 1
   ant1 = next1;
   next1 = analogRead(sensorPin1);
-  
-  Serial.print("Pin1: ");
+
+  Serial.print(F("Pin1: "));
   Serial.println(next1);
-  
-  delay(1000);
 
   if (ant1 > next1) {
     if (maxVal1 > ant1) {
       //maxVal1 = ant1;
       //SEND
-      Serial.print("MaxDigiVoltage = ");
+      Serial.print(F("MaxVolt = "));
       Serial.println(maxVal1);
       //Intensity Map
       ArrayAdd(IntensityMap(maxVal1), 1);
@@ -162,29 +180,31 @@ void loop()
       ButtonInterrupt();
       delay(500);
 
+      //We only store data to EEPROM at 9, 19, 29, ..., 89
       if (((sampleNum1 + 1) % 10) == 0) {
         WriteStorage();
         ButtonInterrupt();
       }
-
     }
   }
   else {
     maxVal1 = next1;
   }
   ButtonInterrupt();
+
+  //***********************************Find the vertex***********************************
   // Channel 2
   ant2 = next2;
   next2 = analogRead(sensorPin2);
 
-  Serial.print("Pin2: ");
+  Serial.print(F("Pin2: "));
   Serial.println(next2);
-  
+
   if (ant2 > next2) {
     if (maxVal2 > ant2) {
       //maxVal2 = ant2;
       //SEND
-      Serial.print("MaxDigiVoltage = ");
+      Serial.print(F("MaxVolt = "));
       Serial.println(maxVal2);
       //Intensity Map
       ArrayAdd(IntensityMap(maxVal2), 2);
@@ -202,26 +222,28 @@ void loop()
   }
   ButtonInterrupt();
 
-  Serial.print("currentAddress = HEX ");
-  Serial.println(currentAddress);
+  //Serial.print("currentAddress = HEX ");
+  //Serial.println(currentAddress);
 
-  Serial.print("SampleNumber 1 = ");
+  Serial.print(F("samNum1: "));
   Serial.println(sampleNum1);
 
-  Serial.print("SampleNumber 2 = ");
+  Serial.print(F("samNum2: "));
   Serial.println(sampleNum2);
 
-  Serial.print("Start Time Recorded: ");
+  Serial.print(F("start: "));
   Serial.println(startTime);
 
-  Serial.print("Final Time Recorded: ");
+  Serial.print(F("end: "));
   Serial.println(endTime);
 
-  Serial.println("------------Loop Complete-------------");
+  Serial.println(F("------------Loop Complete-------------"));
 }
-
-
+//////////////////////////////////////////////////////////////////////////////////////////
 void initialize() {
+  //Initialize all global variables related to a session
+  int i = 0;
+
   sampleNum1 = 0;  // Sample number
   sampleNum2 = 0;  // Sample number
   arrayTot1 = 0; // A running sum of the contents of sampleArray to be divided by sampleNum for averaging
@@ -235,24 +257,25 @@ void initialize() {
   ant2 = 0;
   next2 = 0;
   maxVal2 = 0;
+  startTime = 0;
+  endTime = 0;
 
-  for (int i=0; i<140; i++){
+  for (i = 0; i < 90; i++) {
     sampleArray1[i] = 0;
     sampleArray2[i] = 0;
   }
 }
-
-
+//////////////////////////////////////////////////////////////////////////////////////////
 void outputtingToApp() {
+  //Send data to the app via BLE
 
   int address = 2;
-  for (int i = 0; i <= sessionCount; i++) {
-
+  for (int i = 0; i < sessionCount; i++) {
+    ble_do_events();
     char output_array_avg1[6];
     char output_array_avg2[6];
     char output_session_comp[5];
     char output_session_count[2];
-    //int address = 2;
     int sc = 0;
     float aavg1;
     float aavg2;
@@ -269,51 +292,54 @@ void outputtingToApp() {
     address = address + 2;
 
     aavg1 = EEPROM.readFloat(address);
-    dtostrf(aavg1, 5, 2, output_array_avg1);
-    address = address + 5;
+    dtostrf(aavg1, 5, 2, output_array_avg1); //char * dtostrf (double __val, signed char __width, unsigned char __prec, char *__s)
+    address = address + 4;
 
     aavg2 = EEPROM.readFloat(address);
     dtostrf(aavg2, 5, 2, output_array_avg2);
-    address = address + 5;
+    address = address + 4;
 
     scomp = EEPROM.readFloat(address);
     dtostrf(scomp, 4, 2, output_session_comp);
-    address = address + 5;
+    address = address + 4;
 
     startT = EEPROM.readLong(address);
     ltoa(startT, output_start_time, 10);
-    address = address + 5;
+    address = address + 4;
 
     endT = EEPROM.readLong(address);
     ltoa(endT, output_end_time, 10);
-    address = address + 5;
+    address = address + 4;
 
-    //ble_write_bytes((unsigned char * )output_session_count, strlen(output_session_count));
-    //delay(500);
-    //ble_write_bytes(output_comma,1);
-    //delay(1000);
+
+    Serial.print(sc);
+    Serial.print("/");
+    sc=EEPROM.readInt(0);
+    Serial.println(sc);
+    
     ble_write_bytes((unsigned char * )output_array_avg1, strlen(output_array_avg1));
-    delay(500);
+    //delay(1000);
     ble_write_bytes(output_comma, 1);
-    delay(1000);
+    //delay(500);
     ble_write_bytes((unsigned char * )output_array_avg2, strlen(output_array_avg2));
-    delay(500);
+    //delay(1000);
     ble_write_bytes(output_comma, 1);
-    delay(1000);
+    //delay(500);
     ble_write_bytes((unsigned char * )output_session_comp, strlen(output_session_comp));
-    delay(500);
+    //delay(1000);
     ble_write_bytes(output_comma, 1);
-    delay(1000);
+    //delay(500);
     ble_write_bytes((unsigned char * )output_start_time, strlen(output_start_time));
-
-    Serial.println(strlen(output_start_time));
-    delay(1000);
+    //delay(2000);
     ble_write_bytes(output_comma, 1);
-    delay(1000);
+    //delay(500);
     ble_write_bytes((unsigned char * )output_end_time, strlen(output_end_time));
-    delay(1000);
+    //delay(2000);
     ble_write_bytes(output_newline, 1);
-
+    //delay(500);
+    delay(5000);
+    ble_do_events();
+    delay(1000);
   }
   sessionCount = 0;
 
@@ -323,110 +349,57 @@ void outputtingToApp() {
 
 ////////////Button Inter//////////////////////////////////////////////////////////
 void ButtonInterrupt() {
-  /*
-    int address = 0;
-    unsigned char bytes[255];
-    unsigned char value;
-  */
-  //analogWrite(LED2, 150);
 
-  //if (digitalRead(buttonPin)==1 || sampleNum1>90 || sampleNum2>90){
+  ble_set_pins(6, 7); //ble_set_pins is to specify the REQN and RDYN pins to the BLE chip, i.e. the jumper on the BLE Shield.
 
-  //********I don't know how to change the conditions of 90 samples because I have changed this buttonInterrupt********
-  //if (digitalRead(buttonPin)==0 || sampleNum1>90 || sampleNum2>90){
-  if (1) {
-    ble_set_pins(6, 7); //ble_set_pins is to specify the REQN and RDYN pins to the BLE chip, i.e. the jumper on the BLE Shield.
-
-
-    //********Only check the connection when buttonInterrupt is called********
-    if (!ble_connected()) { //ble_connected returns 1 if connected by BLE Central or 0 if not.
-      Serial.println("BLE Not Connected");
-      ble_do_events();//ble_do_events allows the BLE to process its events, if data is pending, it will be sent out.
-    }
-    else if ( ble_connected() ) {
-      //Serial.println("BLE Connected");
-
-
-
-
-      //********If blend has sent data to the app, the flap is set to true********
-      //********Disconnect BLE if data has been transfered and there's nothing in BLE********
-      if (flag == true) {
-        Serial.println("Data has been sent out");
-        ble_do_events();
-        //ble_disconnect();
-        flag = false;
-        //analogWrite(LED3, 0);
-      }
-
-      //********If the app connects to the blend, it will send a value to BLE, so ble_read is not -1********
-      while (ble_read() != -1) {
-        Serial.println("Transfering data!!");
-        outputtingToApp();
-
-        ble_do_events();
-        delay(5000);
-
-        flag = true;
-        //analogWrite(LED3, 50);
-      }
-
-
-
-      //Serial.println("***************");
-
-      //address = 0;
-      //delay(1000); // We wait for an answer if its true, he has receive it so we go out of the loop, if not, we send it again
-
-    }
-    //}
-
-    ble_do_events();
-    //analogWrite(LED2, 0);
+  //Only check the connection when buttonInterrupt is called
+  if (!ble_connected()) { //ble_connected returns 1 if connected by BLE Central or 0 if not.
+    Serial.println(F("BLE Not Connected"));
+    ble_do_events();//ble_do_events allows the BLE to process its events, if data is pending, it will be sent out.
   }
+  else if ( ble_connected() ) {
+    //Serial.println("BLE Connected");
+
+    //If blend has sent data to the app, the flag is set to true
+    if (sendFlag == true) {
+      //Serial.println("Done");
+      ble_do_events();
+      sendFlag = false;
+      ble_disconnect();
+    }
+
+    //If the app connects to the blend, it will send a value to BLE, so ble_read is not -1
+    while (ble_read() != -1) {
+      ble_do_events();
+      Serial.println(F("Sync!"));
+      outputtingToApp();
+      ble_do_events();
+      delay(5000);
+      sendFlag = true;
+    }
+  }
+  ble_do_events();
 }
 ///////////////////////Writing to EEPROM///////////////////////////////////////////////////
 void WriteStorage() {
-  char comma = ',';
-  char newline = '\n';
+  int currentAddress = 2;
 
   now = rtc.now();
   endTime = now.unixtime();
 
-  Serial.print("********sessionCount = ");
-  Serial.println(sessionCount);
-  Serial.print("********currentAddress = ");
-  Serial.println(currentAddress);
-
-  currentAddress = 27 * sessionCount + currentAddress;
+  currentAddress = 22 * (sessionCount - 1) + 2;
   EEPROM.updateInt(currentAddress, sessionCount);
   currentAddress = currentAddress + 2;//increase by int
-  //EEPROM.updateByte(currentAddress,comma);
-  //currentAddress = currentAddress + 1;
   EEPROM.updateFloat(currentAddress, arrayAvg1);
   currentAddress = currentAddress + 4;//increase by float
-  EEPROM.updateByte(currentAddress, comma);
-  currentAddress = currentAddress + 1;
   EEPROM.updateFloat(currentAddress, arrayAvg2);
   currentAddress = currentAddress + 4;//increase by float
-  EEPROM.updateByte(currentAddress, comma);
-  currentAddress = currentAddress + 1;
   EEPROM.updateFloat(currentAddress, sessionComp);
   currentAddress = currentAddress + 4;//increase by float
-  EEPROM.updateByte(currentAddress, comma);
-  currentAddress = currentAddress + 1;
   EEPROM.updateLong(currentAddress, startTime);
   currentAddress = currentAddress + 4;//increase by int
-  EEPROM.updateByte(currentAddress, comma);
-  currentAddress = currentAddress + 1;
   EEPROM.updateLong(currentAddress, endTime);
   currentAddress = currentAddress + 4;//increase by int
-  EEPROM.updateByte(currentAddress, newline);
-  currentAddress = currentAddress + 1;
-
-
-
-
 
   if (sampleNum1 > sampleNum2) {
     if (sampleNum1 < 90) { //Not done - these addresses will be rewritten this session
@@ -483,9 +456,9 @@ void ArrayAdd(float intensityValue, int channel) {
       arrayAvg1 = arrayTot1 / (sampleNum1 + 1);
       sessionComp = float(sampleNum1) / 90;
       if (testMode) {
-        Serial.print("ArrayAvg = ");
+        Serial.print(F("ArrayAvg = "));
         Serial.print(arrayAvg1);
-        Serial.print(" and SessionComplete = ");
+        Serial.print(F(" | sessionComp = "));
         Serial.print(sessionComp * 100);
         Serial.println("%");
       }
@@ -496,9 +469,9 @@ void ArrayAdd(float intensityValue, int channel) {
       arrayAvg2 = arrayTot2 / (sampleNum2 + 1);
       sessionComp = float(sampleNum2) / 90;
       if (testMode) {
-        Serial.print("ArrayAvg = ");
+        Serial.print(F("ArrayAvg = "));
         Serial.print(arrayAvg2);
-        Serial.print(" and SessionComplete = ");
+        Serial.print(F(" | sessionComp = "));
         Serial.print(sessionComp * 100);
         Serial.println("%");
       }
@@ -512,7 +485,7 @@ float IntensityMap(int sensorValue) {
   intensity = (float) sensorValue / 10.0;
 
   if (testMode) {
-    Serial.print("Intensity = ");
+    Serial.print(F("Intensity = "));
     Serial.println(intensity);
   }
 
