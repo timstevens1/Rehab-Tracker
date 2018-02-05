@@ -11,6 +11,7 @@ import CoreData
 import Foundation
 var UDID = ""
 var DBuser = ""
+var lastSynced = ""
 
 // This is a bunch of utility functions used throughout the code
 class Util {
@@ -19,6 +20,7 @@ class Util {
     }
     // Returns current User's userID as a string
     class func returnCurrentUsersID() -> String {
+        
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
         let request: NSFetchRequest<User>=User.fetchRequest()
@@ -34,6 +36,17 @@ class Util {
         }
         if ret == "" { ret = "No User" }
         return ret
+    }
+    class func getCurrentUserID() -> String {
+        var ID = ""
+        var x = 0
+        DispatchQueue.main.async {
+            ID = returnCurrentUsersID()
+            x = 1
+        }
+        while x == 0 {
+        }
+        return ID
     }
     
     // Returns the current User as a NSManagedObject
@@ -179,6 +192,7 @@ class Util {
     
     // Function to save target intensity to Core Data
     class func saveTargetIntensity(returnedTargetIntensity: String) {
+        DispatchQueue.main.async(execute: {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
         let request: NSFetchRequest< User >=User.fetchRequest()
@@ -196,6 +210,7 @@ class Util {
         }
         
         (UIApplication.shared.delegate as! AppDelegate).saveContext()
+    })
     }
     
     // Function to return the targetIntensity from core data
@@ -279,6 +294,57 @@ class Util {
     }
     class func getUDID() -> String{
         return UDID;
+    }
+    class func getDeviceLastSynced() ->String {
+            findDeviceLastSynced()
+        while(lastSynced == ""){
+        }
+            return lastSynced;
+    }
+    class func findDeviceLastSynced(){
+        // Create urlstr string with current userID
+        let urlstr : String = Util.getHOST() + "Restful/getDeviceSync.php?pmkPatientID=" + Util.returnCurrentUsersID()
+        
+        // Make url string into actual url and catch errors
+        guard let url = URL(string: urlstr)
+            else {
+                print("Error: cannot create URL2")
+                lastSynced = "  "
+                return
+        }
+        
+        // Creates urlRequest using our url
+        // Let urlRequest = NSMutableURLRequest(url: url)
+        var urlRequest = URLRequest(url: url)
+        print(urlstr)
+        var task = URLSession.shared.dataTask(with: urlRequest, completionHandler: {
+            (data, response, error) in
+            // If data exists, grab it and set it to our global variable
+            print(error == nil)
+            if (error == nil) {
+                let jo : NSDictionary
+                do {
+                    jo =
+                        try JSONSerialization.jsonObject(with: data!, options: []) as! NSDictionary
+                    print(jo)
+                }
+                catch {
+                    lastSynced = "  "
+                    return
+                }
+                if let name = jo["sync"] as? String {
+                     lastSynced = name
+                }
+                else{
+                    lastSynced = "  "
+                }
+            }
+            else {
+                print(error)
+                lastSynced = "  "
+            }
+        })
+        task.resume()
     }
     class func getDatabaseUsername() -> String {
         findDatabaseUsername()

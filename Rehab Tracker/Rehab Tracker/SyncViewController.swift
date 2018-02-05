@@ -42,6 +42,7 @@ let positiveFeedbackMessages = ["By completing your NMES session, you are preven
 // Eventually you are going to want to get callbacks from some functionality. There are two delegates to implement: CBCentralManagerDelegate, and CBPeripheralDelegate.
 class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate  {
     
+    @IBOutlet weak var dateSynced: UILabel!
     //(3) Declare Manager and Peripheral
     // The CBCentralManager install will be what you use to find, connect, and manage BLE devices. Once you are connected, and are working with a specific service, the peripheral will help you iterate characteristics and interacting with them.
     private var manager:CBCentralManager!
@@ -83,7 +84,6 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         // show the alert
         self.present(alert, animated: true, completion: nil)
     }
-    
     // Reset sync UI and create post-sync alert - feedback on success or failure
     private func syncResetUIAndFeedbackAlert() {
         // Reset image and button
@@ -154,7 +154,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                                             self.flag = true;
                                             
                                             // Timeout if data not correctly synced from NMES device after 10 seconds
-                                            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0, execute: {
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 15.0, execute: {
                                                 if (sessionsStringFromDevice == "" || !sessionsStringFromDevice.contains("\n") || !self.finished_parsing_data) {
                                                     self.failed_sync = true
                                                     self.feedback_message = "Error finding data on NMES device. Please reboot your NMES device and try again."
@@ -686,6 +686,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     override func viewDidLoad() {
         super.viewDidLoad()
         self.sync_image.image = UIImage(named: "Tab-Sync")
+        dateSynced.text = Util.getDeviceLastSynced();
         flag = false
     }
     

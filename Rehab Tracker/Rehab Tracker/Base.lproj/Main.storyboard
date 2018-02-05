@@ -57,7 +57,7 @@
                     <navigationItem key="navigationItem" title="User" id="Hq9-gK-FU8">
                         <barButtonItem key="leftBarButtonItem" title="Back" id="etq-tr-Fu0">
                             <connections>
-                                <segue destination="uFE-9B-9Z5" kind="show" id="NH2-DQ-me7"/>
+                                <segue destination="9ZY-Pg-SSE" kind="show" id="38U-FL-vpU"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -195,24 +195,33 @@
                                     <action selector="Sync:" destination="vbo-sO-2Vi" eventType="touchUpInside" id="Cvz-qR-DP4"/>
                                 </connections>
                             </button>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="v34-06-eIz">
-                                <rect key="frame" x="136" y="260" width="49" height="49"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="246" misplaced="YES" text="Sync your new NMES sessions" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3uv-wr-Rrg">
                                 <rect key="frame" x="23" y="176" width="274.5" height="24"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <color key="textColor" red="0.001153659326" green="0.001153659326" blue="0.001153659326" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Date last Synced:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jae-uv-n9W">
+                                <rect key="frame" x="82" y="132" width="157" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="v34-06-eIz">
+                                <rect key="frame" x="136" y="254" width="49" height="49"/>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="3uv-wr-Rrg" firstAttribute="centerX" secondItem="BoW-Da-dcl" secondAttribute="centerX" id="Auj-v2-Qem"/>
+                            <constraint firstItem="imC-Ye-3Nv" firstAttribute="centerX" secondItem="BoW-Da-dcl" secondAttribute="centerX" id="NeL-GK-gGT"/>
+                            <constraint firstItem="v34-06-eIz" firstAttribute="centerX" secondItem="BoW-Da-dcl" secondAttribute="centerX" id="UH1-61-wmV"/>
                             <constraint firstItem="LqQ-uc-v0O" firstAttribute="top" secondItem="imC-Ye-3Nv" secondAttribute="bottom" constant="106" id="V2E-V8-Fr7"/>
                             <constraint firstItem="imC-Ye-3Nv" firstAttribute="centerX" secondItem="BoW-Da-dcl" secondAttribute="centerX" id="ht4-8U-dek"/>
                             <constraint firstItem="3uv-wr-Rrg" firstAttribute="top" secondItem="frm-dQ-VW2" secondAttribute="bottom" constant="70" id="nu8-ef-cLD"/>
                             <constraint firstItem="imC-Ye-3Nv" firstAttribute="leading" secondItem="BoW-Da-dcl" secondAttribute="leadingMargin" constant="79" id="pr6-FW-qn2"/>
+                            <constraint firstItem="jae-uv-n9W" firstAttribute="centerX" secondItem="BoW-Da-dcl" secondAttribute="centerX" id="uIh-o4-Fjj"/>
+                            <constraint firstItem="3uv-wr-Rrg" firstAttribute="top" secondItem="jae-uv-n9W" secondAttribute="bottom" constant="23" id="zEc-gR-qyS"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Sync" id="se7-Cu-KdY">
@@ -228,6 +237,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="dateSynced" destination="3uv-wr-Rrg" id="N5V-Pg-yE0"/>
                         <outlet property="sync_button" destination="imC-Ye-3Nv" id="buT-jv-HCt"/>
                         <outlet property="sync_image" destination="v34-06-eIz" id="szh-55-r4G"/>
                     </connections>
@@ -339,6 +349,6 @@
         <image name="Tab-Sync-Highlighted" width="30" height="30"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="NH2-DQ-me7"/>
+        <segue reference="38U-FL-vpU"/>
     </inferredMetricsTieBreakers>
 </document>

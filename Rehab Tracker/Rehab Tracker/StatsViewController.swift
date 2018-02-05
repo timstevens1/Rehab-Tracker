@@ -52,7 +52,9 @@ class StatsViewController: UIViewController {
         // Aesthetic options for the chart
         lineChartView.chartDescription?.text = ""
         lineChartView.xAxis.labelPosition = .bottom
-        lineChartView.backgroundColor = UIColor(red: 189/255, green: 195/255, blue: 199/255, alpha: 1)
+        DispatchQueue.main.async {
+            self.lineChartView.backgroundColor = UIColor(red: 189/255, green: 195/255, blue: 199/255, alpha: 1)
+        }
         lineChartView.animate(xAxisDuration: 2.0, yAxisDuration: 2.0)
         lineChartView.rightAxis.enabled = false
         lineChartView.xAxis.granularity = 1
@@ -107,11 +109,11 @@ class StatsViewController: UIViewController {
                     let sessionID = userSessionDict["fldSessNum"] as! String
                     print("SESSION ID")
                     print(sessionID)
-                    let userID = Util.returnCurrentUsersID()
+                    let userID = Util.getCurrentUserID()
                     if (sessionID.count > userID.count) {
                         print("SESSION NUM STRING")
                         print(sessionID.suffix(sessionID.count - userID.count - 1))
-                    }
+                        }
                     if (sessionID.range(of:"_") != nil) {
                         let sessionNum = Double(sessionID.suffix(sessionID.count - userID.count - 1))
                         let sessionIntensity1 = Double(userSessionDict["fldIntensity1"] as! String)
