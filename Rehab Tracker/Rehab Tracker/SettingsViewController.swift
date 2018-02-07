@@ -20,7 +20,7 @@ class SettingsViewController: UIViewController {
     @IBOutlet weak var UserName: UILabel!
     @IBAction func Logout(_ sender: Any) {
         print(Util.numberOfUsers())
-        while Util.numberOfUsers() != 0 {
+        while Util.numberOfUsers() > 0 {
             print("is this running?")
             Util.deleteData()
         }

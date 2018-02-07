@@ -155,11 +155,34 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                                             
                                             // Timeout if data not correctly synced from NMES device after 10 seconds
                                             DispatchQueue.main.asyncAfter(deadline: .now() + 15.0, execute: {
-                                                if (sessionsStringFromDevice == "" || !sessionsStringFromDevice.contains("\n") || !self.finished_parsing_data) {
+                                                if (sessionsStringFromDevice == "" || !sessionsStringFromDevice.contains("\n")) {
                                                     self.failed_sync = true
                                                     self.feedback_message = "Error finding data on NMES device. Please reboot your NMES device and try again."
                                                     print("[DEBUG] Problem syncing data from NMES device")
                                                     self.syncResetUIAndFeedbackAlert()
+                                                }
+                                                else {
+                                                // This is whwere the app syncs the data to the database
+                                                    if (sessionsStringFromDevice.hasSuffix("\n")) {
+                                                        // Set feedback message to positive message
+                                                        let randomPositiveMessageIndex = Int(arc4random_uniform(UInt32(positiveFeedbackMessages.count)))
+                                                        self.feedback_message = positiveFeedbackMessages[randomPositiveMessageIndex]
+                                                        self.parseData()
+                                                        print("[DEBUG] DATA PARSED")
+                                                        // It no failure yet, sync sessions to core data and db
+                                                        if (!self.failed_sync) {
+                                                            self.syncSessions()
+                                                            print("[DEBUG] SESSIONS SYNCED")
+                                                            // If failure in parseData(), update error message and launch alert
+                                                        } else {
+                                                            self.feedback_message = "Error parsing and Syncing the data. Please contact the developers through the feedback form."
+                                                            self.syncResetUIAndFeedbackAlert()
+                                                            return
+                                                        }
+                                                        // Reset sync UI and launch feedback alert
+                                                        self.syncResetUIAndFeedbackAlert()
+                                                    }
+                                                    
                                                 }
                                             })
                                             
@@ -659,6 +682,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             
             print("SESSIONS_STRING_FROM_DEVICE")
             print(sessionsStringFromDevice)
+            /*
             if (sessionsStringFromDevice.hasSuffix("\n")) {
                 // Set feedback message to positive message
                 let randomPositiveMessageIndex = Int(arc4random_uniform(UInt32(positiveFeedbackMessages.count)))
@@ -678,7 +702,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                 // Reset sync UI and launch feedback alert
                 self.syncResetUIAndFeedbackAlert()
             }
-            
+            */
             //flag = false
         }
     }
