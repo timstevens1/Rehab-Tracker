@@ -18,10 +18,10 @@ int sensorPin2 = A1;    // select the input pin for channel 2
 */
 int sampleNum1 = 0;  // Sample number
 int sampleNum2 = 0;  // Sample number
-int sampleArray1[90]; // Should be 90 samples in an hour long session (one each 40 seconds). Extras to be safe.
+int sampleArray1[95]; // Should be 90 samples in an hour long session (one each 40 seconds). Extras to be safe.
 long arrayTot1 = 0; // A running sum of the contents of sampleArray to be divided by sampleNum for averaging
 float arrayAvg1 = 0; // A running avg of the above
-int sampleArray2[90]; // Should be 90 samples in an hour long session (one each 40 seconds). Extras to be safe.
+int sampleArray2[95]; // Should be 90 samples in an hour long session (one each 40 seconds). Extras to be safe.
 long arrayTot2 = 0; // A running sum of the contents of sampleArray to be divided by sampleNum for averaging
 float arrayAvg2 = 0; // A running avg of the above
 int sessionCount; //= EEPROM.write(0, 0x00);
@@ -94,6 +94,9 @@ void setup() {
 void loop()
 { 
   //rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+
+  Serial.print("sc: ");
+  Serial.println(EEPROM.readInt(0));
   
   int sensorPin1 = A0;    // select the input pin for channel 1
   int sensorPin2 = A1;    // select the input pin for channel 2
@@ -107,6 +110,12 @@ void loop()
     ButtonInterrupt();
     if (sampleNum1 >= 9 || sampleNum2 >= 9) {
       //Serial.println("Finish the session");
+      initialize();
+      startFlag = false;
+    }
+    else if (startFlag == true && sessionCount != 0){ //If a session has started but hasn't been written to EEPROM, delete this session
+      sessionCount--;
+      EEPROM.updateInt(0, sessionCount);
       initialize();
       startFlag = false;
     }
@@ -129,17 +138,13 @@ void loop()
 
   //***********************************Session starts***********************************
 
-  //Store the start time when a session starts
-  if (sampleNum1 == 0 && sampleNum2 == 0) {
-    now = rtc.now();
-    startTime = now.unixtime();
-  }
-
   //Store the start time and increase the session count if this session starts
   if (startFlag == false) {
     sessionCount++;
     EEPROM.updateInt(0, sessionCount);
     startFlag = true;
+    now = rtc.now();
+    startTime = now.unixtime();
   }
   //Patient is doing a session, but data has been sent out and sessionCount has been set to zero
   //Start a new session
@@ -260,7 +265,7 @@ void initialize() {
   startTime = 0;
   endTime = 0;
 
-  for (i = 0; i < 90; i++) {
+  for (i = 0; i < 95; i++) {
     sampleArray1[i] = 0;
     sampleArray2[i] = 0;
   }
@@ -268,6 +273,10 @@ void initialize() {
 //////////////////////////////////////////////////////////////////////////////////////////
 void outputtingToApp() {
   //Send data to the app via BLE
+
+  if (startFlag == true && sampleNum1 < 9 && sampleNum2 < 9 && sessionCount > 0){
+    sessionCount--;
+  }
 
   int address = 2;
   for (int i = 0; i < sessionCount; i++) {
@@ -345,6 +354,8 @@ void outputtingToApp() {
 
   EEPROM.updateInt(0, sessionCount);
   address = 2;
+  initialize();
+  startFlag = false;
 }
 
 ////////////Button Inter//////////////////////////////////////////////////////////
