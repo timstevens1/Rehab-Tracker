@@ -74,9 +74,13 @@ class StatsViewController: UIViewController {
         // Create urlstr string with current userID
         let urlstr : String = Util.getHOST() + "Restful/getUserSessionsStats.php?pmkPatientID=" + Util.returnCurrentUsersID()
         // Make url string into actual url
-        let url = URL(string: urlstr)
+        guard let url = URL(string: urlstr)
+            else {
+                print("Error: cannot create stats URL")
+                return
+        }
         // Create urlRequest using our url
-        let urlRequest = URLRequest(url: url!)
+        let urlRequest = URLRequest(url: url)
         
         let task = URLSession.shared.dataTask(with: urlRequest, completionHandler: {
             (data, response, error) in

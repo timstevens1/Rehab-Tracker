@@ -208,18 +208,20 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="v34-06-eIz">
-                                <rect key="frame" x="136" y="254" width="49" height="49"/>
+                                <rect key="frame" x="110" y="302" width="100" height="100"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="3uv-wr-Rrg" firstAttribute="centerX" secondItem="BoW-Da-dcl" secondAttribute="centerX" id="Auj-v2-Qem"/>
                             <constraint firstItem="imC-Ye-3Nv" firstAttribute="centerX" secondItem="BoW-Da-dcl" secondAttribute="centerX" id="NeL-GK-gGT"/>
+                            <constraint firstItem="v34-06-eIz" firstAttribute="top" relation="greaterThanOrEqual" secondItem="3uv-wr-Rrg" secondAttribute="bottom" id="QoW-0A-gdo"/>
                             <constraint firstItem="v34-06-eIz" firstAttribute="centerX" secondItem="BoW-Da-dcl" secondAttribute="centerX" id="UH1-61-wmV"/>
-                            <constraint firstItem="LqQ-uc-v0O" firstAttribute="top" secondItem="imC-Ye-3Nv" secondAttribute="bottom" constant="106" id="V2E-V8-Fr7"/>
+                            <constraint firstItem="LqQ-uc-v0O" firstAttribute="top" secondItem="imC-Ye-3Nv" secondAttribute="bottom" constant="75" id="V2E-V8-Fr7"/>
                             <constraint firstItem="imC-Ye-3Nv" firstAttribute="centerX" secondItem="BoW-Da-dcl" secondAttribute="centerX" id="ht4-8U-dek"/>
                             <constraint firstItem="3uv-wr-Rrg" firstAttribute="top" secondItem="frm-dQ-VW2" secondAttribute="bottom" constant="70" id="nu8-ef-cLD"/>
                             <constraint firstItem="imC-Ye-3Nv" firstAttribute="leading" secondItem="BoW-Da-dcl" secondAttribute="leadingMargin" constant="79" id="pr6-FW-qn2"/>
+                            <constraint firstItem="imC-Ye-3Nv" firstAttribute="top" relation="greaterThanOrEqual" secondItem="v34-06-eIz" secondAttribute="bottom" constant="50" id="qm3-RL-v2r"/>
                             <constraint firstItem="jae-uv-n9W" firstAttribute="centerX" secondItem="BoW-Da-dcl" secondAttribute="centerX" id="uIh-o4-Fjj"/>
                             <constraint firstItem="3uv-wr-Rrg" firstAttribute="top" secondItem="jae-uv-n9W" secondAttribute="bottom" constant="23" id="zEc-gR-qyS"/>
                         </constraints>

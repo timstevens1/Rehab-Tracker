@@ -161,29 +161,6 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                                                     print("[DEBUG] Problem syncing data from NMES device")
                                                     self.syncResetUIAndFeedbackAlert()
                                                 }
-                                                else {
-                                                // This is whwere the app syncs the data to the database
-                                                    if (sessionsStringFromDevice.hasSuffix("\n")) {
-                                                        // Set feedback message to positive message
-                                                        let randomPositiveMessageIndex = Int(arc4random_uniform(UInt32(positiveFeedbackMessages.count)))
-                                                        self.feedback_message = positiveFeedbackMessages[randomPositiveMessageIndex]
-                                                        self.parseData()
-                                                        print("[DEBUG] DATA PARSED")
-                                                        // It no failure yet, sync sessions to core data and db
-                                                        if (!self.failed_sync) {
-                                                            self.syncSessions()
-                                                            print("[DEBUG] SESSIONS SYNCED")
-                                                            // If failure in parseData(), update error message and launch alert
-                                                        } else {
-                                                            self.feedback_message = "Error parsing and Syncing the data. Please contact the developers through the feedback form."
-                                                            self.syncResetUIAndFeedbackAlert()
-                                                            return
-                                                        }
-                                                        // Reset sync UI and launch feedback alert
-                                                        self.syncResetUIAndFeedbackAlert()
-                                                    }
-                                                    
-                                                }
                                             })
                                             
                                             // see what's in core data - DEBUG STEP
@@ -269,6 +246,9 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     private func parseData() {
         do {
             // New sessions string to array
+            if sessionsStringFromDevice.hasSuffix("x"){
+                sessionsStringFromDevice = sessionsStringFromDevice.substring(to: sessionsStringFromDevice.index(before: sessionsStringFromDevice.endIndex))
+            }
             var newSessions = sessionsStringFromDevice.components(separatedBy: "\n")
             newSessions.remove(at: newSessions.count-1)
             print("NEW SESSIONS COUNT")
@@ -682,8 +662,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             
             print("SESSIONS_STRING_FROM_DEVICE")
             print(sessionsStringFromDevice)
-            /*
-            if (sessionsStringFromDevice.hasSuffix("\n")) {
+            
+            if (sessionsStringFromDevice.hasSuffix("x")) {
                 // Set feedback message to positive message
                 let randomPositiveMessageIndex = Int(arc4random_uniform(UInt32(positiveFeedbackMessages.count)))
                 feedback_message = positiveFeedbackMessages[randomPositiveMessageIndex]
@@ -702,7 +682,6 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                 // Reset sync UI and launch feedback alert
                 self.syncResetUIAndFeedbackAlert()
             }
-            */
             //flag = false
         }
     }
