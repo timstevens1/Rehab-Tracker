@@ -12,16 +12,13 @@ boolean testMode = true;
 #include <RBL_services.h>
 #include <Wire.h>
 #include "RTClib.h"
-/*
-int sensorPin1 = A0;    // select the input pin for channel 1
-int sensorPin2 = A1;    // select the input pin for channel 2
-*/
+
 int sampleNum1 = 0;  // Sample number
 int sampleNum2 = 0;  // Sample number
-int sampleArray1[95]; // Should be 90 samples in an hour long session (one each 40 seconds). Extras to be safe.
+//int sampleArray1[95]; // Should be 90 samples in an hour long session (one each 40 seconds). Extras to be safe.
 long arrayTot1 = 0; // A running sum of the contents of sampleArray to be divided by sampleNum for averaging
 float arrayAvg1 = 0; // A running avg of the above
-int sampleArray2[95]; // Should be 90 samples in an hour long session (one each 40 seconds). Extras to be safe.
+//int sampleArray2[95]; // Should be 90 samples in an hour long session (one each 40 seconds). Extras to be safe.
 long arrayTot2 = 0; // A running sum of the contents of sampleArray to be divided by sampleNum for averaging
 float arrayAvg2 = 0; // A running avg of the above
 int sessionCount; //= EEPROM.write(0, 0x00);
@@ -108,16 +105,9 @@ void loop()
   while ((analogRead(sensorPin1) <= 2 && analogRead(sensorPin2) <= 2)) {
     Serial.println(F("Low input"));
     ButtonInterrupt();
-    if (sampleNum1 >= 9 || sampleNum2 >= 9) {
-      //Serial.println("Finish the session");
+    //If this session has been stored in EEPROM, finish this session
+    if (startFlag == true) {
       initialize();
-      startFlag = false;
-    }
-    else if (startFlag == true && sessionCount != 0){ //If a session has started but hasn't been written to EEPROM, delete this session
-      sessionCount--;
-      EEPROM.updateInt(0, sessionCount);
-      initialize();
-      startFlag = false;
     }
   }
 
@@ -132,26 +122,13 @@ void loop()
     //When a session has finished after 120 seconds, we initialize all related variables
     if (i == 120000 || (analogRead(sensorPin1) <= 2 && analogRead(sensorPin2) <= 2)) {
       initialize();
-      startFlag = false;
     }
   }
 
-  //***********************************Session starts***********************************
+  //***********************************Start counting***********************************
 
-  //Store the start time and increase the session count if this session starts
-  if (startFlag == false) {
-    sessionCount++;
-    EEPROM.updateInt(0, sessionCount);
-    startFlag = true;
-    now = rtc.now();
-    startTime = now.unixtime();
-  }
-  //Patient is doing a session, but data has been sent out and sessionCount has been set to zero
-  //Start a new session
-  else if ((sampleNum1 >=9 || sampleNum2 >=9) && sessionCount == 0){
-    sessionCount++;
-    EEPROM.updateInt(0, sessionCount);
-    initialize();
+  //Store the start time before a session starts
+  if (sampleNum1 == 0 && sampleNum2 == 0) {
     now = rtc.now();
     startTime = now.unixtime();
   }
@@ -264,21 +241,21 @@ void initialize() {
   maxVal2 = 0;
   startTime = 0;
   endTime = 0;
+  startFlag = false;
 
+  /*
   for (i = 0; i < 95; i++) {
     sampleArray1[i] = 0;
     sampleArray2[i] = 0;
   }
+  */
 }
 //////////////////////////////////////////////////////////////////////////////////////////
 void outputtingToApp() {
   //Send data to the app via BLE
 
-  if (startFlag == true && sampleNum1 < 9 && sampleNum2 < 9 && sessionCount > 0){
-    sessionCount--;
-  }
-
   int address = 2;
+  unsigned char output_x[1] = {'x'};
   for (int i = 0; i < sessionCount; i++) {
     ble_do_events();
     char output_array_avg1[6];
@@ -325,6 +302,7 @@ void outputtingToApp() {
     Serial.print("/");
     sc=EEPROM.readInt(0);
     Serial.println(sc);
+    Serial.println(startT);
     
     ble_write_bytes((unsigned char * )output_array_avg1, strlen(output_array_avg1));
     //delay(1000);
@@ -350,12 +328,13 @@ void outputtingToApp() {
     ble_do_events();
     delay(1000);
   }
+  ble_write_bytes(output_x, 1);
+  
   sessionCount = 0;
 
   EEPROM.updateInt(0, sessionCount);
   address = 2;
   initialize();
-  startFlag = false;
 }
 
 ////////////Button Inter//////////////////////////////////////////////////////////
@@ -394,6 +373,13 @@ void ButtonInterrupt() {
 ///////////////////////Writing to EEPROM///////////////////////////////////////////////////
 void WriteStorage() {
   int currentAddress = 2;
+  
+  //A session is considered starting only when the data is stored in EEPROM
+  if (startFlag == false){
+    sessionCount++;
+    EEPROM.updateInt(0, sessionCount);
+    startFlag = true;
+  }
 
   now = rtc.now();
   endTime = now.unixtime();
@@ -415,10 +401,12 @@ void WriteStorage() {
   if (sampleNum1 > sampleNum2) {
     if (sampleNum1 < 90) { //Not done - these addresses will be rewritten this session
       currentAddress = 2;
-    } else { //session is done
+    } 
+    /*else { //session is done
       EEPROM.updateInt(0, sessionCount);
       sessionCount++;
     }
+    */
     if (testMode) {
       Serial.print(sessionCount);
       Serial.print(',');
@@ -436,11 +424,12 @@ void WriteStorage() {
   } else {
     if (sampleNum2 < 90) { //Not done - these addresses will be rewritten this session
       currentAddress = 2;
-    } else { //session is done
+    } 
+    /*else { //session is done
       EEPROM.updateInt(0, sessionCount);
       sessionCount++;
-
     }
+    */
     if (testMode) {
       Serial.print(sessionCount);
       Serial.print(',');
@@ -461,7 +450,7 @@ void WriteStorage() {
 void ArrayAdd(float intensityValue, int channel) {
   if (intensityValue > 0) {
     if (channel == 1) {
-      sampleArray1[sampleNum1] = intensityValue;
+      //sampleArray1[sampleNum1] = intensityValue;
       sampleNum1++;
       arrayTot1 = arrayTot1 + intensityValue;
       arrayAvg1 = arrayTot1 / (sampleNum1 + 1);
@@ -474,7 +463,7 @@ void ArrayAdd(float intensityValue, int channel) {
         Serial.println("%");
       }
     } else {
-      sampleArray2[sampleNum2] = intensityValue;
+      //sampleArray2[sampleNum2] = intensityValue;
       sampleNum2++;
       arrayTot2 = arrayTot2 + intensityValue;
       arrayAvg2 = arrayTot2 / (sampleNum2 + 1);
