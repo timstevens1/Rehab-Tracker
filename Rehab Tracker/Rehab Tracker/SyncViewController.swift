@@ -255,6 +255,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             print(newSessions.count)
             
             // Data array for each session - append each session data array to stats array
+            self.stats = []
             for session in newSessions{
                 
                 let myDataArr = session.components(separatedBy: ",")
@@ -398,7 +399,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         let request: NSFetchRequest<Session> = Session.fetchRequest()
         request.predicate = NSPredicate(format: "pushed_to_db == false")
         request.returnsObjectsAsFaults = false
-        
+        self.sessionsJson = [String: [String:Any]]()
         do {
             let sessions = try context.fetch(request)
             print("sessions");
