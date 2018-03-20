@@ -2,7 +2,7 @@
 // Blake Hewgill & Javier Bunuel, University of Vermont
 // Capstone Design, Spring 2017
 // Chia-Chun Chao, Yifan Zhang, and Xaview Stevens, Universiaty of Vermont
-boolean testMode = true;
+boolean testMode = true; //If true, print more messages
 
 #include <EEPROMex.h>
 #include <SPI.h>
@@ -15,13 +15,14 @@ boolean testMode = true;
 
 int sampleNum1 = 0;  // Sample number
 int sampleNum2 = 0;  // Sample number
-//int sampleArray1[95]; // Should be 90 samples in an hour long session (one each 40 seconds). Extras to be safe.
 long arrayTot1 = 0; // A running sum of the contents of sampleArray to be divided by sampleNum for averaging
 float arrayAvg1 = 0; // A running avg of the above
-//int sampleArray2[95]; // Should be 90 samples in an hour long session (one each 40 seconds). Extras to be safe.
 long arrayTot2 = 0; // A running sum of the contents of sampleArray to be divided by sampleNum for averaging
 float arrayAvg2 = 0; // A running avg of the above
 int sessionCount; //= EEPROM.write(0, 0x00);
+
+//int sampleArray1[95]; // Should be 90 samples in an hour long session (one each 40 seconds). Extras to be safe.
+//int sampleArray2[95]; // Should be 90 samples in an hour long session (one each 40 seconds). Extras to be safe.
 
 float sessionComp = 0;
 int ant1 = 0;
@@ -45,29 +46,30 @@ void WriteStorage();
 void ArrayAdd(float intensityValue, int channel);
 float IntensityMap(int sensorValue);
 
-
+/*
+ * Every program contains a setup function and a loop function
+ * setup() function initializes and sets the initial values
+ * loop() function loops consecutively, allowing your program to change and respond
+*/
 void setup() {
-  // Initialize what we need in here
-
+  
   //Set the maximum number of writes
   //EEPROM.setMaxAllowedWrites(32768);
   EEPROM.setMaxAllowedWrites(EEPROMSizeUno);
 
   //Set sessionCount
-  //This is the first time using this blend
-  if (EEPROM.readInt(2) != 1) {
+  if (EEPROM.readInt(2) != 1) {//This is the first time using this blend
     EEPROM.updateInt(0, 0);
   }
-  //The first two bytes are used to store an integer of the total session count in EEPROM
-  sessionCount = EEPROM.readInt(0);
+  sessionCount = EEPROM.readInt(0);  //The first two bytes are used to store an integer of the total session count in EEPROM
 
+  //Start serial monitor
   if (testMode) { //start serial com
     Serial.begin(57600);
     //Serial.print("SessionCount = ");
     //Serial.println(sessionCount);
   }
-
-  Serial.begin(57600);
+  Serial.begin(57600); //Use the same rate in serial monitor
 
   //Set real time clock
   if (! rtc.begin()) {
@@ -88,10 +90,18 @@ void setup() {
   ble_begin(); //ble_begin starts the BLE stack and broadcasting the advertising packet  
 }
 //////////////////////////////////////////////////////////////////////////////////////////
+/*
+ * Every program contains a setup function and a loop function
+ * setup() function initializes and sets the initial values
+ * loop() function loops consecutively, allowing your program to change and respond
+*/
 void loop()
 { 
-  //rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  //loops consecutively, allowing your program to change and respond
+  
+  //rtc.adjust(DateTime(F(__DATE__), F(__TIME__))); //Adjust RTC time
 
+  //Print current session count for debugging
   Serial.print("sc: ");
   Serial.println(EEPROM.readInt(0));
   
@@ -133,7 +143,7 @@ void loop()
     startTime = now.unixtime();
   }
 
-  ButtonInterrupt();
+  ButtonInterrupt(); //Frequently check if user has pressed the sync button
 
   if (testMode) {
     Serial.println(F("TEST MODE"));
@@ -152,7 +162,6 @@ void loop()
 
   if (ant1 > next1) {
     if (maxVal1 > ant1) {
-      //maxVal1 = ant1;
       //SEND
       Serial.print(F("MaxVolt = "));
       Serial.println(maxVal1);
@@ -184,7 +193,6 @@ void loop()
 
   if (ant2 > next2) {
     if (maxVal2 > ant2) {
-      //maxVal2 = ant2;
       //SEND
       Serial.print(F("MaxVolt = "));
       Serial.println(maxVal2);
@@ -204,9 +212,6 @@ void loop()
   }
   ButtonInterrupt();
 
-  //Serial.print("currentAddress = HEX ");
-  //Serial.println(currentAddress);
-
   Serial.print(F("samNum1: "));
   Serial.println(sampleNum1);
 
@@ -222,9 +227,11 @@ void loop()
   Serial.println(F("------------Loop Complete-------------"));
 }
 //////////////////////////////////////////////////////////////////////////////////////////
+/*
+ * Initialize all global variables related to a session
+ */
+
 void initialize() {
-  //Initialize all global variables related to a session
-  int i = 0;
 
   sampleNum1 = 0;  // Sample number
   sampleNum2 = 0;  // Sample number
@@ -244,6 +251,7 @@ void initialize() {
   startFlag = false;
 
   /*
+  int i = 0;
   for (i = 0; i < 95; i++) {
     sampleArray1[i] = 0;
     sampleArray2[i] = 0;
@@ -251,13 +259,18 @@ void initialize() {
   */
 }
 //////////////////////////////////////////////////////////////////////////////////////////
+/*
+ * Send data to the app via BLE
+ * This function is called by ButtonInterrupt() when BLE is connected and user has pressed the sync button
+ */
 void outputtingToApp() {
-  //Send data to the app via BLE
-
+  
   int address = 2;
   unsigned char output_x[1] = {'x'};
+  
   for (int i = 0; i < sessionCount; i++) {
     ble_do_events();
+    
     char output_array_avg1[6];
     char output_array_avg2[6];
     char output_session_comp[5];
@@ -303,50 +316,45 @@ void outputtingToApp() {
     sc=EEPROM.readInt(0);
     Serial.println(sc);
     Serial.println(startT);
-    
+
+    //Sometimes we need delay() to give data transferred smoothly
     ble_write_bytes((unsigned char * )output_array_avg1, strlen(output_array_avg1));
-    //delay(1000);
     ble_write_bytes(output_comma, 1);
-    //delay(500);
     ble_write_bytes((unsigned char * )output_array_avg2, strlen(output_array_avg2));
-    //delay(1000);
     ble_write_bytes(output_comma, 1);
-    //delay(500);
     ble_write_bytes((unsigned char * )output_session_comp, strlen(output_session_comp));
-    //delay(1000);
     ble_write_bytes(output_comma, 1);
-    //delay(500);
     ble_write_bytes((unsigned char * )output_start_time, strlen(output_start_time));
-    //delay(2000);
     ble_write_bytes(output_comma, 1);
-    //delay(500);
     ble_write_bytes((unsigned char * )output_end_time, strlen(output_end_time));
-    //delay(2000);
     ble_write_bytes(output_newline, 1);
-    //delay(500);
     delay(5000);
     ble_do_events();
     delay(1000);
   }
-  ble_write_bytes(output_x, 1);
-  
-  sessionCount = 0;
+  ble_write_bytes(output_x, 1); //Tell the app that all data has been sent successfully
 
+  //Clear all stored sessions or the currently running session
+  sessionCount = 0;
   EEPROM.updateInt(0, sessionCount);
   address = 2;
   initialize();
 }
 
 ////////////Button Inter//////////////////////////////////////////////////////////
+/*
+ * Check if BLE is connected. If true, call outputtingToApp() and send data to the app.
+ * After sending data, disconnect BLE to make sure the next successful connection
+ */
 void ButtonInterrupt() {
 
   ble_set_pins(6, 7); //ble_set_pins is to specify the REQN and RDYN pins to the BLE chip, i.e. the jumper on the BLE Shield.
 
-  //Only check the connection when buttonInterrupt is called
   if (!ble_connected()) { //ble_connected returns 1 if connected by BLE Central or 0 if not.
     Serial.println(F("BLE Not Connected"));
     ble_do_events();//ble_do_events allows the BLE to process its events, if data is pending, it will be sent out.
   }
+  
   else if ( ble_connected() ) {
     //Serial.println("BLE Connected");
 
@@ -371,10 +379,13 @@ void ButtonInterrupt() {
   ble_do_events();
 }
 ///////////////////////Writing to EEPROM///////////////////////////////////////////////////
+/*
+ * When session count is 9, 19, 29, ..., 89, store data in EEPROM
+ */
 void WriteStorage() {
   int currentAddress = 2;
   
-  //A session is considered starting only when the data is stored in EEPROM
+  //A session starts only when data is stored in EEPROM at the first time
   if (startFlag == false){
     sessionCount++;
     EEPROM.updateInt(0, sessionCount);
@@ -447,6 +458,9 @@ void WriteStorage() {
   }
 }
 //////////////////////////////////////////////////////////////////////////////////////////
+/*
+ * Sum up all intensities, calculate the average intensity, and calculate the session compliance
+ */
 void ArrayAdd(float intensityValue, int channel) {
   if (intensityValue > 0) {
     if (channel == 1) {
@@ -479,6 +493,9 @@ void ArrayAdd(float intensityValue, int channel) {
   }
 }
 ///////////////////////////////////////////////////////////////////////////////////////////
+/*
+ * Calculate the intensity based on the sensor value and return the intensity
+ */
 float IntensityMap(int sensorValue) {
   float intensity;
 
