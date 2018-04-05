@@ -39,9 +39,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="35"/>
                                 <state key="normal" title="Feedback" backgroundImage="SmallButton"/>
                                 <connections>
-                                    <action selector="Continue:" destination="BYZ-38-t0r" eventType="touchUpInside" id="t8i-MZ-qzm"/>
                                     <action selector="Feedback:" destination="9Uq-XS-RJg" eventType="touchUpInside" id="bdb-wi-A4d"/>
-                                    <action selector="Logout:" destination="9Uq-XS-RJg" eventType="touchUpInside" id="a3G-dG-hzo"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Welcome:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UCM-wZ-Jhv">
@@ -87,6 +85,7 @@
                                 <state key="normal" title="Continue" backgroundImage="SmallButton"/>
                                 <connections>
                                     <action selector="Continue:" destination="BYZ-38-t0r" eventType="touchUpInside" id="k1i-89-Lyb"/>
+                                    <segue destination="9ZY-Pg-SSE" kind="show" id="LYQ-2W-iUt"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Enter Username:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a1u-80-juH">
@@ -136,19 +135,19 @@
                         <viewControllerLayoutGuide type="bottom" id="Z8Q-w9-aBC"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="VwA-CH-zj4">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="411"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yc1-pI-EEa" customClass="LineChartView" customModule="Charts">
-                                <rect key="frame" x="9" y="45" width="301" height="358"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                            </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Intensity By Session" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yO9-2l-PNS">
-                                <rect key="frame" x="82" y="15" width="154" height="21"/>
+                                <rect key="frame" x="83" y="15" width="154" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yc1-pI-EEa" customClass="LineChartView" customModule="Charts">
+                                <rect key="frame" x="0.0" y="0.0" width="301" height="451"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -210,6 +209,12 @@
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="v34-06-eIz">
                                 <rect key="frame" x="110" y="302" width="100" height="100"/>
                             </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Sessions This Week: 0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WVz-2m-MJK">
+                                <rect key="frame" x="82" y="221" width="196" height="24"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -219,9 +224,11 @@
                             <constraint firstItem="v34-06-eIz" firstAttribute="centerX" secondItem="BoW-Da-dcl" secondAttribute="centerX" id="UH1-61-wmV"/>
                             <constraint firstItem="LqQ-uc-v0O" firstAttribute="top" secondItem="imC-Ye-3Nv" secondAttribute="bottom" constant="75" id="V2E-V8-Fr7"/>
                             <constraint firstItem="imC-Ye-3Nv" firstAttribute="centerX" secondItem="BoW-Da-dcl" secondAttribute="centerX" id="ht4-8U-dek"/>
+                            <constraint firstItem="WVz-2m-MJK" firstAttribute="centerX" secondItem="BoW-Da-dcl" secondAttribute="centerX" id="mnK-5u-7l3"/>
                             <constraint firstItem="3uv-wr-Rrg" firstAttribute="top" secondItem="frm-dQ-VW2" secondAttribute="bottom" constant="70" id="nu8-ef-cLD"/>
                             <constraint firstItem="imC-Ye-3Nv" firstAttribute="leading" secondItem="BoW-Da-dcl" secondAttribute="leadingMargin" constant="79" id="pr6-FW-qn2"/>
                             <constraint firstItem="imC-Ye-3Nv" firstAttribute="top" relation="greaterThanOrEqual" secondItem="v34-06-eIz" secondAttribute="bottom" constant="50" id="qm3-RL-v2r"/>
+                            <constraint firstItem="WVz-2m-MJK" firstAttribute="top" secondItem="3uv-wr-Rrg" secondAttribute="bottom" constant="23" id="sY4-QD-SVp"/>
                             <constraint firstItem="jae-uv-n9W" firstAttribute="centerX" secondItem="BoW-Da-dcl" secondAttribute="centerX" id="uIh-o4-Fjj"/>
                             <constraint firstItem="3uv-wr-Rrg" firstAttribute="top" secondItem="jae-uv-n9W" secondAttribute="bottom" constant="23" id="zEc-gR-qyS"/>
                         </constraints>
@@ -240,6 +247,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="dateSynced" destination="3uv-wr-Rrg" id="N5V-Pg-yE0"/>
+                        <outlet property="numSessions" destination="WVz-2m-MJK" id="0rX-g0-rJx"/>
                         <outlet property="sync_button" destination="imC-Ye-3Nv" id="buT-jv-HCt"/>
                         <outlet property="sync_image" destination="v34-06-eIz" id="szh-55-r4G"/>
                     </connections>
@@ -259,7 +267,6 @@
                     </tabBar>
                     <connections>
                         <segue destination="uFE-9B-9Z5" kind="relationship" relationship="viewControllers" id="J1d-D6-0AI"/>
-                        <segue destination="YQE-O3-CkH" kind="relationship" relationship="viewControllers" id="GwZ-Fz-Au7"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WDo-Ks-sqK" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -333,7 +340,7 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="0ND-Uq-jVH" kind="relationship" relationship="rootViewController" id="zLF-XJ-mf8"/>
+                        <segue destination="0ND-Uq-jVH" kind="relationship" relationship="rootViewController" id="duU-RP-6sc"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="O8m-E0-buL" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -351,6 +358,6 @@
         <image name="Tab-Sync-Highlighted" width="30" height="30"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="FtS-cU-vym"/>
+        <segue reference="LYQ-2W-iUt"/>
     </inferredMetricsTieBreakers>
 </document>

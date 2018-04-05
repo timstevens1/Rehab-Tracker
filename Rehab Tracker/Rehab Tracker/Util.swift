@@ -9,12 +9,14 @@
 import UIKit
 import CoreData
 import Foundation
-var UDID = ""
-var DBuser = ""
-var lastSynced = ""
 
 // This is a bunch of utility functions used throughout the code
 class Util {
+    static var UDID : String = ""
+    static var DBuser : String = "No User"
+    static var lastSynced : String = "Never"
+    static var numSessions : String = "0 "
+    
     class func getHOST() -> String{
         return "https://rehabtracker.med.uvm.edu/"
     }
@@ -73,6 +75,9 @@ class Util {
         // Get context
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
+        self.UDID = ""
+        self.DBuser = "No User"
+        self.lastSynced = "Never"
         
         // Create the fetch requests
         let userRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "User")
@@ -295,11 +300,13 @@ class Util {
     class func getUDID() -> String{
         return UDID;
     }
-    class func getDeviceLastSynced() ->String {
+    class func getDeviceLastSynced() -> [String] {
+        lastSynced = "Never"
+        numSessions = "0 "
             findDeviceLastSynced()
-        while(lastSynced == ""){
+        while(lastSynced == "Never" || numSessions == "0 "){
         }
-            return lastSynced;
+            return [lastSynced, numSessions];
     }
     class func findDeviceLastSynced(){
         // Create urlstr string with current userID
@@ -308,8 +315,10 @@ class Util {
         // Make url string into actual url and catch errors
         guard let url = URL(string: urlstr)
             else {
-                print("Error: cannot create URL2")
-                lastSynced = "  "
+                print("Error: cannot create DLS url")
+                print(urlstr)
+                lastSynced = "Never!"
+                numSessions = "0"
                 return
         }
         
@@ -330,35 +339,56 @@ class Util {
                 }
                 catch {
                     lastSynced = "  "
+                    numSessions="0"
                     return
                 }
                 if let name = jo["sync"] as? String {
                      lastSynced = name
                 }
                 else{
-                    lastSynced = "  "
+                    lastSynced = "Never "
+                }
+                if let num = jo["count"] as? String {
+                    numSessions = num
+                }
+                else{
+                    numSessions = "0"
                 }
             }
             else {
                 print(error)
                 lastSynced = "  "
+                numSessions="0"
             }
         })
         task.resume()
     }
+
     class func getDatabaseUsername() -> String {
-        findDatabaseUsername()
-        return DBuser
+        let serialQueue = DispatchQueue(label: "queuename")
+        var x = 0
+        try serialQueue.sync{
+            findDatabaseUsername(finished: { string in
+                self.DBuser = string
+                x = 1
+            })
+        }
+        while (x==0){
+            
+        }
+        return self.DBuser
     }
-    class func findDatabaseUsername(){
+    class func findDatabaseUsername(finished: @escaping ((_: String)->Void)) {
         
         // Create urlstr string with current userID
+        var uname :String!
         let urlstr : String = Util.getHOST() + "Restful/example.php?pmkPatientID=" + Util.returnCurrentUsersID()
         
         // Make url string into actual url and catch errors
         guard let url = URL(string: urlstr)
             else {
                 print("Error: cannot create URL1")
+                finished(_ : "No User!")
                 return
         }
         
@@ -377,19 +407,21 @@ class Util {
                     print(jo)
                 }
                 catch {
+                    finished(_ : "No User!")
                     return
                 }
                 if let name = jo["pmkPatientID"] {
-                        DBuser = name as! String
+                        finished(_ : name as! String)
+                    print("This: ",self.DBuser)
                 }
             }
             else {
+                finished(_ : "No User!")
                 print(error)
             }
         })
         // Return value of returnedUserID
         task.resume()
-        return
     }
     class func pushRegistration() -> String {
     

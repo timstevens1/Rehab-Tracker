@@ -13,7 +13,7 @@ class SettingsViewController: UIViewController {
     
     @IBAction func Feedback(_ sender: Any) {
         if let url = URL(string: "https://goo.gl/forms/jeWGFdvACDlcg2Br1"){
-            UIApplication.shared.openURL(url)
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }
     

@@ -44,9 +44,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // rootViewController from StoryBoard
         let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         var navigationController : UIViewController
-        print(Util.returnCurrentUsersID())
-        print(Util.getDatabaseUsername())
-        if Util.numberOfUsers() > 0 {
+        if Util.returnCurrentUsersID() == Util.getDatabaseUsername() {
             Util.pushRegistration()
             navigationController = storyboard.instantiateViewController( withIdentifier:"Sync")
         }

@@ -13,7 +13,7 @@ import CoreBluetooth
 import UserNotifications
 
 // This is the main page, allows users to login and get into the app
-class ViewController: UIViewController {
+class ViewController: UIViewController, UITextFieldDelegate {
 
     @IBOutlet weak var loginBar: UITextField!
     @IBAction func enterUserID(_ sender: Any) {
@@ -137,11 +137,6 @@ class ViewController: UIViewController {
     @IBAction func Continue(_ sender: UIButton) {
         // If username is valid, allows the user to continue into the app
         if !(loginBar.text == ""){ self.updateUserID(ID: loginBar.text!)}
-        print("Database")
-        print(Util.getDatabaseUsername())
-        print("persistent")
-        print(Util.returnCurrentUsersID())
-        print(Util.numberOfUsers())
         if (Util.returnCurrentUsersID() == Util.getDatabaseUsername()){
             // Continues on to the syncviewcontroller
             Util.pushRegistration()
@@ -184,12 +179,17 @@ class ViewController: UIViewController {
         //tap.cancelsTouchesInView = false
         
         view.addGestureRecognizer(tap)
+        self.loginBar.delegate = self;
         // Do any additional setup after loading the view, typically from a nib.
         
     }
     func dismissKeyboard() {
         //Causes the view (or one of its embedded text fields) to resign the first responder status.
         view.endEditing(true)
+    }
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        view.endEditing(true)
+        return false
     }
 
     override func didReceiveMemoryWarning() {

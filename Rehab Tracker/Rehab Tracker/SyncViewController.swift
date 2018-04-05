@@ -33,7 +33,7 @@ let SESSION_TIME_TRACKING = true
 var maxUserSessionNum:Int? = nil
 
 // String to hold session info received from device
-var sessionsStringFromDevice = ""
+var sessionsStringFromDevice: String = ""
 
 // Set of positive feedback messages for successful sync alert
 let positiveFeedbackMessages = ["By completing your NMES session, you are preventing your muscles from atrophying and getting weaker.", "Good job completing your NMES session!", "Keep up the good work on your NMES sessions!", "By completing your NMES session, you are being proactive in preventing muscle atrophy and maintaining your muscle strength."]
@@ -42,6 +42,7 @@ let positiveFeedbackMessages = ["By completing your NMES session, you are preven
 // Eventually you are going to want to get callbacks from some functionality. There are two delegates to implement: CBCentralManagerDelegate, and CBPeripheralDelegate.
 class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate  {
     
+    @IBOutlet weak var numSessions: UILabel!
     @IBOutlet weak var dateSynced: UILabel!
     //(3) Declare Manager and Peripheral
     // The CBCentralManager install will be what you use to find, connect, and manage BLE devices. Once you are connected, and are working with a specific service, the peripheral will help you iterate characteristics and interacting with them.
@@ -49,21 +50,21 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     private var peripheral:CBPeripheral!
     private var resultString: String!
     private var stats:[(avg_ch1_intensity:String, avg_ch2_intensity:String, session_compliance: String, start_time: String, end_time: String)] = []
-    private var failed_sync = false
+    private var failed_sync : Bool = false
     private var feedback_message:String = ""
-    private var finished_parsing_data = false
+    private var finished_parsing_data : Bool = false
     
     // (4) UUID and Service Name
     // You will need UUID for the BLE service, and a UUID for the specific characteristic. In some cases, you will need additional UUIDs. They get used repeatedly throughout the code, so having constants for them will keep the code cleaner, and easier to maintain.
-    let RT_NAME = "RT"
+    let RT_NAME : String = "RT"
     let RT_SERVICE_UUID = CBUUID(string: "713D0000-503E-4C75-BA94-3148F18D941E")
     let RT_CHAR_TX_UUID = CBUUID(string: "713D0002-503E-4C75-BA94-3148F18D941E")
     let RT_CHAR_RX_UUID = CBUUID(string: "713D0003-503E-4C75-BA94-3148F18D941E")
     
-    var flag = false
+    var flag : Bool = false
     
     // global variable comments to store session comments
-    private var comments = "No Comments"
+    private var comments : String = "No Comments"
     
     // Sync image outlet
     @IBOutlet weak var sync_image: UIImageView!
@@ -76,7 +77,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     
     @IBAction func showInfo(_ sender: UIBarButtonItem) {
         // create the alert
-        let alert = UIAlertController(title: "Problems?", message: "Make sure your device is in range and paired with your phone!", preferredStyle: UIAlertControllerStyle.alert)
+        let alert = UIAlertController(title: "Problems?", message: "Make sure your device is on and in range, and that your phone's bluetooth is on!", preferredStyle: UIAlertControllerStyle.alert)
         
         // add an action (button)
         alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
@@ -102,6 +103,11 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             self.sync_image.image = UIImage(named: "Tab-Sync")}))
         // Show sync feedback alert
         self.present(post_sync_alert, animated: true, completion: nil)
+        let data = Util.getDeviceLastSynced();
+        print("async?",data[0]);
+        self.dateSynced.text = data[0];
+        self.numSessions.text = "Sessions This Week: " + data[1];
+
     }
     
     @IBAction func Sync(_ sender: UIButton) {
@@ -153,9 +159,9 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                                             
                                             self.flag = true;
                                             
-                                            // Timeout if data not correctly synced from NMES device after 10 seconds
+                                            // Timeout if data not correctly synced from NMES device after 15 seconds
                                             DispatchQueue.main.asyncAfter(deadline: .now() + 15.0, execute: {
-                                                if (sessionsStringFromDevice == "" || !sessionsStringFromDevice.contains("\n")) {
+                                                if (sessionsStringFromDevice == "") {
                                                     self.failed_sync = true
                                                     self.feedback_message = "Error finding data on NMES device. Please reboot your NMES device and try again."
                                                     print("[DEBUG] Problem syncing data from NMES device")
@@ -690,7 +696,10 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     override func viewDidLoad() {
         super.viewDidLoad()
         self.sync_image.image = UIImage(named: "Tab-Sync")
-        dateSynced.text = Util.getDeviceLastSynced();
+        let data = Util.getDeviceLastSynced();
+        dateSynced.text = data[0];
+        numSessions.text = "Sessions This Week: " + data[1];
+        print(data[1]);
         flag = false
     }
     
