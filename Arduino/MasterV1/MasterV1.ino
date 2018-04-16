@@ -1,8 +1,18 @@
+/** \file
+ *  The MasterV1 script was written by the SEED team for the actual prototype that they created. 
+ *  It has then been modified by Chia-Chun Chao, Yifan Zhang, and Xavier Stevens beyond that. 
+ *  MasterV1 now tracks time, has clearer and more useful BLE usage and can transfer data from the NMES->Blend Board->App, 
+ *  fixed the data pull so now there is no need for an off-app button for the sync, 
+ *  the intensity values have been completely overhauled, 
+ *  and multiple sessions can now be stored within the EEPROM just incase the user doesn't have internet
+ */
+
+
 // EMPI Usage Monitoring
 // Blake Hewgill & Javier Bunuel, University of Vermont
 // Capstone Design, Spring 2017
-// Chia-Chun Chao, Yifan Zhang, and Xaview Stevens, University of Vermont
-boolean testMode = true;
+// Chia-Chun Chao, Yifan Zhang, and Xavier Stevens, Universiaty of Vermont
+boolean testMode = true; ///<If true, print more messages
 
 #include <EEPROMex.h>
 #include <SPI.h>
@@ -13,85 +23,115 @@ boolean testMode = true;
 #include <Wire.h>
 #include "RTClib.h"
 
-int sampleNum1 = 0;  // Sample number
-int sampleNum2 = 0;  // Sample number
+int sampleNum1 = 0;  ///< Sample number of channel 1
+int sampleNum2 = 0;  ///< Sample number of channel 2
+long arrayTot1 = 0; ///< A running sum of the intensity of channel 1 to be divided by sampleNum1 for averaging
+float arrayAvg1 = 0; ///< A running avg of channel 1
+long arrayTot2 = 0; ///< A running sum of the intensity of channel 2 to be divided by sampleNum2 for averaging
+float arrayAvg2 = 0; ///< A running avg of channel 2
+int sessionCount; ///< Total session count in EEPROM
+//sessionCount = EEPROM.write(0, 0x00);
+
 //int sampleArray1[95]; // Should be 90 samples in an hour long session (one each 40 seconds). Extras to be safe.
-long arrayTot1 = 0; // A running sum of the contents of sampleArray to be divided by sampleNum for averaging
-float arrayAvg1 = 0; // A running avg of the above
 //int sampleArray2[95]; // Should be 90 samples in an hour long session (one each 40 seconds). Extras to be safe.
-long arrayTot2 = 0; // A running sum of the contents of sampleArray to be divided by sampleNum for averaging
-float arrayAvg2 = 0; // A running avg of the above
-int sessionCount; //= EEPROM.write(0, 0x00);
 
-float sessionComp = 0;
-int ant1 = 0;
-int next1 = 0;
-int maxVal1 = 0;
-int ant2 = 0;
-int next2 = 0;
-int maxVal2 = 0;
+float sessionComp = 0; ///< Session compliance
+int ant1 = 0; ///< Old value is stored to find the vertex
+int next1 = 0; ///< New value is stored to find the vertex
+int maxVal1 = 0; ///< Maximum value is stored to find the vertex
+int ant2 = 0; ///< Old value is stored to find the vertex
+int next2 = 0; ///< New value is stored to find the vertex
+int maxVal2 = 0; ///< Maximum value is stored to find the vertex
 
-bool sendFlag = false; //If blend has sent data to the app, the sendFlag is set to true
-bool startFlag = false; //If a session starts, the startFlag is set to true
+bool sendFlag = false; ///<If blend has sent data to the app, the sendFlag is set to true
+bool startFlag = false; ///<If a session starts, the startFlag is set to true
 
-long startTime;
-long endTime;
-DateTime now;
-RTC_DS1307 rtc;
+long startTime; ///< Store the start time before a session starts
+long endTime; ///< Store the time when writing data to EEPROM
+DateTime now; ///< Current time
+RTC_DS1307 rtc; ///< Real time clock
 
-void initialize();
+void initialize(); 
 void ButtonInterrupt();
 void WriteStorage();
 void ArrayAdd(float intensityValue, int channel);
 float IntensityMap(int sensorValue);
 
 
+/**\brief Initialize and set the initial values
+ * 
+ * Every Arduino program contains a setup function and a loop function.
+ * The setup() function is called when a sketch starts. Use it to initialize variables, pin modes, start using libraries, etc. 
+ * The setup() function will only run once, after each powerup or reset of the Arduino board.
+*/
 void setup() {
-  // Initialize what we need in here
-
+  
   //Set the maximum number of writes
   //EEPROM.setMaxAllowedWrites(32768);
   EEPROM.setMaxAllowedWrites(EEPROMSizeUno);
 
   //Set sessionCount
-  //This is the first time using this blend
-  if (EEPROM.readInt(2) != 1) {
+  if (EEPROM.readInt(2) != 1) {//This is the first time using this blend
     EEPROM.updateInt(0, 0);
   }
-  //The first two bytes are used to store an integer of the total session count in EEPROM
-  sessionCount = EEPROM.readInt(0);
+  sessionCount = EEPROM.readInt(0);  //The first two bytes are used to store an integer of the total session count in EEPROM
 
+  //Start serial monitor
   if (testMode) { //start serial com
     Serial.begin(57600);
     //Serial.print("SessionCount = ");
     //Serial.println(sessionCount);
   }
+  Serial.begin(57600); //Use the same rate in serial monitor
 
-  Serial.begin(57600);
-
-  //Set real time clock
+  /*
+  // Set real time clock
   if (! rtc.begin()) {
-    //Serial.println("Couldn't find RTC");
-    //while (1);
+    Serial.println("Couldn't find RTC");
+    while (1);
   }
   if (! rtc.isrunning()) {
-    //Serial.println("RTC is NOT running");
+    Serial.println("RTC is NOT running");
     // following line sets the RTC to the date & time this sketch was compiled
     rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-    // This line sets the RTC with an explicit date & time, for example to set
-    // January 21, 2014 at 3am you would call:
-    // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
   }
+  */
 
   //RT is the name of this blend. We can use this name for the app to only recognize this blend
   ble_set_name("RT");
   ble_begin(); //ble_begin starts the BLE stack and broadcasting the advertising packet  
 }
-//////////////////////////////////////////////////////////////////////////////////////////
-void loop()
-{ 
-  //rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
 
+
+/**\brief Loop consecutively, allowing the program to change and respond
+ * 
+ * Every program contains a setup function and a loop function
+ * After creating a setup() function, which initializes and sets the initial values, 
+ * the loop() function does precisely what its name suggests, and loops consecutively, 
+ * allowing your program to change and respond. Use it to actively control the Arduino board.
+*/
+void loop()
+{   
+  //rtc.adjust(DateTime(F(__DATE__), F(__TIME__))); //Adjust RTC time
+
+  if (! rtc.isrunning()) {
+    Serial.println("RTC is NOT running");
+  }
+
+  now = rtc.now();
+  Serial.print(now.year());
+  Serial.print('/');
+  Serial.print(now.month());
+  Serial.print('/');
+  Serial.print(now.day());
+  Serial.print(' ');
+  Serial.print(now.hour());
+  Serial.print(':');
+  Serial.print(now.minute());
+  Serial.print(':');
+  Serial.println(now.second());
+
+  //Print current session count for debugging
   Serial.print("sc: ");
   Serial.println(EEPROM.readInt(0));
   
@@ -99,7 +139,7 @@ void loop()
   int sensorPin2 = A1;    // select the input pin for channel 2
   long i = 0; //i is used as a timer
 
-  //***********************************Not running***********************************
+  //*****************Not running******************
 
   //When the input is too low, this blend should not continue computing the intensity
   while ((analogRead(sensorPin1) <= 2 && analogRead(sensorPin2) <= 2)) {
@@ -125,21 +165,21 @@ void loop()
     }
   }
 
-  //***********************************Start counting***********************************
-
+  //******************Start counting******************
+  
   //Store the start time before a session starts
   if (sampleNum1 == 0 && sampleNum2 == 0) {
     now = rtc.now();
     startTime = now.unixtime();
   }
 
-  ButtonInterrupt();
+  ButtonInterrupt(); //Frequently check if user has pressed the sync button
 
   if (testMode) {
     Serial.println(F("TEST MODE"));
   }
 
-  //***********************************Find the vertex***********************************
+  //******************Find the vertex******************
   delay(1000);
 
   // Comparison Loop
@@ -152,7 +192,6 @@ void loop()
 
   if (ant1 > next1) {
     if (maxVal1 > ant1) {
-      //maxVal1 = ant1;
       //SEND
       Serial.print(F("MaxVolt = "));
       Serial.println(maxVal1);
@@ -174,7 +213,7 @@ void loop()
   }
   ButtonInterrupt();
 
-  //***********************************Find the vertex***********************************
+  //******************Find the vertex******************
   // Channel 2
   ant2 = next2;
   next2 = analogRead(sensorPin2);
@@ -184,7 +223,6 @@ void loop()
 
   if (ant2 > next2) {
     if (maxVal2 > ant2) {
-      //maxVal2 = ant2;
       //SEND
       Serial.print(F("MaxVolt = "));
       Serial.println(maxVal2);
@@ -204,9 +242,6 @@ void loop()
   }
   ButtonInterrupt();
 
-  //Serial.print("currentAddress = HEX ");
-  //Serial.println(currentAddress);
-
   Serial.print(F("samNum1: "));
   Serial.println(sampleNum1);
 
@@ -221,10 +256,13 @@ void loop()
 
   Serial.println(F("------------Loop Complete-------------"));
 }
-//////////////////////////////////////////////////////////////////////////////////////////
+
+
+/**\brief Initialize all global variables related to a session
+ * 
+ * This function is called when a session has finished or a session has been dumped. All global variables related to a session are initialized.
+ */
 void initialize() {
-  //Initialize all global variables related to a session
-  int i = 0;
 
   sampleNum1 = 0;  // Sample number
   sampleNum2 = 0;  // Sample number
@@ -244,20 +282,29 @@ void initialize() {
   startFlag = false;
 
   /*
+  int i = 0;
   for (i = 0; i < 95; i++) {
     sampleArray1[i] = 0;
     sampleArray2[i] = 0;
   }
   */
 }
-//////////////////////////////////////////////////////////////////////////////////////////
-void outputtingToApp() {
-  //Send data to the app via BLE
 
+
+/**\brief Send data to the app via BLE
+ * 
+ * This function is called by ButtonInterrupt() when BLE is connected and user has pressed the sync button. 
+ * The data in EEPROM are read and transformed to a format that can be passed to ble_write_bytes().
+ * The sent data include an 'x' in the end to inform the app that all data have been sent
+ */
+void outputtingToApp() {
+  
   int address = 2;
   unsigned char output_x[1] = {'x'};
+  
   for (int i = 0; i < sessionCount; i++) {
     ble_do_events();
+    
     char output_array_avg1[6];
     char output_array_avg2[6];
     char output_session_comp[5];
@@ -297,56 +344,52 @@ void outputtingToApp() {
     ltoa(endT, output_end_time, 10);
     address = address + 4;
 
-
     Serial.print(sc);
     Serial.print("/");
     sc=EEPROM.readInt(0);
     Serial.println(sc);
     Serial.println(startT);
-    
+
+    //Sometimes we need delay() to give data transferred smoothly
     ble_write_bytes((unsigned char * )output_array_avg1, strlen(output_array_avg1));
-    //delay(1000);
     ble_write_bytes(output_comma, 1);
-    //delay(500);
     ble_write_bytes((unsigned char * )output_array_avg2, strlen(output_array_avg2));
-    //delay(1000);
     ble_write_bytes(output_comma, 1);
-    //delay(500);
     ble_write_bytes((unsigned char * )output_session_comp, strlen(output_session_comp));
-    //delay(1000);
     ble_write_bytes(output_comma, 1);
-    //delay(500);
     ble_write_bytes((unsigned char * )output_start_time, strlen(output_start_time));
-    //delay(2000);
     ble_write_bytes(output_comma, 1);
-    //delay(500);
     ble_write_bytes((unsigned char * )output_end_time, strlen(output_end_time));
-    //delay(2000);
     ble_write_bytes(output_newline, 1);
-    //delay(500);
     delay(5000);
     ble_do_events();
     delay(1000);
   }
-  ble_write_bytes(output_x, 1);
-  
-  sessionCount = 0;
+  ble_write_bytes(output_x, 1); //Tell the app that all data has been sent successfully
 
+  //Clear all stored sessions or the currently running session
+  sessionCount = 0;
   EEPROM.updateInt(0, sessionCount);
   address = 2;
   initialize();
 }
 
-////////////Button Inter//////////////////////////////////////////////////////////
+
+/**\brief Check if BLE is connected
+ * 
+ * Check if BLE is connected. If true, call outputtingToApp() and send data to the app.
+ * After sending data, disconnect BLE to make sure the next successful connection.
+ * This function is frequently called to check if a user has pressed the sync button
+ */
 void ButtonInterrupt() {
 
   ble_set_pins(6, 7); //ble_set_pins is to specify the REQN and RDYN pins to the BLE chip, i.e. the jumper on the BLE Shield.
 
-  //Only check the connection when buttonInterrupt is called
   if (!ble_connected()) { //ble_connected returns 1 if connected by BLE Central or 0 if not.
     Serial.println(F("BLE Not Connected"));
     ble_do_events();//ble_do_events allows the BLE to process its events, if data is pending, it will be sent out.
   }
+  
   else if ( ble_connected() ) {
     //Serial.println("BLE Connected");
 
@@ -370,11 +413,16 @@ void ButtonInterrupt() {
   }
   ble_do_events();
 }
-///////////////////////Writing to EEPROM///////////////////////////////////////////////////
+
+
+/**\brief Write data to EEPROM. 
+ * 
+ * When session count is 9, 19, 29, ..., 89, store data in EEPROM. The data include sessionCount, arrayAvg1, arrayAvg2, sessionComp, startTime, and endTime.
+ */
 void WriteStorage() {
-  int currentAddress = 2;
+  int currentAddress;
   
-  //A session is considered starting only when the data is stored in EEPROM
+  //A session starts only when data is stored in EEPROM at the first time
   if (startFlag == false){
     sessionCount++;
     EEPROM.updateInt(0, sessionCount);
@@ -399,14 +447,6 @@ void WriteStorage() {
   currentAddress = currentAddress + 4;//increase by int
 
   if (sampleNum1 > sampleNum2) {
-    if (sampleNum1 < 90) { //Not done - these addresses will be rewritten this session
-      currentAddress = 2;
-    } 
-    /*else { //session is done
-      EEPROM.updateInt(0, sessionCount);
-      sessionCount++;
-    }
-    */
     if (testMode) {
       Serial.print(sessionCount);
       Serial.print(',');
@@ -422,14 +462,6 @@ void WriteStorage() {
       Serial.println(';');
     }
   } else {
-    if (sampleNum2 < 90) { //Not done - these addresses will be rewritten this session
-      currentAddress = 2;
-    } 
-    /*else { //session is done
-      EEPROM.updateInt(0, sessionCount);
-      sessionCount++;
-    }
-    */
     if (testMode) {
       Serial.print(sessionCount);
       Serial.print(',');
@@ -446,7 +478,15 @@ void WriteStorage() {
     }
   }
 }
-//////////////////////////////////////////////////////////////////////////////////////////
+
+
+/**\brief Sum up all intensities, calculate the average intensity, and calculate the session compliance
+ * 
+ * This function is called when a vertex of input intensity data is found
+ * 
+ * \param intensityValue The intensity value of a vertex
+ * \param channel The channel number
+ */
 void ArrayAdd(float intensityValue, int channel) {
   if (intensityValue > 0) {
     if (channel == 1) {
@@ -478,7 +518,15 @@ void ArrayAdd(float intensityValue, int channel) {
     }
   }
 }
-///////////////////////////////////////////////////////////////////////////////////////////
+
+
+/**\brief Calculate the intensity based on the sensor value and return the intensity
+ * 
+ * This function is called when a vertex is found. The value of intensity is about one tenth of a sensor value
+ * 
+ * \param sensorValue The voltage value from a sensor
+ * \return Return the intensity value mapping to the input sensor value
+ */
 float IntensityMap(int sensorValue) {
   float intensity;
 

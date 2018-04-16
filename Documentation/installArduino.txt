@@ -1,0 +1,53 @@
+/** \page installArduino Install Arduino
+
+\section Install
+(Step 1 to 3 are only required at the first time)
+1. Install Arduino IDE
+	- Go to this link to download Arduino IDE
+	- https://www.arduino.cc/en/Main/Software
+<br><br>
+2. Install the blend board to Arduino IDE and install libraries
+	- Follow the instruction of installation in the following page
+	- https://github.com/RedBearLab/Blend
+<br><br>
+3. Make sure all used libraries are installed
+	- EEPROMex
+	- SPI
+	- lib_aci
+	- aci_setup
+	- RBL_nRF8001
+	- RBL_services
+	- Wire
+	- RTClib
+<br><br>
+4. Open MasterV1.ino in Arduino IDE
+<br><br>
+5. Use micro-USB to connect the blend board with your laptop
+	- There is a hexagonal screwdriver in the bag to open the white part of the device
+<br><br>
+6. Select Tools menu, then Board, and last Blend
+<br><br>
+7. Select Tools menu, then Port, and last the port that you connect the micro-USB
+<br><br>
+8. Make sure Serial Monitor is not open
+<br><br>
+9. Click the Verify button in the top left corner
+	- This is not necessary if you will upload the program to the blend board
+<br><br>
+10. Click the Upload button next to Verify
+	- When there is “Done uploading” shown in the window below the code part, the blend board is running the program
+
+\section recovery Port Not Found
+If you do not see the USB port you’re using, try these following steps
+Recovery Procedure for Blend Micro sketch upload failing. (https://github.com/RedBearLab/Blend)
+1. Open the Blink sketch (File menu -> Examples -> 01.Basics -> Blink)
+2. Press the white button on the blend board to reset the board. It will enter to bootloader mode for 8 seconds (the LED - L will be flashing).
+3. During this 8-second period, select the COM port of the board in the Arduino IDE (Tools menu -> Port)
+4. Press "Compile and Upload" and then press the reset button on the board again. It should be able to load the sketch and fix the issue.
+
+
+Potential reasons for sketch upload failure:
+- Fail to upload a complete sketch last time. (e.g. uploading and suddenly removing power source, then the board's USB will not work since the firmware inside the board is invalid)
+- The program uses too much dynamic memory.
+
+*/
