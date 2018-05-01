@@ -1,0 +1,260 @@
+body {
+    background: rgb(64,63,76);
+    margin: 2px;
+    font-family: Tahoma, Geneva, sans-serif;
+    width: 100%;
+    
+}
+
+#container {
+    background: rgb(220,220,221);
+    /* border-radius: 5px 5px 5px 5px; */
+    width: 100%;
+     margin-left: auto; 
+     margin-right: auto; 
+    /* min-height: 700px; */
+    padding: 2em;
+    margin-top: 1em;
+}
+
+#container #login{
+/*    display: block;
+    max-height: 170px;
+    margin: auto;*/
+}
+
+#login {
+    padding-bottom: 30px;
+}
+
+#logo img {
+    max-height: 200px;
+    //margin: auto;
+    margin-top: 2em;
+    
+}
+#logo h1 {
+    font-family: Futura, "Trebuchet MS", Arial, sans-serif;
+    width: 270px;
+    //float: right;
+}
+h1 {
+margin-left: 15px;
+text-align:center;
+}
+
+h2{
+    margin: auto;
+    padding-top: 30px;
+    padding-bottom: 20px;
+    color: rgb(28,117,127);//teal
+}
+
+h1, h2 {
+    padding: 0;
+    margin: 0 0 20px 0;
+    font-weight: normal;
+   // color: rgb(28,117,127);
+}
+
+#page-logo{
+    color: #FFF;
+   // padding-left: 10px;
+    display:inline-block;
+}
+
+#login form {
+    padding: inherit;
+    display: block;
+    text-align: center;
+    font-size: x-large;
+    font-family: monospace;
+    margin-top: 170px;
+}
+
+#login h1 {
+    margin-top: 1px;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    top: 0;
+    width: 100%;
+    font-size: 20px;
+  //  color: white;
+}
+
+/*nav li a{
+    color:white;
+}*/
+
+
+#logo{
+    margin-left: 30px;
+    margin-top: 30px;
+}
+
+nav{
+    border:1px; //solid #ccc;
+    border-width:1px 0;
+    list-style:none;
+    margin:0;
+    padding:0;
+    text-align:center;
+    background-color: rgb(64,63,76);
+  //  color:white;
+    width:100%
+}
+nav li{
+    display:inline;
+    padding: 10px;
+ //   color: white;
+}
+nav a{
+    display:inline-block;
+    padding:10px;
+   // color: white;
+}
+
+.nav:link{
+    color: rgb(28,117,127);
+    
+}
+
+.nav:hover {
+    //background-color: rgb(64,63,76);
+   color:white;
+}
+
+.activePage { 
+    background-color: rgb(64,63,76); 
+    color: white;
+   // color: rgb(28,117,127); //teal of logo
+}
+
+#page-pic {
+    max-height: 80px;
+}
+
+.button {
+    padding: 10px 10px;
+    text-align: center;
+    border-radius: 15px;
+    font-size: 16px;
+    background: rgb(44,43,60);
+    color: white;
+}
+
+.button:hover {background-color: rgb(64,63,76)}
+
+
+.form-signup{
+    width: 450px;
+    padding-top: 0px;
+    padding: 30px;
+    margin: auto;
+    background: #FFF;
+    border-radius: 10px;
+}
+
+ul {
+    padding-left: 2em;
+    margin: 0 0 20px 0;
+    list-style: none;
+}
+
+a{
+    text-decoration: none;
+    color: teal;
+}
+
+/*a:visited { 
+    color: black;
+    text-decoration: none;
+}*/
+
+
+/* mouse over link */
+a:hover {
+    color: white;
+}
+
+/* selected link */
+a:active {
+    color: white;
+}
+
+#table {
+    margin-bottom: 3em;
+    margin-top: 3em;
+   // align: center;
+}
+
+.title{
+    background-color: rgb(64,63,76);
+    color: white;
+    font-size: 30px;
+}
+
+
+tr:nth-child(even) {
+   background-color: #ccc;
+}
+
+fieldset{
+  width: 60%;
+  margin-left: 10%;
+}
+
+.verticalBarGraph {
+    border-bottom: 1px solid #FFF;
+    height: 200px;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    }
+    
+.verticalBarGraph li {
+    border: 1px solid #555;
+    border-bottom: none;
+    bottom: 0;
+    list-style:none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    text-align: center;
+    width: 39px;
+    }
+    
+    .chart { width: 100%; }
+
+.chart li {
+  border-radius: 4px 4px 0 0; /* Remember vendor prefixes */
+  box-shadow: 0 1px 0 0 rgba(255,255,255,.6) inset; /* Remember vendor prefixes */
+  display: block;
+  height: 125px;
+  padding: 25px 0;
+  position: relative;
+  text-align: center;
+  vertical-align: bottom;
+}
+
+.chart .axis { 
+  display: none;
+  top: -25px;
+  width: 11%;
+ }
+
+.chart .label {
+  background: #eaeaea;
+  margin: -.6em 0 65px 0;
+}
+
+.chart .percent {
+  font-size: 30px;
+  letter-spacing: -3px;
+  opacity: .4;
+  width: 100%;
+}
