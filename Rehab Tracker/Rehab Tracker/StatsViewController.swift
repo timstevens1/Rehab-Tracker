@@ -10,15 +10,16 @@
 //
 
 import UIKit
-import Charts
 import Foundation
+import Charts
 import CoreData
 import CoreBluetooth
 
 // This pulls all the stats from Core Data
-class StatsViewController: UIViewController {
-
-    @IBOutlet weak var lineChartView: LineChartView!
+class StatsViewController: UIViewController, ChartViewDelegate {
+    
+    @IBOutlet var yLabel: UILabel!
+    @IBOutlet var scatterChartView: ScatterChartView!
     
     // Variables to hold data arrays
     private var sessions: [Double] = []
@@ -36,37 +37,38 @@ class StatsViewController: UIViewController {
     private var fldIntensity2 = ""
     
     // Set chart function to create a chart from session data
-    private func setLineChart(dataPoints: [Double], values: [Double]) {
-        lineChartView.noDataText = "Loading..."
+    private func setScatterChart(dataPoints: [Double], values: [Double]) {
+        scatterChartView.noDataText = "Loading..."
         var dataEntries: [ChartDataEntry] = []
         
         for i in 0..<dataPoints.count {
             let dataEntry = ChartDataEntry(x: dataPoints[i], y: values[i])
             dataEntries.append(dataEntry)
         }
-        
-        let chartDataSet = LineChartDataSet(values: dataEntries, label: "Average Session Intensity")
-        let chartData = LineChartData(dataSet: chartDataSet)
-        lineChartView.data = chartData
+        let chartDataSet = ScatterChartDataSet(values: dataEntries, label: "Average Session Intensity")
+        let chartData = ScatterChartData(dataSet: chartDataSet)
+        scatterChartView.data = chartData
         
         // Aesthetic options for the chart
-        lineChartView.chartDescription?.text = ""
-        lineChartView.xAxis.labelPosition = .bottom
+        scatterChartView.chartDescription?.text = ""
+        scatterChartView.xAxis.labelPosition = .bottom
         DispatchQueue.main.async {
-            self.lineChartView.backgroundColor = UIColor(red: 189/255, green: 195/255, blue: 199/255, alpha: 1)
+            self.scatterChartView.backgroundColor =
+                UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1)
         }
-        lineChartView.animate(xAxisDuration: 2.0, yAxisDuration: 2.0)
-        lineChartView.rightAxis.enabled = false
-        lineChartView.xAxis.granularity = 1
-        /*print("DATES")
+        scatterChartView.animate(xAxisDuration: 2.0, yAxisDuration: 2.0)
+        scatterChartView.rightAxis.enabled = false
+        scatterChartView.xAxis.granularity = 1
+        scatterChartView.setVisibleXRangeMaximum(10)
+        /*print("DATES")/
         print(self.dates)
-        lineChartView.xAxis.setLabelCount(self.dates.count, force: true)
-        lineChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values:self.dates)*/
+        scatterChartView.xAxis.setLabelCount(self.dates.count, force: true)
+        scatterChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values:self.dates)*/
         
         // Sets the target intensity
         let targetIntensity = ChartLimitLine(limit: limit, label: "Target Intensity")
         targetIntensity.labelPosition = .leftTop
-        lineChartView.leftAxis.addLimitLine(targetIntensity)
+        scatterChartView.leftAxis.addLimitLine(targetIntensity)
     }
  
     // Function to get current user's session stats from db via ReST
@@ -155,9 +157,6 @@ class StatsViewController: UIViewController {
                 // Append sorted data to the respective global arrays
                 for dataPoint in self.dataPoints {
                     self.sessions.append(dataPoint.0)
-                    //let sessionTimeNoYear = dataPoint.1.substring(from: String.Index(5))
-                    //let sessionDate = sessionTimeNoYear.substring(to: String.Index(5))
-                    //self.dates.append(sessionDate)
                     self.intensity.append(dataPoint.1)
                 }
                 print("SESSIONS")
@@ -165,18 +164,107 @@ class StatsViewController: UIViewController {
                 print("INTENSITIES")
                 print(self.intensity)
                 // Send data to charts
-                self.setLineChart(dataPoints: self.sessions, values: self.intensity)
+                self.setScatterChart(dataPoints: self.sessions, values: self.intensity)
             }
             else {
-                print(error)
+                print(error!)
             }
         })
         task.resume()
     }
-    
-    // TO DO - use core data if no internet connection!!!
+    private func getStatsUpdated(){
+        // Create urlstr string with current userID
+        let urlstr : String = Util.getHOST() + "Restful/getUserSessionsStats.php?pmkPatientID=" + Util.returnCurrentUsersID()
+        // Make url string into actual url
+        guard let url = URL(string: urlstr)
+            else {
+                print("Error: cannot create stats URL")
+                return
+        }
+        // Create urlRequest using our url
+        let urlRequest = URLRequest(url: url)
+        
+        let task = URLSession.shared.dataTask(with: urlRequest, completionHandler: {
+            (data, response, error) in
+            // If user sessions exist, save them
+            if (error == nil) {
+                let jo : NSDictionary
+                do {
+                    jo =
+                        try JSONSerialization.jsonObject(with: data!, options: []) as! NSDictionary
+                    print("JSON OBJECT RETURNED FROM REST")
+                    print(jo)
+                }
+                catch {
+                    return
+                }
+                let userSessions = jo.value(forKey: "userSessions") as! NSArray
+                
+                print("USER SESSIONS ARRAY")
+                print(userSessions)
+                
+                for userSession in userSessions {
+                    let userSessionDict = userSession as! NSDictionary
+                    print("Session")
+                    print(userSessionDict)
+                    for session_data in userSessionDict {
+                        print("data piece")
+                        print(session_data)
+                    }
+                    //let sessionTime = userSessionDict["fldStartTime"] as! String
+                    let sessionID = userSessionDict["fldSessNum"] as! String
+                    print("SESSION ID")
+                    print(sessionID)
+                    let userID = Util.getCurrentUserID()
+                    if (sessionID.count > userID.count) {
+                        print("SESSION NUM STRING")
+                        print(sessionID.suffix(sessionID.count - userID.count - 1))
+                    }
+                    if (sessionID.range(of:"_") != nil) {
+                        let sessionNum = Double(sessionID.suffix(sessionID.count - userID.count - 1))
+                        let sessionIntensity1 = Double(userSessionDict["fldIntensity1"] as! String)
+                        let sessionIntensity2 = Double(userSessionDict["fldIntensity2"] as! String)
+                        if (sessionNum != nil && sessionIntensity1 != nil && sessionIntensity2 != nil) {
+                            var sessionIntensityAvg = 0.0
+                            if (sessionIntensity1! == 0) {
+                                sessionIntensityAvg = sessionIntensity2!
+                            } else if (sessionIntensity2! == 0){
+                                sessionIntensityAvg = sessionIntensity1!
+                            } else {
+                                sessionIntensityAvg = Double((sessionIntensity1! + sessionIntensity2!)/2)
+                            }
+                            // Append data for this session to dataPoints
+                            self.dataPoints.append((sessionNum!,sessionIntensityAvg))
+                            //self.dataPoints.append((sessionNum!,sessionTime,sessionIntensityAvg))
+                            print("DATA BEFORE SORT")
+                            print( )
+                        }
+                    }
+                }
+                // Sort data points by session number (ascending)
+                self.dataPoints.sort {$0.0 < $1.0}
+                print("DATA AFTER SORT")
+                print(self.dataPoints)
+                // Append sorted data to the respective global arrays
+                for dataPoint in self.dataPoints {
+                    self.sessions.append(dataPoint.0)
+                    self.intensity.append(dataPoint.1)
+                }
+                print("SESSIONS")
+                print(self.sessions)
+                print("INTENSITIES")
+                print(self.intensity)
+                // Send data to charts
+                self.setScatterChart(dataPoints: self.sessions, values: self.intensity)
+            }
+            else {
+                print(error!)
+            }
+        })
+        task.resume()
+    }
     // Function to retrieve stats from core data
-    /*private func getStats() {
+    private func storeStats() {
         // Set up the request for Sessions
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
@@ -210,11 +298,11 @@ class StatsViewController: UIViewController {
         catch {
             print("Could not find stats. \(error)")
         }
-    }*/
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        yLabel.transform = CGAffineTransform(rotationAngle: -CGFloat.pi/2)
         // Get data for graphs
         getStats()
         
