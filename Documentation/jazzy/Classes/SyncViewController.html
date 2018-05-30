@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>SyncViewController Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Class/SyncViewController" class="dashAnchor"></a>
+    <a title="SyncViewController Class Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html">Rehab_Tracker Docs</a> (18% documented)</p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html">Rehab_Tracker Reference</a>
+        <img id="carat" src="../img/carat.png" />
+        SyncViewController Class Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/AppDelegate.html">AppDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Session.html">Session</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SettingsViewController.html">SettingsViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/StatsViewController.html">StatsViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SyncViewController.html">SyncViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/User.html">User</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Util.html">Util</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ViewController.html">ViewController</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Global Variables.html">Global Variables</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Global Variables.html#/s:13Rehab_Tracker5DEBUGSbv">DEBUG</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Global Variables.html#/s:13Rehab_Tracker21SESSION_TIME_TRACKINGSbv">SESSION_TIME_TRACKING</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Global Variables.html#/s:13Rehab_Tracker17maxUserSessionNumSiSgv">maxUserSessionNum</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Global Variables.html#/s:13Rehab_Tracker24positiveFeedbackMessagesSaySSGv">positiveFeedbackMessages</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Global Variables.html#/s:13Rehab_Tracker24sessionsStringFromDeviceSSv">sessionsStringFromDevice</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>SyncViewController</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight swift"><code><span class="kd">class</span> <span class="kt">SyncViewController</span><span class="p">:</span> <span class="kt">UIViewController</span><span class="p">,</span> <span class="kt">CBCentralManagerDelegate</span><span class="p">,</span> <span class="kt">CBPeripheralDelegate</span></code></pre>
+
+                </div>
+              </div>
+            <p>This class is the main view controller of this app, which pulls data from the device and syncs to core data and db.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Rehab_Tracker@objc(cs)SyncViewController(py)numSessions"></a>
+                    <a name="//apple_ref/swift/Property/numSessions" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Rehab_Tracker@objc(cs)SyncViewController(py)numSessions">numSessions</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Text label that shows the number of sessions that week</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@IBOutlet</span> <span class="k">weak</span> <span class="k">var</span> <span class="nv">numSessions</span><span class="p">:</span> <span class="kt">UILabel</span><span class="o">!</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Rehab_Tracker@objc(cs)SyncViewController(py)dateSynced"></a>
+                    <a name="//apple_ref/swift/Property/dateSynced" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Rehab_Tracker@objc(cs)SyncViewController(py)dateSynced">dateSynced</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Text label that shows if any session has been synced</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@IBOutlet</span> <span class="k">weak</span> <span class="k">var</span> <span class="nv">dateSynced</span><span class="p">:</span> <span class="kt">UILabel</span><span class="o">!</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:13Rehab_Tracker18SyncViewControllerC7manager33_42892B8C40B3801EC1563D759B5C74E6LLSQySo16CBCentralManagerCGv"></a>
+                    <a name="//apple_ref/swift/Property/manager" class="dashAnchor"></a>
+                    <a class="token" href="#/s:13Rehab_Tracker18SyncViewControllerC7manager33_42892B8C40B3801EC1563D759B5C74E6LLSQySo16CBCentralManagerCGv">manager</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Object to manage discovered or connected remote peripheral devices</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">private</span> <span class="k">var</span> <span class="nv">manager</span><span class="p">:</span><span class="kt">CBCentralManager</span><span class="o">!</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:13Rehab_Tracker18SyncViewControllerC10peripheral33_42892B8C40B3801EC1563D759B5C74E6LLSQySo12CBPeripheralCGv"></a>
+                    <a name="//apple_ref/swift/Property/peripheral" class="dashAnchor"></a>
+                    <a class="token" href="#/s:13Rehab_Tracker18SyncViewControllerC10peripheral33_42892B8C40B3801EC1563D759B5C74E6LLSQySo12CBPeripheralCGv">peripheral</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Remote peripheral devices that your app has discovered advertising or is currently connected to</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">private</span> <span class="k">var</span> <span class="nv">peripheral</span><span class="p">:</span><span class="kt">CBPeripheral</span><span class="o">!</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:13Rehab_Tracker18SyncViewControllerC12resultString33_42892B8C40B3801EC1563D759B5C74E6LLSQySSGv"></a>
+                    <a name="//apple_ref/swift/Property/resultString" class="dashAnchor"></a>
+                    <a class="token" href="#/s:13Rehab_Tracker18SyncViewControllerC12resultString33_42892B8C40B3801EC1563D759B5C74E6LLSQySSGv">resultString</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>String to store the entire data received from the device</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">private</span> <span class="k">var</span> <span class="nv">resultString</span><span class="p">:</span> <span class="kt">String</span><span class="o">!</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:13Rehab_Tracker18SyncViewControllerC5stats33_42892B8C40B3801EC1563D759B5C74E6LLSaySS17avg_ch1_intensity_SS0o5_ch2_Q0SS18session_complianceSS10start_timeSS04end_V0tGv"></a>
+                    <a name="//apple_ref/swift/Property/stats" class="dashAnchor"></a>
+                    <a class="token" href="#/s:13Rehab_Tracker18SyncViewControllerC5stats33_42892B8C40B3801EC1563D759B5C74E6LLSaySS17avg_ch1_intensity_SS0o5_ch2_Q0SS18session_complianceSS10start_timeSS04end_V0tGv">stats</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Array to store stats data</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">private</span> <span class="k">var</span> <span class="nv">stats</span><span class="p">:[(</span><span class="nv">avg_ch1_intensity</span><span class="p">:</span><span class="kt">String</span><span class="p">,</span> <span class="nv">avg_ch2_intensity</span><span class="p">:</span><span class="kt">String</span><span class="p">,</span> <span class="nv">session_compliance</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">start_time</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">end_time</span><span class="p">:</span> <span class="kt">String</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[]</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:13Rehab_Tracker18SyncViewControllerC11failed_sync33_42892B8C40B3801EC1563D759B5C74E6LLSbv"></a>
+                    <a name="//apple_ref/swift/Property/failed_sync" class="dashAnchor"></a>
+                    <a class="token" href="#/s:13Rehab_Tracker18SyncViewControllerC11failed_sync33_42892B8C40B3801EC1563D759B5C74E6LLSbv">failed_sync</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Boolean value to check if the sync has failed</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">private</span> <span class="k">var</span> <span class="nv">failed_sync</span> <span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:13Rehab_Tracker18SyncViewControllerC16feedback_message33_42892B8C40B3801EC1563D759B5C74E6LLSSv"></a>
+                    <a name="//apple_ref/swift/Property/feedback_message" class="dashAnchor"></a>
+                    <a class="token" href="#/s:13Rehab_Tracker18SyncViewControllerC16feedback_message33_42892B8C40B3801EC1563D759B5C74E6LLSSv">feedback_message</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>String to show the feedback</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">private</span> <span class="k">var</span> <span class="nv">feedback_message</span><span class="p">:</span><span class="kt">String</span> <span class="o">=</span> <span class="s">""</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:13Rehab_Tracker18SyncViewControllerC21finished_parsing_data33_42892B8C40B3801EC1563D759B5C74E6LLSbv"></a>
+                    <a name="//apple_ref/swift/Property/finished_parsing_data" class="dashAnchor"></a>
+                    <a class="token" href="#/s:13Rehab_Tracker18SyncViewControllerC21finished_parsing_data33_42892B8C40B3801EC1563D759B5C74E6LLSbv">finished_parsing_data</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Boolean value to check if data has been parsed completely</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">private</span> <span class="k">var</span> <span class="nv">finished_parsing_data</span> <span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Rehab_Tracker@objc(cs)SyncViewController(py)RT_NAME"></a>
+                    <a name="//apple_ref/swift/Property/RT_NAME" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Rehab_Tracker@objc(cs)SyncViewController(py)RT_NAME">RT_NAME</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Name of the device connected via bluetooth</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">RT_NAME</span> <span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"RT"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Rehab_Tracker@objc(cs)SyncViewController(py)RT_SERVICE_UUID"></a>
+                    <a name="//apple_ref/swift/Property/RT_SERVICE_UUID" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Rehab_Tracker@objc(cs)SyncViewController(py)RT_SERVICE_UUID">RT_SERVICE_UUID</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Service UUID of the device</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">RT_SERVICE_UUID</span> <span class="o">=</span> <span class="kt">CBUUID</span><span class="p">(</span><span class="nv">string</span><span class="p">:</span> <span class="s">"713D0000-503E-4C75-BA94-3148F18D941E"</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Rehab_Tracker@objc(cs)SyncViewController(py)RT_CHAR_TX_UUID"></a>
+                    <a name="//apple_ref/swift/Property/RT_CHAR_TX_UUID" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Rehab_Tracker@objc(cs)SyncViewController(py)RT_CHAR_TX_UUID">RT_CHAR_TX_UUID</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Transmit UUID of the device</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">RT_CHAR_TX_UUID</span> <span class="o">=</span> <span class="kt">CBUUID</span><span class="p">(</span><span class="nv">string</span><span class="p">:</span> <span class="s">"713D0002-503E-4C75-BA94-3148F18D941E"</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Rehab_Tracker@objc(cs)SyncViewController(py)RT_CHAR_RX_UUID"></a>
+                    <a name="//apple_ref/swift/Property/RT_CHAR_RX_UUID" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Rehab_Tracker@objc(cs)SyncViewController(py)RT_CHAR_RX_UUID">RT_CHAR_RX_UUID</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Receive UUID of the device</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">RT_CHAR_RX_UUID</span> <span class="o">=</span> <span class="kt">CBUUID</span><span class="p">(</span><span class="nv">string</span><span class="p">:</span> <span class="s">"713D0003-503E-4C75-BA94-3148F18D941E"</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Rehab_Tracker@objc(cs)SyncViewController(py)flag"></a>
+                    <a name="//apple_ref/swift/Property/flag" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Rehab_Tracker@objc(cs)SyncViewController(py)flag">flag</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Boolean value to check if the app is ready to receive data from the device</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">flag</span> <span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:13Rehab_Tracker18SyncViewControllerC8comments33_42892B8C40B3801EC1563D759B5C74E6LLSSv"></a>
+                    <a name="//apple_ref/swift/Property/comments" class="dashAnchor"></a>
+                    <a class="token" href="#/s:13Rehab_Tracker18SyncViewControllerC8comments33_42892B8C40B3801EC1563D759B5C74E6LLSSv">comments</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>global variable comments to store session comments</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">private</span> <span class="k">var</span> <span class="nv">comments</span> <span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"No Comments"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Rehab_Tracker@objc(cs)SyncViewController(py)sync_image"></a>
+                    <a name="//apple_ref/swift/Property/sync_image" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Rehab_Tracker@objc(cs)SyncViewController(py)sync_image">sync_image</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sync image outlet</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@IBOutlet</span> <span class="k">weak</span> <span class="k">var</span> <span class="nv">sync_image</span><span class="p">:</span> <span class="kt">UIImageView</span><span class="o">!</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Rehab_Tracker@objc(cs)SyncViewController(py)sync_button"></a>
+                    <a name="//apple_ref/swift/Property/sync_button" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Rehab_Tracker@objc(cs)SyncViewController(py)sync_button">sync_button</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sync button outlet</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@IBOutlet</span> <span class="k">weak</span> <span class="k">var</span> <span class="nv">sync_button</span><span class="p">:</span> <span class="kt">UIButton</span><span class="o">!</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:13Rehab_Tracker18SyncViewControllerC12sessionsJson33_42892B8C40B3801EC1563D759B5C74E6LLs10DictionaryVySSAGySSypGGv"></a>
+                    <a name="//apple_ref/swift/Property/sessionsJson" class="dashAnchor"></a>
+                    <a class="token" href="#/s:13Rehab_Tracker18SyncViewControllerC12sessionsJson33_42892B8C40B3801EC1563D759B5C74E6LLs10DictionaryVySSAGySSypGGv">sessionsJson</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Empty dictionary to hold JSON for post to database</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">private</span> <span class="k">var</span> <span class="nv">sessionsJson</span> <span class="o">=</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span><span class="kt">Any</span><span class="p">]]()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Rehab_Tracker@objc(cs)SyncViewController(im)showInfo:"></a>
+                    <a name="//apple_ref/swift/Method/showInfo(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Rehab_Tracker@objc(cs)SyncViewController(im)showInfo:">showInfo(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Info button at the top right corner that shows an alert</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@IBAction</span> <span class="kd">func</span> <span class="nf">showInfo</span><span class="p">(</span><span class="n">_</span> <span class="nv">sender</span><span class="p">:</span> <span class="kt">UIBarButtonItem</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:13Rehab_Tracker18SyncViewControllerC27syncResetUIAndFeedbackAlert33_42892B8C40B3801EC1563D759B5C74E6LLyyF"></a>
+                    <a name="//apple_ref/swift/Method/syncResetUIAndFeedbackAlert()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:13Rehab_Tracker18SyncViewControllerC27syncResetUIAndFeedbackAlert33_42892B8C40B3801EC1563D759B5C74E6LLyyF">syncResetUIAndFeedbackAlert()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Reset sync UI and create post-sync alert - feedback on success or failure</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">private</span> <span class="kd">func</span> <span class="nf">syncResetUIAndFeedbackAlert</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Rehab_Tracker@objc(cs)SyncViewController(im)Sync:"></a>
+                    <a name="//apple_ref/swift/Method/Sync(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Rehab_Tracker@objc(cs)SyncViewController(im)Sync:">Sync(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@IBAction</span> <span class="kd">func</span> <span class="kt">Sync</span><span class="p">(</span><span class="n">_</span> <span class="nv">sender</span><span class="p">:</span> <span class="kt">UIButton</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:13Rehab_Tracker18SyncViewControllerC8thisDate33_42892B8C40B3801EC1563D759B5C74E6LLSSyF"></a>
+                    <a name="//apple_ref/swift/Method/thisDate()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:13Rehab_Tracker18SyncViewControllerC8thisDate33_42892B8C40B3801EC1563D759B5C74E6LLSSyF">thisDate()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">private</span> <span class="kd">func</span> <span class="nf">thisDate</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:13Rehab_Tracker18SyncViewControllerC21unixSecondsToDatetime33_42892B8C40B3801EC1563D759B5C74E6LLSSs5Int32V18seconds_since_1970_tF"></a>
+                    <a name="//apple_ref/swift/Method/unixSecondsToDatetime(seconds_since_1970:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:13Rehab_Tracker18SyncViewControllerC21unixSecondsToDatetime33_42892B8C40B3801EC1563D759B5C74E6LLSSs5Int32V18seconds_since_1970_tF">unixSecondsToDatetime(seconds_since_1970:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">private</span> <span class="kd">func</span> <span class="nf">unixSecondsToDatetime</span><span class="p">(</span><span class="nv">seconds_since_1970</span><span class="p">:</span><span class="kt">Int32</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:13Rehab_Tracker18SyncViewControllerC9parseData33_42892B8C40B3801EC1563D759B5C74E6LLyyF"></a>
+                    <a name="//apple_ref/swift/Method/parseData()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:13Rehab_Tracker18SyncViewControllerC9parseData33_42892B8C40B3801EC1563D759B5C74E6LLyyF">parseData()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">private</span> <span class="kd">func</span> <span class="nf">parseData</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:13Rehab_Tracker18SyncViewControllerC12syncSessions33_42892B8C40B3801EC1563D759B5C74E6LLyyF"></a>
+                    <a name="//apple_ref/swift/Method/syncSessions()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:13Rehab_Tracker18SyncViewControllerC12syncSessions33_42892B8C40B3801EC1563D759B5C74E6LLyyF">syncSessions()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">private</span> <span class="kd">func</span> <span class="nf">syncSessions</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:13Rehab_Tracker18SyncViewControllerC7addData33_42892B8C40B3801EC1563D759B5C74E6LLyyF"></a>
+                    <a name="//apple_ref/swift/Method/addData()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:13Rehab_Tracker18SyncViewControllerC7addData33_42892B8C40B3801EC1563D759B5C74E6LLyyF">addData()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">private</span> <span class="kd">func</span> <span class="nf">addData</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:13Rehab_Tracker18SyncViewControllerC22prepareNewSessionsJSON33_42892B8C40B3801EC1563D759B5C74E6LLyyF"></a>
+                    <a name="//apple_ref/swift/Method/prepareNewSessionsJSON()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:13Rehab_Tracker18SyncViewControllerC22prepareNewSessionsJSON33_42892B8C40B3801EC1563D759B5C74E6LLyyF">prepareNewSessionsJSON()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">private</span> <span class="kd">func</span> <span class="nf">prepareNewSessionsJSON</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:13Rehab_Tracker18SyncViewControllerC14pushToDatabase33_42892B8C40B3801EC1563D759B5C74E6LLyyF"></a>
+                    <a name="//apple_ref/swift/Method/pushToDatabase()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:13Rehab_Tracker18SyncViewControllerC14pushToDatabase33_42892B8C40B3801EC1563D759B5C74E6LLyyF">pushToDatabase()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">private</span> <span class="kd">func</span> <span class="nf">pushToDatabase</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Rehab_Tracker@objc(cs)SyncViewController(im)centralManagerDidUpdateState:"></a>
+                    <a name="//apple_ref/swift/Method/centralManagerDidUpdateState(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Rehab_Tracker@objc(cs)SyncViewController(im)centralManagerDidUpdateState:">centralManagerDidUpdateState(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">centralManagerDidUpdateState</span><span class="p">(</span><span class="n">_</span> <span class="nv">central</span><span class="p">:</span> <span class="kt">CBCentralManager</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Rehab_Tracker@objc(cs)SyncViewController(im)centralManager:didDiscoverPeripheral:advertisementData:RSSI:"></a>
+                    <a name="//apple_ref/swift/Method/centralManager(_:didDiscoverPeripheral:advertisementData:RSSI:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Rehab_Tracker@objc(cs)SyncViewController(im)centralManager:didDiscoverPeripheral:advertisementData:RSSI:">centralManager(_:didDiscoverPeripheral:advertisementData:RSSI:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">centralManager</span><span class="p">(</span><span class="n">_</span> <span class="nv">central</span><span class="p">:</span> <span class="kt">CBCentralManager</span><span class="p">,</span> <span class="n">didDiscoverPeripheral</span> <span class="nv">peripheral</span><span class="p">:</span> <span class="kt">CBPeripheral</span><span class="p">,</span> <span class="nv">advertisementData</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span> <span class="p">:</span> <span class="kt">AnyObject</span><span class="p">],</span> <span class="kt">RSSI</span><span class="p">:</span> <span class="kt">NSNumber</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Rehab_Tracker@objc(cs)SyncViewController(im)centralManager:didConnectPeripheral:"></a>
+                    <a name="//apple_ref/swift/Method/centralManager(_:didConnect:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Rehab_Tracker@objc(cs)SyncViewController(im)centralManager:didConnectPeripheral:">centralManager(_:didConnect:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">centralManager</span><span class="p">(</span><span class="n">_</span> <span class="nv">central</span><span class="p">:</span> <span class="kt">CBCentralManager</span><span class="p">,</span> <span class="n">didConnect</span> <span class="nv">peripheral</span><span class="p">:</span> <span class="kt">CBPeripheral</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Rehab_Tracker@objc(cs)SyncViewController(im)peripheral:didDiscoverServices:"></a>
+                    <a name="//apple_ref/swift/Method/peripheral(_:didDiscoverServices:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Rehab_Tracker@objc(cs)SyncViewController(im)peripheral:didDiscoverServices:">peripheral(_:didDiscoverServices:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">peripheral</span><span class="p">(</span><span class="n">_</span> <span class="nv">peripheral</span><span class="p">:</span> <span class="kt">CBPeripheral</span><span class="p">,</span> <span class="n">didDiscoverServices</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">NSError</span><span class="p">?)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Rehab_Tracker@objc(cs)SyncViewController(im)peripheral:didDiscoverCharacteristicsForService:error:"></a>
+                    <a name="//apple_ref/swift/Method/peripheral(_:didDiscoverCharacteristicsForService:error:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Rehab_Tracker@objc(cs)SyncViewController(im)peripheral:didDiscoverCharacteristicsForService:error:">peripheral(_:didDiscoverCharacteristicsForService:error:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">peripheral</span><span class="p">(</span><span class="n">_</span> <span class="nv">peripheral</span><span class="p">:</span> <span class="kt">CBPeripheral</span><span class="p">,</span> <span class="n">didDiscoverCharacteristicsForService</span> <span class="nv">service</span><span class="p">:</span> <span class="kt">CBService</span><span class="p">,</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">NSError</span><span class="p">?)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Rehab_Tracker@objc(cs)SyncViewController(im)peripheral:didUpdateValueForCharacteristic:error:"></a>
+                    <a name="//apple_ref/swift/Method/peripheral(_:didUpdateValueForCharacteristic:error:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Rehab_Tracker@objc(cs)SyncViewController(im)peripheral:didUpdateValueForCharacteristic:error:">peripheral(_:didUpdateValueForCharacteristic:error:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">peripheral</span><span class="p">(</span><span class="n">_</span> <span class="nv">peripheral</span><span class="p">:</span> <span class="kt">CBPeripheral</span><span class="p">,</span> <span class="n">didUpdateValueForCharacteristic</span> <span class="nv">characteristic</span><span class="p">:</span> <span class="kt">CBCharacteristic</span><span class="p">,</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">NSError</span><span class="p">?)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Rehab_Tracker@objc(cs)SyncViewController(im)viewDidLoad"></a>
+                    <a name="//apple_ref/swift/Method/viewDidLoad()" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Rehab_Tracker@objc(cs)SyncViewController(im)viewDidLoad">viewDidLoad()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">override</span> <span class="kd">func</span> <span class="nf">viewDidLoad</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@Rehab_Tracker@objc(cs)SyncViewController(im)didReceiveMemoryWarning"></a>
+                    <a name="//apple_ref/swift/Method/didReceiveMemoryWarning()" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@Rehab_Tracker@objc(cs)SyncViewController(im)didReceiveMemoryWarning">didReceiveMemoryWarning()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">override</span> <span class="kd">func</span> <span class="nf">didReceiveMemoryWarning</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2018 <a class="link" href="" target="_blank" rel="external">Chia-Chun Chao</a>. All rights reserved. (Last updated: 2018-05-30)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.1</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>

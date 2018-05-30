@@ -4,10 +4,14 @@
 The overarching goal of the project was to create a mobile application/wireless-enabled NMES device to improve rehabilitation compliance of patients with ACL tears through increased monitoring and novel patient-provider interactions. The iOS app connects to the NMES electrotherapy device through bluetooth, and receives data on the rehabilitation session. This data is saved in a database and is viewable to the physician on the physician-portal website. Copyright © University of Vermont.
 
 \section Folder Directory
-- **Arduino:** The code for the Blend Arduino that will be uploaded to the board on the NMES machine. Instructions of installing Arduino are in \subpage installArduino. 
-- **Restful:** All of the scripts that involve RESTful communication, PUSH notifications, and compliance scripts as well as database architecture
-- **PhysicianPortal:** The code for the online portal which clinicians can use to add/manage users as well as track compliance and patient sessions
-- *Rehab Tracker (documented in Jazzy): The code for the mobile application(iOS) where patients upload their session information which writes to the database*
+- **Hardware:** The code for the Blend Arduino that will be uploaded to the board on the NMES machine. Instructions of installing Arduino are in \subpage installArduino. 
+- **RTIT:** The code for web services including physician web portal and backend database web services. 
+	- **Restful:** All of the scripts that involve RESTful communication, PUSH notifications, and compliance scripts as well as database architecture.
+	- **PhysicianPortal:** The code for the online portal which clinicians can use to add/manage users as well as track compliance and patient sessions.
+
+- **Rehab Tracker:** The code for the mobile application(iOS) where patients upload their session information which writes to the database. The documentation of the Swift code is in [**Jazzy**](../jazzy/index.html). 
+- **Documentation:** The text documents, configuration files, and HTML files. 
+
 
 ___
 
@@ -24,6 +28,5 @@ Previous authors:
 - Brandon Goodwin brandon.goodwin@uvm.edu
 - Meaghan Winter meaghan.winter@uvm.edu
 
-This document is written by Chia-Chun Chao in April, 2018.
+This document is written by Chia-Chun Chao in May, 2018.
 */
-

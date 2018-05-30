@@ -9,72 +9,80 @@
 // <a href="https://icons8.com">Icon pack by Icons8</a>
 //
 
-// The purpose of this file is to pull data from the device and sync to core data and db
+/// The purpose of this file is to pull data from the device and sync to core data and db
 
 // Reference: 12 steps of bluetooth
 // Kevin Hoyt
 // http://www.kevinhoyt.com/2016/05/20/the-12-steps-of-bluetooth-swift/
 
 
-// (1) Import
-// Unlike beacons, which use Core Location, if you are communicating to a BLE device, you will use CoreBluetooth.
 import Foundation
 import UIKit
 import CoreData
 import CoreBluetooth
 
-// DEBUG mode flag
+/// DEBUG mode flag
 let DEBUG = true
 
-// Switch for including session time tracking (start time, end time)
+/// Switch for including session time tracking (start time, end time)
 let SESSION_TIME_TRACKING = true
 
-// Last session number for this user
+/// Last session number for this user
 var maxUserSessionNum:Int? = nil
 
-// String to hold session info received from device
+/// String to hold session info received from device
 var sessionsStringFromDevice: String = ""
 
-// Set of positive feedback messages for successful sync alert
+/// Set of positive feedback messages for successful sync alert
 let positiveFeedbackMessages = ["By completing your NMES session, you are preventing your muscles from atrophying and getting weaker.", "Good job completing your NMES session!", "Keep up the good work on your NMES sessions!", "By completing your NMES session, you are being proactive in preventing muscle atrophy and maintaining your muscle strength."]
 
-// (2) Delegates
-// Eventually you are going to want to get callbacks from some functionality. There are two delegates to implement: CBCentralManagerDelegate, and CBPeripheralDelegate.
+///This class is the main view controller of this app, which pulls data from the device and syncs to core data and db.
 class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate  {
     
+    /// Text label that shows the number of sessions that week
     @IBOutlet weak var numSessions: UILabel!
+    /// Text label that shows if any session has been synced
     @IBOutlet weak var dateSynced: UILabel!
-    //(3) Declare Manager and Peripheral
-    // The CBCentralManager install will be what you use to find, connect, and manage BLE devices. Once you are connected, and are working with a specific service, the peripheral will help you iterate characteristics and interacting with them.
+
+    /// Object to manage discovered or connected remote peripheral devices
     private var manager:CBCentralManager!
+    /// Remote peripheral devices that your app has discovered advertising or is currently connected to
     private var peripheral:CBPeripheral!
+    /// String to store the entire data received from the device
     private var resultString: String!
+    /// Array to store stats data
     private var stats:[(avg_ch1_intensity:String, avg_ch2_intensity:String, session_compliance: String, start_time: String, end_time: String)] = []
+    /// Boolean value to check if the sync has failed
     private var failed_sync : Bool = false
+    /// String to show the feedback
     private var feedback_message:String = ""
+    /// Boolean value to check if data has been parsed completely
     private var finished_parsing_data : Bool = false
     
-    // (4) UUID and Service Name
-    // You will need UUID for the BLE service, and a UUID for the specific characteristic. In some cases, you will need additional UUIDs. They get used repeatedly throughout the code, so having constants for them will keep the code cleaner, and easier to maintain.
+    /// Name of the device connected via bluetooth
     let RT_NAME : String = "RT"
+    /// Service UUID of the device
     let RT_SERVICE_UUID = CBUUID(string: "713D0000-503E-4C75-BA94-3148F18D941E")
+    /// Transmit UUID of the device
     let RT_CHAR_TX_UUID = CBUUID(string: "713D0002-503E-4C75-BA94-3148F18D941E")
+    /// Receive UUID of the device
     let RT_CHAR_RX_UUID = CBUUID(string: "713D0003-503E-4C75-BA94-3148F18D941E")
     
+    /// Boolean value to check if the app is ready to receive data from the device
     var flag : Bool = false
     
-    // global variable comments to store session comments
+    /// global variable comments to store session comments
     private var comments : String = "No Comments"
     
-    // Sync image outlet
+    /// Sync image outlet
     @IBOutlet weak var sync_image: UIImageView!
-    
-    // Sync button outlet
+    /// Sync button outlet
     @IBOutlet weak var sync_button: UIButton!
     
-    // Empty dictionary to hold JSON for post to database
+    /// Empty dictionary to hold JSON for post to database
     private var sessionsJson = [String: [String:Any]]()
     
+    /// Info button at the top right corner that shows an alert
     @IBAction func showInfo(_ sender: UIBarButtonItem) {
         // create the alert
         let alert = UIAlertController(title: "Problems?", message: "Make sure your device is on and in range, and that your phone's bluetooth is on!", preferredStyle: UIAlertControllerStyle.alert)
@@ -85,7 +93,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         // show the alert
         self.present(alert, animated: true, completion: nil)
     }
-    // Reset sync UI and create post-sync alert - feedback on success or failure
+    /// Reset sync UI and create post-sync alert - feedback on success or failure
     private func syncResetUIAndFeedbackAlert() {
         // Reset image and button
         self.sync_image.stopAnimating()
@@ -620,12 +628,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?) {
         print("[DEBUG] Setup notifications.")
         
-        //let data: NSData = "R".data(using: String.Encoding.utf8)! as NSData
-        /*
-         var flag = true;
-         */
         let data = NSData(bytes: &flag, length: MemoryLayout<Bool>.size)
-        
         
         for characteristic in service.characteristics! {
             let thisCharacteristic = characteristic as CBCharacteristic

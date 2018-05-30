@@ -1,0 +1,6 @@
+author: Chia-Chun Chao
+module: Rehab_Tracker 
+min_acl: private 
+output: "../Documentation/jazzy" 
+source_directory: "../Rehab Tracker/"
+
