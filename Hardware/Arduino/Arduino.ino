@@ -84,12 +84,13 @@ void setup() {
   }
   Serial.begin(57600); //Use the same rate in serial monitor
 
-  /*
+  
   // Set real time clock
   if (! rtc.begin()) {
     Serial.println("Couldn't find RTC");
-    while (1);
+    //while (1);
   }
+  /*
   if (! rtc.isrunning()) {
     Serial.println("RTC is NOT running");
     // following line sets the RTC to the date & time this sketch was compiled
@@ -112,6 +113,7 @@ void setup() {
 */
 void loop()
 {   
+  //EEPROM.updateInt(0, 0); //Initialize session count
   //rtc.adjust(DateTime(F(__DATE__), F(__TIME__))); //Adjust RTC time
 
   if (! rtc.isrunning()) {
