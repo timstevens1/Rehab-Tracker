@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>“RehabTracker”: Rehab Tracker</title>
+<title>RehabTracker: Rehab Tracker</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -21,7 +21,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">“RehabTracker”
+   <div id="projectname">RehabTracker
    </div>
   </td>
  </tr>
@@ -68,19 +68,48 @@ $(function() {
 <div class="textblock"><h1><a class="anchor" id="Overview"></a>
 Overview</h1>
 <p class="">The overarching goal of the project was to create a mobile application/wireless-enabled NMES device to improve rehabilitation compliance of patients with ACL tears through increased monitoring and novel patient-provider interactions. The iOS app connects to the NMES electrotherapy device through bluetooth, and receives data on the rehabilitation session. This data is saved in a database and is viewable to the physician on the physician-portal website. Copyright © University of Vermont.</p>
-<h1><a class="anchor" id="Folder"></a>
-Directory</h1>
+<h1><a class="anchor" id="Components"></a>
+Components</h1>
 <ul>
-<li><b>Hardware:</b> The code for the Blend Arduino that will be uploaded to the board on the NMES machine. Instructions of installing Arduino are in <a class="el" href="install_arduino.html">Install Arduino</a>.</li>
-<li><b>RTIT:</b> The code for web services including physician web portal and backend database web services.<ul>
-<li><b>Restful:</b> All of the scripts that involve RESTful communication, PUSH notifications, and compliance scripts as well as database architecture.</li>
-<li><b>PhysicianPortal:</b> The code for the online portal which clinicians can use to add/manage users as well as track compliance and patient sessions.</li>
+<li><b>NMES:</b> The neuromuscular electrical stimulation device used by patients during rehabilitation.</li>
+<li><b>RTC:</b> The real time clock, DS1307, that keeps track of time even if the power is off and is powered by a CR1220 coin cell battery.</li>
+<li><b>Blend:</b> The integrated development board, which can be considered as an Arduino Leonardo blended with Bluetooth Low Energy. The Blend is embedded in the NMES and the RTC is attached to the Blend.</li>
+<li><b>App:</b> The iOS application, Rehab Tracker, that allows users to login, report feedback, and sync data from the device to the database. It also receives push notifications of reinforcement regularly to remind patients of rehabilitation.</li>
+<li><b>Backend and database:</b> The backend web server that runs on a space provided by LCOM to follow HIPPA regulations. The communication between the app and the physician portal website is through the backend server and the database.</li>
+<li><b>Physician portal:</b> The website that is designed for care providers to review compliance status.</li>
+</ul>
+<div class="image">
+<img src="components.png" alt="components.png" width="500px"/>
+<div class="caption">
+Diagram of components </div></div>
+<p class="">Relations between components:</p><ol type="1">
+<li>The Blend receives voltage from the NMES through input pins.</li>
+<li>The Blend receives current time information from the RTC during a session.</li>
+<li>The Blend stores all session data in EEPROM, which is a non-volatile storage space. When a user pressed the sync button in the app, the BLE will be turned on. After the blend detects the BLE connection, it sends all session data stored in EEPROM to the app.</li>
+<li>After receiving session data from the Blend, the app stores the data in the core data and the database.</li>
+<li>In the sync page, the app shows sync information that is retrieved from the backend service.</li>
+<li>The backend server regularly sends push notifications to a patient’s phone where the app is installed on.</li>
+<li>Care providers check patients’ compliance through a physician portal, which retrieves patients’ data from the database.</li>
+</ol>
+<h1><a class="anchor" id="Directory"></a>
+Directory</h1>
+<p class="">The description of each directory is organized as on <a href="https://github.com/timstevens1/Rehab-Tracker">Github</a>:</p><ul>
+<li><a href="_arduino_8ino.html"><b>Hardware:</b></a> The code for the Blend Arduino that will be uploaded to the board on the NMES machine. There is only one file, <a class="el" href="_arduino_8ino.html" title="The code for the Blend Arduino that will be uploaded to the board on the NMES machine. ">Arduino.ino</a>, in this directory.</li>
+<li><a href="files.html"><b>RTIT:</b></a> The code for web services including physician web portal and backend database web services.<ul>
+<li><a href="dir_1a919a50d07c73a92bcf5580ca94153b.html"><b>Restful:</b></a> All of the scripts that involve RESTful communication, PUSH notifications, and compliance scripts as well as database architecture.</li>
+<li><a href="dir_d95c1d06a83d9225385d6463223d8b80.html"><b>PhysicianPortal:</b></a> The code for the online portal which clinicians can use to add/manage users as well as track compliance and patient sessions.</li>
 </ul>
 </li>
-<li><b>Rehab Tracker:</b> The code for the mobile application(iOS) where patients upload their session information which writes to the database. The documentation of the Swift code is in <a href="../jazzy/index.html"><b>Jazzy</b></a>.</li>
+<li><a href="../jazzy/index.html"><b>Rehab Tracker:</b></a> The code for the mobile application(iOS) where patients upload their session information which writes to the database. The documentation of the app is written with Jazzy.</li>
 <li><b>Documentation:</b> The text documents, configuration files, and HTML files.</li>
 </ul>
-<hr/>
+<h1><a class="anchor" id="Reference"></a>
+Reference</h1>
+<ul>
+<li><a class="el" href="install_arduino.html">Install Arduino</a> : Instructions of installing Arduino.</li>
+<li><a class="el" href="ducumentation_tutorial.html">Documentation Tutorial</a> : The tutorial of two documentation tools, Doxygen and Jazzy. <hr/>
+</li>
+</ul>
 <p class="">Current authors:</p><ul>
 <li>Tim Stevens <a href="#" onclick="location.href='mai'+'lto:'+'tim'+'ot'+'hy.'+'st'+'eve'+'ns'+'@uv'+'m.'+'edu'; return false;">timot<span style="display: none;">.nosp@m.</span>hy.s<span style="display: none;">.nosp@m.</span>teven<span style="display: none;">.nosp@m.</span>s@uv<span style="display: none;">.nosp@m.</span>m.edu</a></li>
 <li>Chia-Chun Chao <a href="#" onclick="location.href='mai'+'lto:'+'chi'+'a-'+'chu'+'n.'+'cha'+'o@'+'uvm'+'.e'+'du'; return false;">chia-<span style="display: none;">.nosp@m.</span>chun<span style="display: none;">.nosp@m.</span>.chao<span style="display: none;">.nosp@m.</span>@uvm<span style="display: none;">.nosp@m.</span>.edu</a></li>
@@ -94,7 +123,7 @@ Directory</h1>
 <li>Brandon Goodwin <a href="#" onclick="location.href='mai'+'lto:'+'bra'+'nd'+'on.'+'go'+'odw'+'in'+'@uv'+'m.'+'edu'; return false;">brand<span style="display: none;">.nosp@m.</span>on.g<span style="display: none;">.nosp@m.</span>oodwi<span style="display: none;">.nosp@m.</span>n@uv<span style="display: none;">.nosp@m.</span>m.edu</a></li>
 <li>Meaghan Winter <a href="#" onclick="location.href='mai'+'lto:'+'mea'+'gh'+'an.'+'wi'+'nte'+'r@'+'uvm'+'.e'+'du'; return false;">meagh<span style="display: none;">.nosp@m.</span>an.w<span style="display: none;">.nosp@m.</span>inter<span style="display: none;">.nosp@m.</span>@uvm<span style="display: none;">.nosp@m.</span>.edu</a></li>
 </ul>
-<p class="">This document is written by Chia-Chun Chao in May, 2018. </p>
+<p class="">This document is updated by Chia-Chun Chao in May, 2018. </p>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->

@@ -3,16 +3,43 @@
 \section Overview
 The overarching goal of the project was to create a mobile application/wireless-enabled NMES device to improve rehabilitation compliance of patients with ACL tears through increased monitoring and novel patient-provider interactions. The iOS app connects to the NMES electrotherapy device through bluetooth, and receives data on the rehabilitation session. This data is saved in a database and is viewable to the physician on the physician-portal website. Copyright © University of Vermont.
 
-\section Folder Directory
-- **Hardware:** The code for the Blend Arduino that will be uploaded to the board on the NMES machine. Instructions of installing Arduino are in \subpage installArduino. 
-- **RTIT:** The code for web services including physician web portal and backend database web services. 
-	- **Restful:** All of the scripts that involve RESTful communication, PUSH notifications, and compliance scripts as well as database architecture.
-	- **PhysicianPortal:** The code for the online portal which clinicians can use to add/manage users as well as track compliance and patient sessions.
-
-- **Rehab Tracker:** The code for the mobile application(iOS) where patients upload their session information which writes to the database. The documentation of the Swift code is in [**Jazzy**](../jazzy/index.html). 
-- **Documentation:** The text documents, configuration files, and HTML files. 
 
 
+\section Components
+
+- **NMES:** The neuromuscular electrical stimulation device used by patients during rehabilitation.
+- **RTC:** The real time clock, DS1307, that keeps track of time even if the power is off and is powered by a CR1220 coin cell battery.
+- **Blend:** The integrated development board, which can be considered as an Arduino Leonardo blended with Bluetooth Low Energy. The Blend is embedded in the NMES and the RTC is attached to the Blend.
+- **App:** The iOS application, Rehab Tracker, that allows users to login, report feedback, and sync data from the device to the database. It also receives push notifications of reinforcement regularly to remind patients of rehabilitation.
+- **Backend and database:** The backend web server that runs on a space provided by LCOM to follow HIPPA regulations. The communication between the app and the physician portal website is through the backend server and the database.
+- **Physician portal:** The website that is designed for care providers to review compliance status.
+
+\image html images/components.png Diagram of components width=500px 
+
+Relations between components:
+1. The Blend receives voltage from the NMES through input pins.
+2. The Blend receives current time information from the RTC during a session.
+3. The Blend stores all session data in EEPROM, which is a non-volatile storage space. When a user pressed the sync button in the app, the BLE will be turned on. After the blend detects the BLE connection, it sends all session data stored in EEPROM to the app.
+4. After receiving session data from the Blend, the app stores the data in the core data and the database.
+5. In the sync page, the app shows sync information that is retrieved from the backend service.
+6. The backend server regularly sends push notifications to a patient’s phone where the app is installed on.
+7. Care providers check patients’ compliance through a physician portal, which retrieves patients’ data from the database.
+
+
+
+\section Directory
+The description of each directory is organized as on [Github] (https://github.com/timstevens1/Rehab-Tracker):
+- [**Hardware:**] (_arduino_8ino.html) The code for the Blend Arduino that will be uploaded to the board on the NMES machine. There is only one file, Arduino.ino, in this directory.
+- [**RTIT:**] (files.html) The code for web services including physician web portal and backend database web services. 
+	- [**Restful:**] (dir_1a919a50d07c73a92bcf5580ca94153b.html) All of the scripts that involve RESTful communication, PUSH notifications, and compliance scripts as well as database architecture.
+	- [**PhysicianPortal:**] (dir_d95c1d06a83d9225385d6463223d8b80.html) The code for the online portal which clinicians can use to add/manage users as well as track compliance and patient sessions.
+
+- [**Rehab Tracker:**](../jazzy/index.html) The code for the mobile application(iOS) where patients upload their session information which writes to the database. The documentation of the app is written with Jazzy. 
+- **Documentation:** The text documents, configuration files, and HTML files.
+
+\section Reference
+- \subpage installArduino : Instructions of installing Arduino.
+- \subpage ducumentationTutorial : The tutorial of two documentation tools, Doxygen and Jazzy.
 ___
 
 Current authors:
@@ -28,5 +55,5 @@ Previous authors:
 - Brandon Goodwin brandon.goodwin@uvm.edu
 - Meaghan Winter meaghan.winter@uvm.edu
 
-This document is written by Chia-Chun Chao in May, 2018.
+This document is updated by Chia-Chun Chao in May, 2018.
 */

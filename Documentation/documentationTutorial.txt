@@ -1,0 +1,65 @@
+/** \page ducumentationTutorial Documentation Tutorial
+
+\section Doxygen
+1. Install **Doxygen** from http://www.stack.nl/~dimitri/doxygen/download.html and follow the instructions
+	- You many need to install **cmake** first from https://gitlab.kitware.com/cmake/cmake
+	- During both installation, you may need to type “sudo make install” instead of only “make install”
+<br><br>
+2. Go to Documentation/ and create a **configuration** file
+	- Type “cd Documentation”
+	- Type “doxygen -g <config-file>”
+	- If the file is named as ‘config’, the command will be “doxygen -g config”
+<br><br>
+3. Change these variables in the config-file
+	- PROJECT_NAME = “Rehab Tracker”
+	- EXTENSION_MAPPING =  ino=C
+	- INPUT = (all documented files)
+	- FILE_PATTERNS *.ino\
+	- HTML_OUTPUT = html_doxygen
+	- GENERATE_LATEX = NO
+	- IMAGE_PATH = images
+<br><br>
+4. Generate the documentation
+	- Type “doxygen <config-file>”
+<br><br>
+5. Open the HTML file to see the page
+	- Open Docmentation/html_doxygen/index.html
+<br><br>
+6. Follow this link to learn how to document the code and find some special commands
+	- https://www.stack.nl/~dimitri/doxygen/manual/index.html
+
+\section Jazzy
+1. Install **Jazzy** from https://github.com/realm/jazzy
+	- You may need to type “sudo gem install jazzy”
+<br><br>
+2. Go to the directory where your Swift project’s folder is in
+	- When you type “ls”, it should show “documentation”
+<br><br>
+3. See all the available parameters that you can use with Jazzy
+	- Type “jazzy -h”
+<br><br>
+4. Follow these links to learn how to document the Swift code 
+	- https://ericasadun.com/2015/06/14/swift-header-documentation-in-xcode-7/
+	- https://www.appcoda.com/swift-markdown/
+<br><br>
+5. Create a **configuration** file called “.jazzy.yaml”
+	- Description of each line in current configuration file
+	1. author: Chia-Chun Chao
+		- Name of author to attribute in docs
+		- Author name will show at the bottom of the document
+	2. module: Rehab_Tracker 
+		- Name of module being documented
+		- If this line is not included, only Charts-master will be documented
+		- Note that the space between Rehab and Tracker is replaced by an underscore
+	3. min_acl: private 
+		- Minimum access control level to document
+		- Default is public
+	4. output: "../Documentation/jazzy" 
+		- Folder to output the HTML docs to
+		- Default is docs
+	5.source_directory: "../Rehab Tracker/"
+		- The directory that contains the source to be documented
+
+
+
+*/

@@ -32,7 +32,7 @@ DOXYFILE_ENCODING      = UTF-8
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
 
-PROJECT_NAME           = “Rehab Tracker”
+PROJECT_NAME           = Rehab Tracker
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
@@ -801,7 +801,14 @@ WARN_LOGFILE           =
 
 INPUT                  = mainpage.txt \
 			 installArduino.txt \
-			 ../Hardware/Arduino/Arduino.ino
+			 ../Hardware/Arduino/Arduino.ino \
+			 documentationTutorial.txt \
+			 ../RTIT/physicianPortal/addPhysician.php \
+			 ../RTIT/physicianPortal/dbh.php \
+			 ../RTIT/Restful/cronDatabaseCompliance.php \
+			 ../RTIT/Restful/Database.php \
+
+
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -939,7 +946,7 @@ EXAMPLE_RECURSIVE      = NO
 # that contain images that are to be included in the documentation (see the
 # \image command).
 
-IMAGE_PATH             =
+IMAGE_PATH             = images
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program

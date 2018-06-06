@@ -1,7 +1,9 @@
 /** \file
- *  The MasterV1 script was written by the SEED team for the actual prototype that they created. 
+ *  \brief The code for the Blend Arduino that will be uploaded to the board on the NMES machine.
+ *  
+ *  The Arduino script was written by the SEED team and named as MasterV1 for the actual prototype that they created. 
  *  It has then been modified by Chia-Chun Chao, Yifan Zhang, and Xavier Stevens beyond that. 
- *  MasterV1 now tracks time, has clearer and more useful BLE usage and can transfer data from the NMES->Blend Board->App, 
+ *  Arduino.ino now tracks time, has clearer and more useful BLE usage and can transfer data from the NMES->Blend Board->App, 
  *  fixed the data pull so now there is no need for an off-app button for the sync, 
  *  the intensity values have been completely overhauled, 
  *  and multiple sessions can now be stored within the EEPROM just incase the user doesn't have internet
@@ -295,7 +297,7 @@ void initialize() {
 
 /**\brief Send data to the app via BLE
  * 
- * This function is called by ButtonInterrupt() when BLE is connected and user has pressed the sync button. 
+ * This function is called by ButtonInterrupt() when BLE is connected and user has pressed the sync button in the app. 
  * The data in EEPROM are read and transformed to a format that can be passed to ble_write_bytes().
  * The sent data include an 'x' in the end to inform the app that all data have been sent
  */

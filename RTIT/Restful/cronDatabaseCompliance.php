@@ -1,4 +1,8 @@
 <<?php
+/** \file
+ \brief Temporarily documented to generate the link of the folder
+ 
+ */
 //begin analysis script
 	require_once realpath(dirname(dirname(__FILE__))."\constants.php");
 	require_once "Database.php";

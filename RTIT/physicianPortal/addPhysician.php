@@ -1,5 +1,8 @@
 <?php
-
+/** \file
+ \brief Temporarily documented to generate the link of the folder
+ 
+ */
 if (isset($_POST['btn-signup'])) {
     $DocID = strip_tags($_POST['DocID']);
     $fldEmail = strip_tags($_POST['fldEmail']);

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['rehab_20tracker',['Rehab Tracker',['../index.html',1,'']]]
+  ['install_20arduino',['Install Arduino',['../install_arduino.html',1,'index']]]
 ];

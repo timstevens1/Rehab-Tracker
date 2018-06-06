@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['install_20arduino',['Install Arduino',['../install_arduino.html',1,'index']]]
+  ['documentation_20tutorial',['Documentation Tutorial',['../ducumentation_tutorial.html',1,'index']]]
 ];

@@ -1,4 +1,8 @@
 <?php
+/** \file
+ \brief Temporarily documented to generate the link of the folder
+ 
+ */
 require_once realpath("../constants.php");
 require_once realpath("../pass.php");
 $DBhost = DB_HOST;

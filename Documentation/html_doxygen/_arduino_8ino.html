@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>“RehabTracker”: /Users/chun/Documents/2018Spring/Rehab-Tracker/Hardware/Arduino/Arduino.ino File Reference</title>
+<title>RehabTracker: /Users/chun/Documents/2018Spring/Rehab-Tracker/Hardware/Arduino/Arduino.ino File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -21,7 +21,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">“RehabTracker”
+   <div id="projectname">RehabTracker
    </div>
   </td>
  </tr>
@@ -72,6 +72,9 @@ $(function() {
 <div class="title">Arduino.ino File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>The code for the Blend Arduino that will be uploaded to the board on the NMES machine.  
+<a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;EEPROMex.h&gt;</code><br />
 <code>#include &lt;SPI.h&gt;</code><br />
 <code>#include &lt;lib_aci.h&gt;</code><br />
@@ -198,7 +201,8 @@ RTC_DS1307&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href
 <tr class="separator:a7715afc6e8732f6f936183f5c0d76167"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p class="">The MasterV1 script was written by the SEED team for the actual prototype that they created. It has then been modified by Chia-Chun Chao, Yifan Zhang, and Xavier Stevens beyond that. MasterV1 now tracks time, has clearer and more useful BLE usage and can transfer data from the NMES-&gt;Blend Board-&gt;App, fixed the data pull so now there is no need for an off-app button for the sync, the intensity values have been completely overhauled, and multiple sessions can now be stored within the EEPROM just incase the user doesn't have internet </p>
+<div class="textblock"><p class="">The code for the Blend Arduino that will be uploaded to the board on the NMES machine. </p>
+<p class="">The Arduino script was written by the SEED team and named as MasterV1 for the actual prototype that they created. It has then been modified by Chia-Chun Chao, Yifan Zhang, and Xavier Stevens beyond that. <a class="el" href="_arduino_8ino.html" title="The code for the Blend Arduino that will be uploaded to the board on the NMES machine. ">Arduino.ino</a> now tracks time, has clearer and more useful BLE usage and can transfer data from the NMES-&gt;Blend Board-&gt;App, fixed the data pull so now there is no need for an off-app button for the sync, the intensity values have been completely overhauled, and multiple sessions can now be stored within the EEPROM just incase the user doesn't have internet </p>
 
 <p class="definition">Definition in file <a class="el" href="_arduino_8ino_source.html">Arduino.ino</a>.</p>
 </div><h2 class="groupheader">Function Documentation</h2>
@@ -238,7 +242,7 @@ RTC_DS1307&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="_arduino_8ino_source.html#l00492">492</a> of file <a class="el" href="_arduino_8ino_source.html">Arduino.ino</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_arduino_8ino_source.html#l00494">494</a> of file <a class="el" href="_arduino_8ino_source.html">Arduino.ino</a>.</p>
 
 </div>
 </div>
@@ -260,7 +264,7 @@ RTC_DS1307&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href
 <p>Check if BLE is connected. </p>
 <p class="">Check if BLE is connected. If true, call <a class="el" href="_arduino_8ino.html#a752007f4f4b1f240f9c0877fb1999e7e" title="Send data to the app via BLE. ">outputtingToApp()</a> and send data to the app. After sending data, disconnect BLE to make sure the next successful connection. This function is frequently called to check if a user has pressed the sync button </p>
 
-<p class="definition">Definition at line <a class="el" href="_arduino_8ino_source.html#l00386">386</a> of file <a class="el" href="_arduino_8ino_source.html">Arduino.ino</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_arduino_8ino_source.html#l00388">388</a> of file <a class="el" href="_arduino_8ino_source.html">Arduino.ino</a>.</p>
 
 </div>
 </div>
@@ -282,7 +286,7 @@ RTC_DS1307&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href
 <p>Initialize all global variables related to a session. </p>
 <p class="">This function is called when a session has finished or a session has been dumped. All global variables related to a session are initialized. </p>
 
-<p class="definition">Definition at line <a class="el" href="_arduino_8ino_source.html#l00267">267</a> of file <a class="el" href="_arduino_8ino_source.html">Arduino.ino</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_arduino_8ino_source.html#l00269">269</a> of file <a class="el" href="_arduino_8ino_source.html">Arduino.ino</a>.</p>
 
 </div>
 </div>
@@ -312,7 +316,7 @@ RTC_DS1307&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Return the intensity value mapping to the input sensor value </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="_arduino_8ino_source.html#l00532">532</a> of file <a class="el" href="_arduino_8ino_source.html">Arduino.ino</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_arduino_8ino_source.html#l00534">534</a> of file <a class="el" href="_arduino_8ino_source.html">Arduino.ino</a>.</p>
 
 </div>
 </div>
@@ -334,7 +338,7 @@ RTC_DS1307&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href
 <p>Loop consecutively, allowing the program to change and respond. </p>
 <p class="">Every program contains a setup function and a loop function After creating a <a class="el" href="_arduino_8ino.html#a4fc01d736fe50cf5b977f755b675f11d" title="Initialize and set the initial values. ">setup()</a> function, which initializes and sets the initial values, the <a class="el" href="_arduino_8ino.html#afe461d27b9c48d5921c00d521181f12f" title="Loop consecutively, allowing the program to change and respond. ">loop()</a> function does precisely what its name suggests, and loops consecutively, allowing your program to change and respond. Use it to actively control the Arduino board. </p>
 
-<p class="definition">Definition at line <a class="el" href="_arduino_8ino_source.html#l00114">114</a> of file <a class="el" href="_arduino_8ino_source.html">Arduino.ino</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_arduino_8ino_source.html#l00116">116</a> of file <a class="el" href="_arduino_8ino_source.html">Arduino.ino</a>.</p>
 
 </div>
 </div>
@@ -354,9 +358,9 @@ RTC_DS1307&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href
 </div><div class="memdoc">
 
 <p>Send data to the app via BLE. </p>
-<p class="">This function is called by <a class="el" href="_arduino_8ino.html#a52573902bb826815aa77a3d47254c860" title="Check if BLE is connected. ">ButtonInterrupt()</a> when BLE is connected and user has pressed the sync button. The data in EEPROM are read and transformed to a format that can be passed to ble_write_bytes(). The sent data include an 'x' in the end to inform the app that all data have been sent </p>
+<p class="">This function is called by <a class="el" href="_arduino_8ino.html#a52573902bb826815aa77a3d47254c860" title="Check if BLE is connected. ">ButtonInterrupt()</a> when BLE is connected and user has pressed the sync button in the app. The data in EEPROM are read and transformed to a format that can be passed to ble_write_bytes(). The sent data include an 'x' in the end to inform the app that all data have been sent </p>
 
-<p class="definition">Definition at line <a class="el" href="_arduino_8ino_source.html#l00302">302</a> of file <a class="el" href="_arduino_8ino_source.html">Arduino.ino</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_arduino_8ino_source.html#l00304">304</a> of file <a class="el" href="_arduino_8ino_source.html">Arduino.ino</a>.</p>
 
 </div>
 </div>
@@ -378,7 +382,7 @@ RTC_DS1307&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href
 <p>Initialize and set the initial values. </p>
 <p class="">Every Arduino program contains a setup function and a loop function. The <a class="el" href="_arduino_8ino.html#a4fc01d736fe50cf5b977f755b675f11d" title="Initialize and set the initial values. ">setup()</a> function is called when a sketch starts. Use it to initialize variables, pin modes, start using libraries, etc. The <a class="el" href="_arduino_8ino.html#a4fc01d736fe50cf5b977f755b675f11d" title="Initialize and set the initial values. ">setup()</a> function will only run once, after each powerup or reset of the Arduino board. </p>
 
-<p class="definition">Definition at line <a class="el" href="_arduino_8ino_source.html#l00067">67</a> of file <a class="el" href="_arduino_8ino_source.html">Arduino.ino</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_arduino_8ino_source.html#l00069">69</a> of file <a class="el" href="_arduino_8ino_source.html">Arduino.ino</a>.</p>
 
 </div>
 </div>
@@ -400,7 +404,7 @@ RTC_DS1307&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href
 <p>Write data to EEPROM. </p>
 <p class="">When session count is 9, 19, 29, ..., 89, store data in EEPROM. The data include sessionCount, arrayAvg1, arrayAvg2, sessionComp, startTime, and endTime. </p>
 
-<p class="definition">Definition at line <a class="el" href="_arduino_8ino_source.html#l00424">424</a> of file <a class="el" href="_arduino_8ino_source.html">Arduino.ino</a>.</p>
+<p class="definition">Definition at line <a class="el" href="_arduino_8ino_source.html#l00426">426</a> of file <a class="el" href="_arduino_8ino_source.html">Arduino.ino</a>.</p>
 
 </div>
 </div>

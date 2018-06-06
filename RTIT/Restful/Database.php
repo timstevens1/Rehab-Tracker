@@ -1,5 +1,9 @@
 <?php
-
+/** \file
+ \brief Temporarily documented to generate the link of the folder
+ 
+ */
+    
 //$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
 //
 // This class is designed to connect to your database and to handle all
