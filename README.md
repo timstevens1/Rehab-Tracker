@@ -1,22 +1,19 @@
 # Rehab-Tracker
 The overarching goal of the project was to create a mobile application/wireless-enabled NMES device to improve rehabilitation compliance of patients with ACL tears through increased monitoring and novel patient-provider interactions. The iOS app connects to the NMES electrotherapy device through bluetooth, and recieves data on the rehabilitation session. This data is saved in a database and is viewable to the physician on the physician-portal website. Copyright © University of Vermont.
 
-Check Documentation/html_doxygen/index.html for the documentation.
+Check ***Documentation/html_doxygen/index.html*** after cloning the project to read the documentation.
 
-Folder Directory:
+**Folder Directory:**
 
-- Documentation:
+- **Documentation:**
     - The text documents, configuration files, images, and HTML files.
-
-- Hardware:
+- **Hardware:**
     - The code for the Blend Arduino that will be uploaded to the board on the NMES machine. There is only one file, Arduino.ino, in this directory.
-
-- RTIT:
+- **RTIT:**
     - The code for web services including physician web portal and backend database web services.
-    - Restful: All of the scripts that involve RESTful communication, PUSH notifications, and compliance scripts as well as database architecture.
-    - PhysicianPortal: The code for the online portal which clinicians can use to add/manage users as well as track compliance and patient sessions.
-
-- Rehab Tracker:
+    - **Restful:** All of the scripts that involve RESTful communication, PUSH notifications, and compliance scripts as well as database architecture.
+    - **PhysicianPortal:** The code for the online portal which clinicians can use to add/manage users as well as track compliance and patient sessions.
+- **Rehab Tracker:**
     - The code for the mobile application(iOS) where patients upload their session information which writes to the database. The documentation of the app is written with Jazzy.
 
 
@@ -38,19 +35,3 @@ Previous authors:
 - Meaghan Winter meaghan.winter@uvm.edu
 
 
-
--Rehab Tracker:
-  -Primary Author: Sean Kates sean.kates@uvm.edu
-  -The code for the mobile application(iOs) where patients upload their session information which writes to the database
-
--Arduino:
-  -Primary Author: Sean Kates, SEED Team.
-  -The code for the Blend arduino that will be uploaded to the board on the NMES machine.
-  
--Restful: 
-  -Primary Author: Brandon Goodwin brandon.goodwin@uvm.edu
-  -All of the scripts that involve RESTful communication, PUSH notifications, and compliance scripts as well as database architecture
-
--PhysicianPortal:
-  -Primary Author: Meaghan Winter meaghan.winter@uvm.edu
-  -The code for the online portal which clinicians can use to add/manage users as well as track compliance and patient sessions
