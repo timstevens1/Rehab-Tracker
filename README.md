@@ -3,6 +3,7 @@ The overarching goal of the project was to create a mobile application/wireless-
 
 Check ***Documentation/html_doxygen/index.html*** after cloning the project to read the documentation.
 
+<br>
 **Folder Directory:**
 
 - **Documentation:**
@@ -16,7 +17,7 @@ Check ***Documentation/html_doxygen/index.html*** after cloning the project to r
 - **Rehab Tracker:**
     - The code for the mobile application(iOS) where patients upload their session information which writes to the database. The documentation of the app is written with Jazzy.
 
-
+----
 Current authors:
 - Tim Stevens timothy.stevens@uvm.edu
 - Chia-Chun Chao chia-chun.chao@uvm.edu
