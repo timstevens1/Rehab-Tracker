@@ -3,7 +3,7 @@ The overarching goal of the project was to create a mobile application/wireless-
 
 Check ***Documentation/html_doxygen/index.html*** after cloning the project to read the documentation.
 
-<br>
+----
 **Folder Directory:**
 
 - **Documentation:**
