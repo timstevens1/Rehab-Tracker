@@ -57,9 +57,12 @@
 	4. output: "../Documentation/jazzy" 
 		- Folder to output the HTML docs to
 		- Default is docs
-	5.source_directory: "../Rehab Tracker/"
+	5. source_directory: "../Rehab Tracker/"
 		- The directory that contains the source to be documented
-
+	6. readme: "README.md"
+		- The path to a markdown README file
+	7. exclude: "../Rehab Tracker/Rehab Tracker/StatsViewController.swift"
+		- Source file pathnames to be excluded from documentation
 
 
 */

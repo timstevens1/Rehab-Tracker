@@ -6,7 +6,8 @@ This is the mobile application codebase, created by Sean Kates and further devel
 
 The data is saved from the NMES device into Core Data and the database, below is a ER diagram of the database model.
 
-![ER Diagram](ER.PNG)
+![ER Diagram](../images/ER.PNG)
+
 
 # Bluetooth Low Energy (BLE)
 

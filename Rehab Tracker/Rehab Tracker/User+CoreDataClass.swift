@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-
+/// Create an entity in core data for every user
 public class User: NSManagedObject {
 
 }

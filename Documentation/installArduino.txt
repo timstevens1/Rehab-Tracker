@@ -1,5 +1,7 @@
 /** \page installArduino Install Arduino
 
+\image html images/BlendPins.png RedBearLab Blend V1.0
+
 \section Install
 
 (Step 1 to 3 are only required at the first time)

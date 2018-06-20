@@ -72,7 +72,7 @@ Overview</h1>
 Components</h1>
 <ul>
 <li><b>NMES:</b> The neuromuscular electrical stimulation device used by patients during rehabilitation.</li>
-<li><b>RTC:</b> The real time clock, DS1307, that keeps track of time even if the power is off and is powered by a CR1220 coin cell battery.</li>
+<li><b>RTC:</b> The real time clock, DS1307, which keeps track of time even if the power is off and is powered by a CR1220 coin cell battery.</li>
 <li><b>Blend:</b> The integrated development board, which can be considered as an Arduino Leonardo blended with Bluetooth Low Energy. The Blend is embedded in the NMES and the RTC is attached to the Blend.</li>
 <li><b>App:</b> The iOS application, Rehab Tracker, that allows users to login, report feedback, and sync data from the device to the database. It also receives push notifications of reinforcement regularly to remind patients of rehabilitation.</li>
 <li><b>Backend and database:</b> The backend web server that runs on a space provided by LCOM to follow HIPPA regulations. The communication between the app and the physician portal website is through the backend server and the database.</li>
@@ -91,9 +91,14 @@ Diagram of components </div></div>
 <li>The backend server regularly sends push notifications to a patient’s phone where the app is installed on.</li>
 <li>Care providers check patients’ compliance through a physician portal, which retrieves patients’ data from the database.</li>
 </ol>
+<p class=""><br />
+ </p><div class="image">
+<img src="flow.png" alt="flow.png" width="800px"/>
+<div class="caption">
+Flow Chart </div></div>
 <h1><a class="anchor" id="Directory"></a>
 Directory</h1>
-<p class="">The description of each directory is organized as on <a href="https://github.com/timstevens1/Rehab-Tracker">Github</a>:</p><ul>
+<p class="">The description of each directory is organized as on <a href="https://github.com/timstevens1/Rehab-Tracker"><b>Github</b></a>:</p><ul>
 <li><a href="_arduino_8ino.html"><b>Hardware:</b></a> The code for the Blend Arduino that will be uploaded to the board on the NMES machine. There is only one file, <a class="el" href="_arduino_8ino.html" title="The code for the Blend Arduino that will be uploaded to the board on the NMES machine. ">Arduino.ino</a>, in this directory.</li>
 <li><a href="files.html"><b>RTIT:</b></a> The code for web services including physician web portal and backend database web services.<ul>
 <li><a href="dir_1a919a50d07c73a92bcf5580ca94153b.html"><b>Restful:</b></a> All of the scripts that involve RESTful communication, PUSH notifications, and compliance scripts as well as database architecture.</li>
@@ -101,19 +106,32 @@ Directory</h1>
 </ul>
 </li>
 <li><a href="../jazzy/index.html"><b>Rehab Tracker:</b></a> The code for the mobile application(iOS) where patients upload their session information which writes to the database. The documentation of the app is written with Jazzy.</li>
-<li><b>Documentation:</b> The text documents, configuration files, and HTML files.</li>
+<li><b>Documentation:</b> The text documents, configuration files, images, and HTML files.</li>
 </ul>
+<h1><a class="anchor" id="Database"></a>
+Database</h1>
+<div class="image">
+<img src="ER.PNG" alt="ER.PNG" width="700px"/>
+<div class="caption">
+ER diagram of the database </div></div>
+<p> <br />
+</p>
 <h1><a class="anchor" id="Reference"></a>
 Reference</h1>
 <ul>
 <li><a class="el" href="install_arduino.html">Install Arduino</a> : Instructions of installing Arduino.</li>
-<li><a class="el" href="ducumentation_tutorial.html">Documentation Tutorial</a> : The tutorial of two documentation tools, Doxygen and Jazzy. <hr/>
-</li>
+<li><a class="el" href="ducumentation_tutorial.html">Documentation Tutorial</a> : The tutorial of two documentation tools, Doxygen and Jazzy.</li>
+<li><a href="https://github.com/timstevens1/Rehab-Tracker"><b>Github</b></a> : The version control interface</li>
 </ul>
+<hr/>
 <p class="">Current authors:</p><ul>
 <li>Tim Stevens <a href="#" onclick="location.href='mai'+'lto:'+'tim'+'ot'+'hy.'+'st'+'eve'+'ns'+'@uv'+'m.'+'edu'; return false;">timot<span style="display: none;">.nosp@m.</span>hy.s<span style="display: none;">.nosp@m.</span>teven<span style="display: none;">.nosp@m.</span>s@uv<span style="display: none;">.nosp@m.</span>m.edu</a></li>
 <li>Chia-Chun Chao <a href="#" onclick="location.href='mai'+'lto:'+'chi'+'a-'+'chu'+'n.'+'cha'+'o@'+'uvm'+'.e'+'du'; return false;">chia-<span style="display: none;">.nosp@m.</span>chun<span style="display: none;">.nosp@m.</span>.chao<span style="display: none;">.nosp@m.</span>@uvm<span style="display: none;">.nosp@m.</span>.edu</a></li>
 <li>Xavier Stevens <a href="#" onclick="location.href='mai'+'lto:'+'Xav'+'ie'+'r.S'+'te'+'ven'+'s@'+'uvm'+'.e'+'du'; return false;">Xavie<span style="display: none;">.nosp@m.</span>r.St<span style="display: none;">.nosp@m.</span>evens<span style="display: none;">.nosp@m.</span>@uvm<span style="display: none;">.nosp@m.</span>.edu</a></li>
+</ul>
+<p class="">Advisors:</p><ul>
+<li>Christian Skalka <a href="#" onclick="location.href='mai'+'lto:'+'Chr'+'is'+'tia'+'n.'+'Ska'+'lk'+'a@u'+'vm'+'.ed'+'u'; return false;">Chris<span style="display: none;">.nosp@m.</span>tian<span style="display: none;">.nosp@m.</span>.Skal<span style="display: none;">.nosp@m.</span>ka@u<span style="display: none;">.nosp@m.</span>vm.ed<span style="display: none;">.nosp@m.</span>u</a></li>
+<li>Michael Toth <a href="#" onclick="location.href='mai'+'lto:'+'mic'+'ha'+'el.'+'to'+'th@'+'me'+'d.u'+'vm'+'.ed'+'u'; return false;">micha<span style="display: none;">.nosp@m.</span>el.t<span style="display: none;">.nosp@m.</span>oth@m<span style="display: none;">.nosp@m.</span>ed.u<span style="display: none;">.nosp@m.</span>vm.ed<span style="display: none;">.nosp@m.</span>u</a></li>
 </ul>
 <p class="">Previous authors:</p><ul>
 <li>Brian Colombini <a href="#" onclick="location.href='mai'+'lto:'+'bco'+'lo'+'mbi'+'@u'+'vm.'+'ed'+'u'; return false;">bcolo<span style="display: none;">.nosp@m.</span>mbi@<span style="display: none;">.nosp@m.</span>uvm.e<span style="display: none;">.nosp@m.</span>du</a></li>
@@ -123,7 +141,7 @@ Reference</h1>
 <li>Brandon Goodwin <a href="#" onclick="location.href='mai'+'lto:'+'bra'+'nd'+'on.'+'go'+'odw'+'in'+'@uv'+'m.'+'edu'; return false;">brand<span style="display: none;">.nosp@m.</span>on.g<span style="display: none;">.nosp@m.</span>oodwi<span style="display: none;">.nosp@m.</span>n@uv<span style="display: none;">.nosp@m.</span>m.edu</a></li>
 <li>Meaghan Winter <a href="#" onclick="location.href='mai'+'lto:'+'mea'+'gh'+'an.'+'wi'+'nte'+'r@'+'uvm'+'.e'+'du'; return false;">meagh<span style="display: none;">.nosp@m.</span>an.w<span style="display: none;">.nosp@m.</span>inter<span style="display: none;">.nosp@m.</span>@uvm<span style="display: none;">.nosp@m.</span>.edu</a></li>
 </ul>
-<p class="">This document is updated by Chia-Chun Chao in May, 2018. </p>
+<p class="">This document is updated by Chia-Chun Chao in June, 2018. </p>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->

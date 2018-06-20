@@ -14,7 +14,7 @@
     <a title="AppDelegate Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">Rehab_Tracker Docs</a> (18% documented)</p>
+        <p><a href="../index.html">Rehab_Tracker Docs</a> (96% documented)</p>
       </div>
     </header>
     <div class="content-wrapper">
@@ -38,9 +38,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/SettingsViewController.html">SettingsViewController</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/StatsViewController.html">StatsViewController</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/SyncViewController.html">SyncViewController</a>
@@ -88,7 +85,7 @@
 
                 </div>
               </div>
-            <p>Undocumented</p>
+            <p>This class handles some events that change the model of the app instead of just one view. It responses to important events in the lifetime of your app like logging in and basic settings.</p>
 
           </section>
           <section class="section task-group-section">
@@ -107,7 +104,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>The backdrop for your app’s user interface and the object that dispatches events to your views</p>
 
                       </div>
                       <div class="declaration">
@@ -134,7 +131,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Tell the delegate that the launch process is almost done and the app is almost ready to run and finish all initialization. This method is called after state restoration has occurred but before the app’s window and other UI have been presented.</p>
 
                       </div>
                       <div class="declaration">
@@ -161,7 +158,17 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Remove mask when animation completes</p>
+<div class="aside aside-precondition">
+    <p class="aside-title">Precondition</p>
+    The logo animation has finished.
+
+</div>
+<div class="aside aside-postcondition">
+    <p class="aside-title">Postcondition</p>
+    The mask is removed.
+
+</div>
 
                       </div>
                       <div class="declaration">
@@ -188,7 +195,12 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Tell the delegate that the app is about to become inactive (called when leaving the foreground state)</p>
+<div class="aside aside-postcondition">
+    <p class="aside-title">Postcondition</p>
+    Unsaved data are saved to ensure that it is not lost.
+
+</div>
 
                       </div>
                       <div class="declaration">
@@ -215,7 +227,12 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Tell the delegate that the app is now in the background</p>
+<div class="aside aside-postcondition">
+    <p class="aside-title">Postcondition</p>
+    Unsaved data are saved to ensure that it is not lost.
+
+</div>
 
                       </div>
                       <div class="declaration">
@@ -242,7 +259,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Tell the delegate that the app is about to enter the foreground (called when transitioning out of the background state)</p>
 
                       </div>
                       <div class="declaration">
@@ -269,7 +286,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Tell the delegate that the app has become active</p>
 
                       </div>
                       <div class="declaration">
@@ -296,7 +313,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Tell the delegate when the app is about to terminate (called only when the app is running. This method is not called if the app is suspended)</p>
 
                       </div>
                       <div class="declaration">
@@ -334,7 +351,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Create a container that encapsulates the Core Data stack in the application</p>
 
                       </div>
                       <div class="declaration">
@@ -344,6 +361,10 @@
                           <pre class="highlight swift"><code><span class="kd">lazy</span> <span class="k">var</span> <span class="nv">persistentContainer</span><span class="p">:</span> <span class="kt">NSPersistentContainer</span> <span class="o">=</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A container for core data</p>
                       </div>
                     </section>
                   </div>
@@ -372,7 +393,17 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Save context to core data</p>
+<div class="aside aside-precondition">
+    <p class="aside-title">Precondition</p>
+    The state transits to the background or to the inactive state.
+
+</div>
+<div class="aside aside-postcondition">
+    <p class="aside-title">Postcondition</p>
+    The context has been saved to core data.
+
+</div>
 
                       </div>
                       <div class="declaration">
@@ -399,7 +430,12 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Obtain the authorization to show push notification</p>
+<div class="aside aside-postcondition">
+    <p class="aside-title">Postcondition</p>
+    The system provides a device token of the phone where the app is installed on.
+
+</div>
 
                       </div>
                       <div class="declaration">
@@ -426,7 +462,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Retrieve the notification settings that the user allows</p>
 
                       </div>
                       <div class="declaration">
@@ -453,7 +489,17 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Tell the delegate that the app successfully registered with Apple Push Notification service (APNs)</p>
+<div class="aside aside-precondition">
+    <p class="aside-title">Precondition</p>
+    The app has registered with the APN. <code>registerForRemoteNotifications</code> has been called.
+
+</div>
+<div class="aside aside-postcondition">
+    <p class="aside-title">Postcondition</p>
+    The app has got the UDID and finished the push notification registration.
+
+</div>
 
                       </div>
                       <div class="declaration">
@@ -481,7 +527,12 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Sent to the delegate when Apple Push Notification service cannot successfully complete the registration process</p>
+<div class="aside aside-precondition">
+    <p class="aside-title">Precondition</p>
+    The app has registered with the APN. <code>registerForRemoteNotifications</code> has been called.
+
+</div>
 
                       </div>
                       <div class="declaration">
@@ -501,7 +552,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2018 <a class="link" href="" target="_blank" rel="external">Chia-Chun Chao</a>. All rights reserved. (Last updated: 2018-05-30)</p>
+          <p>&copy; 2018 <a class="link" href="" target="_blank" rel="external">Chia-Chun Chao</a>. All rights reserved. (Last updated: 2018-06-20)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.1</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

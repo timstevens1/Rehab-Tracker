@@ -9,14 +9,18 @@
 import Foundation
 import CoreData
 
+/// Create attributes and relationships for the entity `User`
 extension User {
-
+    /// Return a new fetch request initialized with the entity represented by this subclass
     @nonobjc public class func fetchRequest() -> NSFetchRequest<User> {
         return NSFetchRequest<User>(entityName: "User");
     }
-
+    
+    /// User's ID
     @NSManaged public var userID: String?
+    /// User's target intensity that is provided by user's care provider
     @NSManaged public var targetIntensity: String?
+    ///
     @NSManaged public var hasSession: NSSet?
 
 }

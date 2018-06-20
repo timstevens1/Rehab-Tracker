@@ -10,17 +10,24 @@ import UIKit
 import CoreData
 import Foundation
 
-// This is a bunch of utility functions used throughout the code
+/// This class includes a bunch of utility functions used throughout the code
 class Util {
+    /// User's device ID
     static var UDID : String = ""
+    /// Patient's ID for database
     static var DBuser : String = "No User"
+    /// Last synced date
     static var lastSynced : String = "Never"
+    /// Number of sessions completed in that week
     static var numSessions : String = "0 "
     
+    /// Return the host URL
+    /// - Returns: Host URL (https://rehabtracker.med.uvm.edu)
     class func getHOST() -> String{
         return "https://rehabtracker.med.uvm.edu/"
     }
-    // Returns current User's userID as a string
+    /// Return current User's userID as a string from core data
+    /// - Returns: User's ID
     class func returnCurrentUsersID() -> String {
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -39,6 +46,8 @@ class Util {
         if ret == "" { ret = "No User" }
         return ret
     }
+    /// Return current user's userID as a string from the device
+    /// - Returns: User's ID
     class func getCurrentUserID() -> String {
         var ID = ""
         var x = 0
@@ -51,7 +60,8 @@ class Util {
         return ID
     }
     
-    // Returns the current User as a NSManagedObject
+    /// Return the current User as a NSManagedObject
+    /// - Returns: User's NSManagedObject
     class func returnCurrentUser() -> User {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
@@ -70,7 +80,7 @@ class Util {
         return nothing as User
     }
 
-    // Function to delete all Users and Sessions from Core Data
+    /// Delete all Users and Sessions from Core Data
     class func deleteData() -> Void {
         // Get context
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -100,7 +110,7 @@ class Util {
         }
     }
     
-    // Function to delete all sessions from Core Data
+    /// Delete all sessions from Core Data
     class func overwriteSessions() -> Void {
         // Get context
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -124,7 +134,8 @@ class Util {
         }
     }
     
-    // Returns number of users in Core Data
+    /// Return number of users in Core Data
+    /// - Returns: Number of users in core data
     class func numberOfUsers() -> Int {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
@@ -140,7 +151,8 @@ class Util {
         }
     }
     
-    // Returns number of Sessions in Core Data
+    /// Return number of Sessions in Core Data
+    /// - Returns: Number of sessions
     class func numberOfSessions() -> Int {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
@@ -156,7 +168,8 @@ class Util {
         }
     }
     
-    // Function to get the target intensity for specific user from the Database
+    /// Get the target intensity for specific user from the Database
+    /// - Postcondition: Target intensity is saved to Core Data.
     class func updateTargetIntensity() {
         
         // Create urlstr string with current userID
@@ -195,7 +208,8 @@ class Util {
         task.resume()
     }
     
-    // Function to save target intensity to Core Data
+    /// Save target intensity to Core Data
+    /// - Parameter returnedTargetIntensity: Target intensity retrieved from the database
     class func saveTargetIntensity(returnedTargetIntensity: String) {
         DispatchQueue.main.async(execute: {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -218,7 +232,8 @@ class Util {
     })
     }
     
-    // Function to return the targetIntensity from core data
+    /// Return the target intensity from core data
+    /// - Returns: Target intensity
     class func returnTargetIntensity() -> Double {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
@@ -238,7 +253,8 @@ class Util {
         return 0.0
     }
     
-    // Function to read data from a CSV file given the fileName as a param
+    /// Read data from a CSV file given the fileName as a parameter
+    /// - Parameter file: Any CSV file
     class func readDataFromFile(file: String) {
         let fileName = file
         let docDirectory = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
@@ -256,7 +272,8 @@ class Util {
         }
     }
     
-    // Returns a random String that is the positive feedback for the user
+    /// Return a random String that is the positive feedback for the user
+    /// - Returns: positive feedback at the random index of the array
     class func getPositiveFeedback() -> String {
         // List of positive feedback from Dr. Toth
         let positiveFeedback = ["Good job completing your NMES session!",
@@ -280,12 +297,16 @@ class Util {
         return positiveFeedback[random(max: positiveFeedback.count)]
     }
     
-    // Function that returns a random int in a specific range
+    /// Return a random int in a specific range
+    /// - Parameter max (maxNumber): The maximum integer of a specific range
+    /// - Returns: A random integer
     class func random(max maxNumber: Int) -> Int {
         return Int(arc4random_uniform(UInt32(maxNumber)))
     }
     
-    // Function that returns the average of an array of doubles
+    /// Return the average of an array of doubles
+    /// - Parameter array: An array of doubles
+    /// - Returns: A double value
     class func average(array: [Double]) -> Double {
         var sum = 0.0
         for number in array {
@@ -294,12 +315,18 @@ class Util {
         let ave = sum / Double(array.count)
         return ave
     }
+    /// Set user's device ID
+    /// - Parameter udid: User's device ID
     class func setUDID(udid: String){
         UDID = udid;
     }
+    /// Return user's device ID
+    /// - Returns: User's device ID
     class func getUDID() -> String{
         return UDID;
     }
+    /// Return the date when last sync occurs
+    /// - Returns: A list of lastSynced and numSessions
     class func getDeviceLastSynced() -> [String] {
         lastSynced = "Never"
         numSessions = "0 "
@@ -308,6 +335,7 @@ class Util {
         }
             return [lastSynced, numSessions];
     }
+    /// Set global variables with the information of last synced
     class func findDeviceLastSynced(){
         // Create urlstr string with current userID
         let urlstr : String = Util.getHOST() + "Restful/getDeviceSync.php?pmkPatientID=" + Util.returnCurrentUsersID()
@@ -364,6 +392,8 @@ class Util {
         task.resume()
     }
 
+    /// Return patient's ID for database
+    /// - Returns: Patient's ID for database
     class func getDatabaseUsername() -> String {
         let serialQueue = DispatchQueue(label: "queuename")
         var x = 0
@@ -378,6 +408,7 @@ class Util {
         }
         return self.DBuser
     }
+    /// Set global variables with the information of the patient
     class func findDatabaseUsername(finished: @escaping ((_: String)->Void)) {
         
         // Create urlstr string with current userID
@@ -423,6 +454,8 @@ class Util {
         // Return value of returnedUserID
         task.resume()
     }
+    /// Return the status of push notification registration
+    /// - Returns: A string representing registration status
     class func pushRegistration() -> String {
     
         let earl = Util.getHOST() + "Restful/restful.php"

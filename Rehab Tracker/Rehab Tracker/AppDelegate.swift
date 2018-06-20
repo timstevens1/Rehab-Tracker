@@ -1,4 +1,3 @@
-
 //
 //  AppDelegate.swift
 //  Rehab Tracker
@@ -11,14 +10,18 @@ import UIKit
 import CoreData
 import UserNotifications
 
+// Check this page to see descriptions of UIApplicationDelegate https://developer.apple.com/documentation/uikit/uiapplicationdelegate?hl=et
+/// This class handles some events that change the model of the app instead of just one view. It responses to important events in the lifetime of your app like logging in and basic settings.
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     // Initialize the pusher instance with key from server
     //let pusher = Pusher(key: "1a12b25128b9b2b28ee1")
     
+    /// The backdrop for your app’s user interface and the object that dispatches events to your views
     var window: UIWindow?
 
+    /// Tell the delegate that the launch process is almost done and the app is almost ready to run and finish all initialization. This method is called after state restoration has occurred but before the app’s window and other UI have been presented.
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         // Define all the color schemes here for consistency
@@ -114,34 +117,42 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
-
+    /// Remove mask when animation completes
+    /// - Precondition: The logo animation has finished.
+    /// - Postcondition: The mask is removed.
     func animationDidStop( finished flag: Bool ) {
-        // remove mask when animation completes
         self.window!.rootViewController!.view.layer.mask = nil
     }
 
+    /// Tell the delegate that the app is about to become inactive (called when leaving the foreground state)
+    /// - Postcondition: Unsaved data are saved to ensure that it is not lost.
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
         self.saveContext()
     }
 
+    /// Tell the delegate that the app is now in the background
+    /// - Postcondition: Unsaved data are saved to ensure that it is not lost.
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
         self.saveContext()
     }
 
+    /// Tell the delegate that the app is about to enter the foreground (called when transitioning out of the background state)
     func applicationWillEnterForeground(_ application: UIApplication) {
         application.applicationIconBadgeNumber = 0
 
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
     }
-
+    
+    /// Tell the delegate that the app has become active
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     }
 
+    /// Tell the delegate when the app is about to terminate (called only when the app is running. This method is not called if the app is suspended)
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         // Saves changes in the application's managed object context before the application terminates.
@@ -149,6 +160,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     // MARK: - Core Data stack
+    /// Create a container that encapsulates the Core Data stack in the application
+    /// - Returns: A container for core data
     lazy var persistentContainer: NSPersistentContainer = {
         /*
          The persistent container for the application. This implementation
@@ -166,6 +179,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }()
 
     // MARK: - Core Data Saving support
+    /// Save context to core data
+    /// - Precondition: The state transits to the background or to the inactive state.
+    /// - Postcondition: The context has been saved to core data.
     func saveContext () {
         let context = persistentContainer.viewContext
         if context.hasChanges {
@@ -179,6 +195,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
+    /// Obtain the authorization to show push notification
+    /// - Postcondition: The system provides a device token of the phone where the app is installed on.
     func registerForPushNotifications() {
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) {
                 (granted, error) in
@@ -187,6 +205,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 self.getNotificationSettings()
         }
     }
+    /// Retrieve the notification settings that the user allows
     func getNotificationSettings() {
         UNUserNotificationCenter.current().getNotificationSettings { (settings) in
             print("Notification settings: \(settings)")
@@ -196,6 +215,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             })
         }
     }
+    
+    /// Tell the delegate that the app successfully registered with Apple Push Notification service (APNs)
+    /// - Precondition: The app has registered with the APN. `registerForRemoteNotifications` has been called.
+    /// - Postcondition: The app has got the UDID and finished the push notification registration.
     func application(_ application: UIApplication,
                      didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         let tokenParts = deviceToken.map { data -> String in
@@ -211,6 +234,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
     }
     
+    /// Sent to the delegate when Apple Push Notification service cannot successfully complete the registration process
+    /// - Precondition: The app has registered with the APN. `registerForRemoteNotifications` has been called.
     func application(_ application: UIApplication,
                      didFailToRegisterForRemoteNotificationsWithError error: Error) {
         print("Failed to register: \(error)")

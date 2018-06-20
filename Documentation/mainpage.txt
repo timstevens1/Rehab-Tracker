@@ -8,7 +8,7 @@ The overarching goal of the project was to create a mobile application/wireless-
 \section Components
 
 - **NMES:** The neuromuscular electrical stimulation device used by patients during rehabilitation.
-- **RTC:** The real time clock, DS1307, that keeps track of time even if the power is off and is powered by a CR1220 coin cell battery.
+- **RTC:** The real time clock, DS1307, which keeps track of time even if the power is off and is powered by a CR1220 coin cell battery.
 - **Blend:** The integrated development board, which can be considered as an Arduino Leonardo blended with Bluetooth Low Energy. The Blend is embedded in the NMES and the RTC is attached to the Blend.
 - **App:** The iOS application, Rehab Tracker, that allows users to login, report feedback, and sync data from the device to the database. It also receives push notifications of reinforcement regularly to remind patients of rehabilitation.
 - **Backend and database:** The backend web server that runs on a space provided by LCOM to follow HIPPA regulations. The communication between the app and the physician portal website is through the backend server and the database.
@@ -25,27 +25,40 @@ Relations between components:
 6. The backend server regularly sends push notifications to a patient’s phone where the app is installed on.
 7. Care providers check patients’ compliance through a physician portal, which retrieves patients’ data from the database.
 
+<br>
+\image html images/flow.png Flow Chart width=800px
 
 
 \section Directory
-The description of each directory is organized as on [Github] (https://github.com/timstevens1/Rehab-Tracker):
+The description of each directory is organized as on [**Github**] (https://github.com/timstevens1/Rehab-Tracker):
 - [**Hardware:**] (_arduino_8ino.html) The code for the Blend Arduino that will be uploaded to the board on the NMES machine. There is only one file, Arduino.ino, in this directory.
 - [**RTIT:**] (files.html) The code for web services including physician web portal and backend database web services. 
 	- [**Restful:**] (dir_1a919a50d07c73a92bcf5580ca94153b.html) All of the scripts that involve RESTful communication, PUSH notifications, and compliance scripts as well as database architecture.
 	- [**PhysicianPortal:**] (dir_d95c1d06a83d9225385d6463223d8b80.html) The code for the online portal which clinicians can use to add/manage users as well as track compliance and patient sessions.
 
 - [**Rehab Tracker:**](../jazzy/index.html) The code for the mobile application(iOS) where patients upload their session information which writes to the database. The documentation of the app is written with Jazzy. 
-- **Documentation:** The text documents, configuration files, and HTML files.
+- **Documentation:** The text documents, configuration files, images, and HTML files.
+
+\section Database
+\image html images/ER.PNG ER diagram of the database width=700px
+<br>
 
 \section Reference
 - \subpage installArduino : Instructions of installing Arduino.
 - \subpage ducumentationTutorial : The tutorial of two documentation tools, Doxygen and Jazzy.
+- [**Github**] (https://github.com/timstevens1/Rehab-Tracker) : The version control interface
+
+
 ___
 
 Current authors:
 - Tim Stevens timothy.stevens@uvm.edu
 - Chia-Chun Chao chia-chun.chao@uvm.edu
 - Xavier Stevens Xavier.Stevens@uvm.edu
+
+Advisors:
+- Christian Skalka Christian.Skalka@uvm.edu
+- Michael Toth michael.toth@med.uvm.edu
 
 Previous authors:
 - Brian Colombini bcolombi@uvm.edu
@@ -55,5 +68,5 @@ Previous authors:
 - Brandon Goodwin brandon.goodwin@uvm.edu
 - Meaghan Winter meaghan.winter@uvm.edu
 
-This document is updated by Chia-Chun Chao in May, 2018.
+This document is updated by Chia-Chun Chao in June, 2018.
 */

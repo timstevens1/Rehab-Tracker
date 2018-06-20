@@ -12,13 +12,16 @@ import Foundation
 import CoreBluetooth
 import UserNotifications
 
-// This is the main page, allows users to login and get into the app
+/// This class represents the main page that allows users to login and get into the app
 class ViewController: UIViewController, UITextFieldDelegate {
-
+    /// Text box to type user name
     @IBOutlet weak var loginBar: UITextField!
+    /// Text box that actually updates user name
     @IBAction func enterUserID(_ sender: Any) {
         self.updateUserID(ID: loginBar.text!)
     }
+    /// Update user ID based on what's typed in
+    /// - Parameter ID: User ID
     private func updateUserID(ID: String){
         while Util.numberOfUsers() != 0 {
             // Delete all core data
@@ -27,7 +30,8 @@ class ViewController: UIViewController, UITextFieldDelegate {
         self.saveUserID(ID);
         self.viewDidLoad();
     }
-    // Function to create a User and add in their userID
+    /// Create a User and add in their userID
+    /// - Parameter thisUserID: User ID
     private func saveUserID(_ thisUserID: String) {
         // Save entered userID to persistent core data
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -40,8 +44,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
        
     }
 
-    // Responds to add user button and checks to see if theres already a user logged in
-    // Saves user to coredata and allows for overwrites
+    /// Respond to add user button,check to see if there's already a user logged in, save user to core data, and allow for overwrites
     @IBAction func AddUser(_ sender: AnyObject) {
         
         if Util.numberOfUsers() > 0 {
@@ -134,6 +137,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
         }
     }
 
+    /// Let user with a valid ID log in and continue on to the sync page
     @IBAction func Continue(_ sender: UIButton) {
         // If username is valid, allows the user to continue into the app
         if !(loginBar.text == ""){ self.updateUserID(ID: loginBar.text!)}
@@ -164,12 +168,10 @@ class ViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    // Global variable to store returned userID check from database
+    /// Global variable to store returned userID check from database
     private var returnedUserID = ""
     
-    // Function to check if a username is in the database, if yes, returns the name as string
-    
-    
+    /// Check if a username is in the database; if yes, return the name as string
     override func viewDidLoad() {
         super.viewDidLoad()
         self.returnedUserID = Util.getDatabaseUsername()
@@ -183,15 +185,16 @@ class ViewController: UIViewController, UITextFieldDelegate {
         // Do any additional setup after loading the view, typically from a nib.
         
     }
+    /// Cause the view (or one of its embedded text fields) to resign the first responder status.
     func dismissKeyboard() {
-        //Causes the view (or one of its embedded text fields) to resign the first responder status.
         view.endEditing(true)
     }
+    /// Cause the view (or one of its embedded text fields) to resign the first responder status.
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         view.endEditing(true)
         return false
     }
-
+    /// Sent to the view controller when the app receives a memory warning.
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

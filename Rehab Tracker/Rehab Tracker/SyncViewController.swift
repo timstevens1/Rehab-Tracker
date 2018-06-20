@@ -11,11 +11,13 @@
 
 /// The purpose of this file is to pull data from the device and sync to core data and db
 
+// Check (1), (2), ..., (11) for code related to bluetooth connection
 // Reference: 12 steps of bluetooth
 // Kevin Hoyt
 // http://www.kevinhoyt.com/2016/05/20/the-12-steps-of-bluetooth-swift/
 
-
+// (1) Import
+// Unlike beacons, which use Core Location, if you are communicating to a BLE device, you will use CoreBluetooth.
 import Foundation
 import UIKit
 import CoreData
@@ -36,7 +38,9 @@ var sessionsStringFromDevice: String = ""
 /// Set of positive feedback messages for successful sync alert
 let positiveFeedbackMessages = ["By completing your NMES session, you are preventing your muscles from atrophying and getting weaker.", "Good job completing your NMES session!", "Keep up the good work on your NMES sessions!", "By completing your NMES session, you are being proactive in preventing muscle atrophy and maintaining your muscle strength."]
 
-///This class is the main view controller of this app, which pulls data from the device and syncs to core data and db.
+// (2) Delegates
+// Eventually you are going to want to get callbacks from some functionality. There are two delegates to implement: CBCentralManagerDelegate, and CBPeripheralDelegate.
+///This class is the view controller of the sync page, which pulls data from the device and syncs to core data and db.
 class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate  {
     
     /// Text label that shows the number of sessions that week
@@ -44,6 +48,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     /// Text label that shows if any session has been synced
     @IBOutlet weak var dateSynced: UILabel!
 
+    //(3) Declare Manager and Peripheral
+    // The CBCentralManager install will be what you use to find, connect, and manage BLE devices. Once you are connected, and are working with a specific service, the peripheral will help you iterate characteristics and interacting with them.
     /// Object to manage discovered or connected remote peripheral devices
     private var manager:CBCentralManager!
     /// Remote peripheral devices that your app has discovered advertising or is currently connected to
@@ -59,6 +65,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     /// Boolean value to check if data has been parsed completely
     private var finished_parsing_data : Bool = false
     
+    // (4) UUID and Service Name
+    // You will need UUID for the BLE service, and a UUID for the specific characteristic. In some cases, you will need additional UUIDs. They get used repeatedly throughout the code, so having constants for them will keep the code cleaner, and easier to maintain.
     /// Name of the device connected via bluetooth
     let RT_NAME : String = "RT"
     /// Service UUID of the device
@@ -83,6 +91,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     private var sessionsJson = [String: [String:Any]]()
     
     /// Info button at the top right corner that shows an alert
+    /// - Postcondition: The alert is shown on the screen.
     @IBAction func showInfo(_ sender: UIBarButtonItem) {
         // create the alert
         let alert = UIAlertController(title: "Problems?", message: "Make sure your device is on and in range, and that your phone's bluetooth is on!", preferredStyle: UIAlertControllerStyle.alert)
@@ -93,7 +102,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         // show the alert
         self.present(alert, animated: true, completion: nil)
     }
-    /// Reset sync UI and create post-sync alert - feedback on success or failure
+    /// Reset sync UI and create post-sync alert -- feedback on success or failure
+    /// - Postcondition: The alert of the sync and the information of previous sync are shown on the screen.
     private func syncResetUIAndFeedbackAlert() {
         // Reset image and button
         self.sync_image.stopAnimating()
@@ -118,6 +128,11 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
 
     }
     
+    // (5) Instantiate Manager
+    // One-liner to create an instance of CBCentralManager. It takes the delegate as an argument, and options, which in most cases are not needed. This is also the jumping off point for what effectively becomes a chain of the remaining seven waterfall steps.
+    /// Instantiate bluetooth manager to sync data from the device to the app later
+    /// - Precondition: The bluetooth of the phone should be turned on.
+    /// - Postcondition: The central manager is turned on, and the alert is shown on the screen after the animation of the flashing lightning sign.
     @IBAction func Sync(_ sender: UIButton) {
         // Alert to take input and save it
         let alert = UIAlertController(title: "Comments",
@@ -161,8 +176,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
                                                 }
                                             }
                                             
-                                            // (5) Instantiate Manager
-                                            // One-liner to create an instance of CBCentralManager. It takes the delegate as an argument, and options, which in most cases are not needed. This is also the jumping off point for what effectively becomes a chain of the remaining seven waterfall steps.
+                                            // Instantiate Manager
                                             self.manager = CBCentralManager (delegate: self, queue: nil)
                                             
                                             self.flag = true;
@@ -235,7 +249,8 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         self.present(alert, animated: true, completion: nil)
     }
     
-    // Get and set current date for fldDeviceSynced
+    /// Get and set current date for fldDeviceSynced
+    /// - Returns: A string containing current date
     private func thisDate() -> String {
         let currDate = Date()
         let formatter = DateFormatter()
@@ -243,7 +258,9 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         return formatter.string(from: currDate)
     }
     
-    // Convert unix time (seconds - this is format sent by Arduino) to datetime format
+    /// Convert unix time (seconds -- this is format sent by Arduino) to datetime format
+    /// - Parameter seconds_since_1970: The unix time sent by Arduino that represents seconds since Jan 01 1970 (UTC)
+    /// - Returns: A string that represents time in the format of yyyy-MM-dd HH:mm:ss
     private func unixSecondsToDatetime(seconds_since_1970:Int32) -> String {
         if (!SESSION_TIME_TRACKING) {
             return "0000-00-00 00:00:00"
@@ -256,7 +273,9 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         return formatter.string(from: datetime)
     }
     
-    // Parse sessionsStringFromDevice to extract session info
+    /// Parse sessionsStringFromDevice to extract session info
+    /// - Precondition: The app has received some data from the device
+    /// - Postcondition: The variable, stats, stores all sessions data that are sent to the app.
     private func parseData() {
         do {
             // New sessions string to array
@@ -311,7 +330,9 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
          */
     }
     
-    // Add parsed sessions to core data (via call to addData()) and database (via call to pushToDatabase())
+    /// Add parsed sessions to core data (via call to addData()) and database (via call to pushToDatabase())
+    /// - Precondition: The device has sent something to the app.
+    /// - Postcondition: Synced sessions are stored in both core data and database.
     private func syncSessions() {
         /* First, get max session number for this user from db
          Use this to determine new session numbers */
@@ -380,7 +401,9 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         task.resume()
     }
     
-    // Save sessions in core data
+    /// Save sessions in core data
+    /// - Precondition: The sync does succeed, and the device has sent something to the app.
+    /// - Postcondition: All transmitted sessions are stored in core data.
     private func addData() {
         var current_session_id = maxUserSessionNum!
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -406,7 +429,9 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         (UIApplication.shared.delegate as! AppDelegate).saveContext()
     }
 
-    // Retrieve new session info from core data and prepare JSON object for db push
+    /// Retrieve new session info from core data and prepare JSON object for db push
+    /// - Precondition: The sync does succeed, and sessions have been stored in core data
+    /// - Postcondition: New sessions in core data are presented in JSON object and stored in `sessionsJson`.
     private func prepareNewSessionsJSON() {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
@@ -454,7 +479,9 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         }
     }
     
-    // Push new sessions to database via JSON object
+    /// Push new sessions to database via JSON object
+    /// - Precondition: The sync does succeed, and new sessions in JSON format have been prepared.
+    /// - Postcondition: All sessions in `sessionJson` are pushed to database.
     private func pushToDatabase() {
         let urlstr : String = Util.getHOST() + "Restful/sync.php"
         
@@ -526,6 +553,9 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     
     // (6) Scan for Devices
     // Once the CBCentralManager instance is finished creating, it will call centralManagerDidUpdateState on the delegate class. From there, if Bluetooth is available (as in "turned on"), you can start scanning for devices.
+    /// Check the bluetooth connection and call a function to scan for devices
+    /// - Precondition: CBCentralManager instance is finished creating.
+    /// - Postcondition: The app starts scanning for devices with the specific UUID.
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         
         print("[DEBUG] CentralManager is initialized")
@@ -563,6 +593,9 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     
     // (7) Connect to a Device
     // When you find the device you are interested in interacting with, you will want to connect to it. This is the only place where the device name shows up in the code, but I still like to declare it as a constant with the UUIDs.
+    /// Connect to the device
+    /// - Precondition: The app has found a device with the specific UUID.
+    /// - Postcondition: The connection between the app and the device has been established.
     func centralManager(_ central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
         
         
@@ -601,6 +634,9 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     
     // (8) Get Services
     // Once you are connected to a device, you can get a list of services on that device.
+    /// Discover services offered by the device
+    /// - Precondition: The connection between the app and the device has been established.
+    /// - Postcondition: The services offered by the device has been discovered.
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         print("[DEBUG] Connected to the device and discovering services.")
         peripheral.discoverServices(nil)
@@ -608,6 +644,9 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     
     // (9) Get Characteristics
     // Once you get a list of the services offered by the device, you will want to get a list of the characteristics.
+    /// Get the specific characteristic that transfers data from the device
+    /// - Precondition: The services offered by the device has been discovered.
+    /// - Postcondition: All characteristics provided from the device have been listed.
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
         print("[DEBUG] Geting a list of characteristics.")
         for service in peripheral.services! {
@@ -625,6 +664,9 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     
     // (10) Setup Notifications
     // There are different ways to approach getting data from the BLE device. One approach would be to read changes incrementally. Another approach, the approach I used in my application, would be to have the BLE device notify you whenever a characteristic value has changed.
+    /// React based on the characteristic (set notify if the characteristic is the transmit UUID, and send a flag if it's the receive UUID)
+    /// - Precondition:  All characteristics provided from the device have been listed.
+    /// - Postcondition: Either the notify value is set or a flag is sent to the device.
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?) {
         print("[DEBUG] Setup notifications.")
         
@@ -649,6 +691,9 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
     
     // (11) Changes Are Coming
     // Any characteristic changes you have setup to receive notifications for will call this delegate method. You will want to be sure and filter them out to take the appropriate action for the specific change.
+    /// Process all received data
+    /// - Precondition: The BLE device notifies whenever a characteristic value has changed.
+    /// - Postcondition: If the transmission succeeds, all data are parsed and synced to core data and database.
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
         
         print("[DEBUG] Characteristic is changed.")
@@ -695,7 +740,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
             //flag = false
         }
     }
-    
+    /// Called after the controller's view is loaded into memory
     override func viewDidLoad() {
         super.viewDidLoad()
         self.sync_image.image = UIImage(named: "Tab-Sync")
@@ -705,7 +750,7 @@ class SyncViewController: UIViewController, CBCentralManagerDelegate, CBPeripher
         print(data[1]);
         flag = false
     }
-    
+    /// Sent to the view controller when the app receives a memory warning
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
