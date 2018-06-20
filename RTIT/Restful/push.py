@@ -6,7 +6,7 @@ import mysql.connector
 apns = APNs(use_sandbox=False, cert_file='rehabDepCer.pem', key_file='rehabDepKey.pem', enhanced=True)
 # Send an iOS 10 compatible notification
 try:
-	cnx = mysql.connector.connect(user="phys", password="CallingDr.H0w@rd",host="Med65",port=65002,db="rehabtracker")
+	cnx = mysql.connector.connect(user="phys", password="**********",host="Med65",port=65002,db="rehabtracker")
 
 except mysql.connector.Error as err:
 	print(err)
