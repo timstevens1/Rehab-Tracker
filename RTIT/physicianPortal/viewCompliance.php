@@ -1,5 +1,14 @@
 <?php
-
+/** \file
+ \brief Page for displaying overview of all patients.
+ 
+ This page allows a physician to see all patients' information including ID, their clinician, last synced date, start date, last checked date, week compliance, goal intensity, and week start date.
+ 
+ Check the [webpage] (https://rehabtracker.med.uvm.edu/physicianPortal/viewCompliance.php).
+ The code on Github is [here] (https://github.com/timstevens1/Rehab-Tracker/blob/master/RTIT/physicianPortal/viewCompliance.php).
+ \cond
+ **/
+    
 //##############################################################################
 //
 // This page lists your tables and fields within your database. if you click on

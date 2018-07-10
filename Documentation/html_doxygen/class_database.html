@@ -64,37 +64,41 @@ $(function() {
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="class_database-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">Database Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>This class is designed to connect to your database and to handle all interactions with the database.  
+ <a href="class_database.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:af01c4c10a7d61bf105f86be6dbd45c0d"><td class="memItemLeft" align="right" valign="top"><a id="af01c4c10a7d61bf105f86be6dbd45c0d"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>__construct</b> ($dbUserName, $whichPass, $dbName)</td></tr>
+<tr class="memitem:af01c4c10a7d61bf105f86be6dbd45c0d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_database.html#af01c4c10a7d61bf105f86be6dbd45c0d">__construct</a> ($dbUserName, $whichPass, $dbName)</td></tr>
+<tr class="memdesc:af01c4c10a7d61bf105f86be6dbd45c0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The constructor function where a function is called to build the connection to the database.  <a href="#af01c4c10a7d61bf105f86be6dbd45c0d">More...</a><br /></td></tr>
 <tr class="separator:af01c4c10a7d61bf105f86be6dbd45c0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8fc32c3d4666857f83e7feaaf28f7046"><td class="memItemLeft" align="right" valign="top"><a id="a8fc32c3d4666857f83e7feaaf28f7046"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>delete</b> ($query, $values=&quot;&quot;, $wheres=1, $conditions=0, $quotes=0, $symbols=0, $spacesAllowed=false, $semiColonAllowed=false)</td></tr>
+<tr class="memitem:a8fc32c3d4666857f83e7feaaf28f7046"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_database.html#a8fc32c3d4666857f83e7feaaf28f7046">delete</a> ($query, $values=&quot;&quot;, $wheres=1, $conditions=0, $quotes=0, $symbols=0, $spacesAllowed=false, $semiColonAllowed=false)</td></tr>
+<tr class="memdesc:a8fc32c3d4666857f83e7feaaf28f7046"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a delete query and returns boolean true or false based on success of query.  <a href="#a8fc32c3d4666857f83e7feaaf28f7046">More...</a><br /></td></tr>
 <tr class="separator:a8fc32c3d4666857f83e7feaaf28f7046"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acaaf07b46f361637f989439d569c8920"><td class="memItemLeft" align="right" valign="top"><a id="acaaf07b46f361637f989439d569c8920"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>insert</b> ($query, $values=&quot;&quot;, $wheres=0, $conditions=0, $quotes=0, $symbols=0, $spacesAllowed=false, $semiColonAllowed=false)</td></tr>
+<tr class="memitem:acaaf07b46f361637f989439d569c8920"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_database.html#acaaf07b46f361637f989439d569c8920">insert</a> ($query, $values=&quot;&quot;, $wheres=0, $conditions=0, $quotes=0, $symbols=0, $spacesAllowed=false, $semiColonAllowed=false)</td></tr>
+<tr class="memdesc:acaaf07b46f361637f989439d569c8920"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a insert query and returns boolean true or false based on success of query.  <a href="#acaaf07b46f361637f989439d569c8920">More...</a><br /></td></tr>
 <tr class="separator:acaaf07b46f361637f989439d569c8920"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0fddec711b2276b04c64f7de2182de8"><td class="memItemLeft" align="right" valign="top"><a id="ad0fddec711b2276b04c64f7de2182de8"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>lastInsert</b> ()</td></tr>
+<tr class="memitem:ad0fddec711b2276b04c64f7de2182de8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_database.html#ad0fddec711b2276b04c64f7de2182de8">lastInsert</a> ()</td></tr>
+<tr class="memdesc:ad0fddec711b2276b04c64f7de2182de8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the autonumber primary key on the last insert statement you just performed.  <a href="#ad0fddec711b2276b04c64f7de2182de8">More...</a><br /></td></tr>
 <tr class="separator:ad0fddec711b2276b04c64f7de2182de8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a614781a5568a1a3757309cef2a50f630"><td class="memItemLeft" align="right" valign="top"><a id="a614781a5568a1a3757309cef2a50f630"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>sanitizeQuery</b> ($query, $spacesAllowed=false, $semiColonAllowed=false)</td></tr>
+<tr class="memitem:a614781a5568a1a3757309cef2a50f630"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_database.html#a614781a5568a1a3757309cef2a50f630">sanitizeQuery</a> ($query, $spacesAllowed=false, $semiColonAllowed=false)</td></tr>
+<tr class="memdesc:a614781a5568a1a3757309cef2a50f630"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sanitize queries for security.  <a href="#a614781a5568a1a3757309cef2a50f630">More...</a><br /></td></tr>
 <tr class="separator:a614781a5568a1a3757309cef2a50f630"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a73307b9ebf7ef5054b9b795b11c4a463"><td class="memItemLeft" align="right" valign="top"><a id="a73307b9ebf7ef5054b9b795b11c4a463"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>select</b> ($query, $values=&quot;&quot;, $wheres=1, $conditions=0, $quotes=0, $symbols=0, $spacesAllowed=false, $semiColonAllowed=false)</td></tr>
+<tr class="memitem:a73307b9ebf7ef5054b9b795b11c4a463"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_database.html#a73307b9ebf7ef5054b9b795b11c4a463">select</a> ($query, $values=&quot;&quot;, $wheres=1, $conditions=0, $quotes=0, $symbols=0, $spacesAllowed=false, $semiColonAllowed=false)</td></tr>
+<tr class="memdesc:a73307b9ebf7ef5054b9b795b11c4a463"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a select query and returns an associtative array.  <a href="#a73307b9ebf7ef5054b9b795b11c4a463">More...</a><br /></td></tr>
 <tr class="separator:a73307b9ebf7ef5054b9b795b11c4a463"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af85c3485c7be03d426bd44d21db273e3"><td class="memItemLeft" align="right" valign="top"><a id="af85c3485c7be03d426bd44d21db273e3"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>testquery</b> ($query, $values=&quot;&quot;, $wheres=0, $conditions=0, $quotes=0, $symbols=0, $spacesAllowed=false, $semiColonAllowed=false)</td></tr>
+<tr class="memitem:af85c3485c7be03d426bd44d21db273e3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_database.html#af85c3485c7be03d426bd44d21db273e3">testquery</a> ($query, $values=&quot;&quot;, $wheres=0, $conditions=0, $quotes=0, $symbols=0, $spacesAllowed=false, $semiColonAllowed=false)</td></tr>
+<tr class="memdesc:af85c3485c7be03d426bd44d21db273e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test a query for the printed messages.  <a href="#af85c3485c7be03d426bd44d21db273e3">More...</a><br /></td></tr>
 <tr class="separator:af85c3485c7be03d426bd44d21db273e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac8bfb00225584712a3b7e6181a3c7eda"><td class="memItemLeft" align="right" valign="top"><a id="ac8bfb00225584712a3b7e6181a3c7eda"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>update</b> ($query, $values=&quot;&quot;, $wheres=1, $conditions=0, $quotes=0, $symbols=0, $spacesAllowed=false, $semiColonAllowed=false)</td></tr>
+<tr class="memitem:ac8bfb00225584712a3b7e6181a3c7eda"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_database.html#ac8bfb00225584712a3b7e6181a3c7eda">update</a> ($query, $values=&quot;&quot;, $wheres=1, $conditions=0, $quotes=0, $symbols=0, $spacesAllowed=false, $semiColonAllowed=false)</td></tr>
+<tr class="memdesc:ac8bfb00225584712a3b7e6181a3c7eda"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform an update query and returns boolean true or false based on success of query.  <a href="#ac8bfb00225584712a3b7e6181a3c7eda">More...</a><br /></td></tr>
 <tr class="separator:ac8bfb00225584712a3b7e6181a3c7eda"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
@@ -102,11 +106,759 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a06cda1e7b49f7181c9e1a709b7326120"><td class="memItemLeft" align="right" valign="top"><a id="a06cda1e7b49f7181c9e1a709b7326120"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>$db</b></td></tr>
 <tr class="separator:a06cda1e7b49f7181c9e1a709b7326120"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
+Private Member Functions</h2></td></tr>
+<tr class="memitem:ad0939be53ed4f9458de56be5cbb3175a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_database.html#ad0939be53ed4f9458de56be5cbb3175a">connect</a> ($dbUserName, $whichPass, $dbName)</td></tr>
+<tr class="memdesc:ad0939be53ed4f9458de56be5cbb3175a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect to the database.  <a href="#ad0939be53ed4f9458de56be5cbb3175a">More...</a><br /></td></tr>
+<tr class="separator:ad0939be53ed4f9458de56be5cbb3175a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04b09ddfa77bc081adccfc843ac0bfbc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_database.html#a04b09ddfa77bc081adccfc843ac0bfbc">countConditions</a> ($query)</td></tr>
+<tr class="memdesc:a04b09ddfa77bc081adccfc843ac0bfbc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Count the number of conditional statements in the query.  <a href="#a04b09ddfa77bc081adccfc843ac0bfbc">More...</a><br /></td></tr>
+<tr class="separator:a04b09ddfa77bc081adccfc843ac0bfbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa89c9c867bc39484ed5e62fb3dff0b61"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_database.html#aa89c9c867bc39484ed5e62fb3dff0b61">countQuotes</a> ($query)</td></tr>
+<tr class="memdesc:aa89c9c867bc39484ed5e62fb3dff0b61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Count the number of quotes, single, double, and html entity equivalents found in the query.  <a href="#aa89c9c867bc39484ed5e62fb3dff0b61">More...</a><br /></td></tr>
+<tr class="separator:aa89c9c867bc39484ed5e62fb3dff0b61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44a0e2cc39749eaebbbdf7e41e99d85b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_database.html#a44a0e2cc39749eaebbbdf7e41e99d85b">countSymbols</a> ($query)</td></tr>
+<tr class="memdesc:a44a0e2cc39749eaebbbdf7e41e99d85b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Count the number of symbols, mostly &lt; and &gt; which would be convereted to html entites in the method sanitize query if we dont flag them.  <a href="#a44a0e2cc39749eaebbbdf7e41e99d85b">More...</a><br /></td></tr>
+<tr class="separator:a44a0e2cc39749eaebbbdf7e41e99d85b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca1427b28cc8d55eb804b2aceac0ca09"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_database.html#aca1427b28cc8d55eb804b2aceac0ca09">countWhere</a> ($query)</td></tr>
+<tr class="memdesc:aca1427b28cc8d55eb804b2aceac0ca09"><td class="mdescLeft">&#160;</td><td class="mdescRight">Count the number of where clauses in the query.  <a href="#aca1427b28cc8d55eb804b2aceac0ca09">More...</a><br /></td></tr>
+<tr class="separator:aca1427b28cc8d55eb804b2aceac0ca09"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="_database_8php_source.html#l00042">42</a> of file <a class="el" href="_database_8php_source.html">Database.php</a>.</p>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
+<div class="textblock"><p class="">This class is designed to connect to your database and to handle all interactions with the database. </p>
+
+<p class="definition">Definition at line <a class="el" href="_database_8php_source.html#l00049">49</a> of file <a class="el" href="_database_8php_source.html">Database.php</a>.</p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="af01c4c10a7d61bf105f86be6dbd45c0d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af01c4c10a7d61bf105f86be6dbd45c0d">&#9670;&nbsp;</a></span>__construct()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Database::__construct </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$dbUserName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$whichPass</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$dbName</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The constructor function where a function is called to build the connection to the database. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$dbUserName</td><td>Username you wish to open the database with </td></tr>
+    <tr><td class="paramname">$whichPass</td><td>First letter after the underscore in the username </td></tr>
+    <tr><td class="paramname">$dbName</td><td>The name of the database that you want to access </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_database_8php_source.html#l00058">58</a> of file <a class="el" href="_database_8php_source.html">Database.php</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="ad0939be53ed4f9458de56be5cbb3175a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad0939be53ed4f9458de56be5cbb3175a">&#9670;&nbsp;</a></span>connect()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Database::connect </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$dbUserName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$whichPass</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$dbName</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Connect to the database. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$dbUserName</td><td>Username you wish to open the database with </td></tr>
+    <tr><td class="paramname">$whichPass</td><td>First letter after the underscore in the username </td></tr>
+    <tr><td class="paramname">$dbName</td><td>The name of the database that you want to access </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>$this-&gt;db The connection to the database </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_database_8php_source.html#l00069">69</a> of file <a class="el" href="_database_8php_source.html">Database.php</a>.</p>
+
+</div>
+</div>
+<a id="a04b09ddfa77bc081adccfc843ac0bfbc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a04b09ddfa77bc081adccfc843ac0bfbc">&#9670;&nbsp;</a></span>countConditions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Database::countConditions </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$query</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Count the number of conditional statements in the query. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$query</td><td>The query for database </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>$conditions The number of conditional statements </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_database_8php_source.html#l00128">128</a> of file <a class="el" href="_database_8php_source.html">Database.php</a>.</p>
+
+</div>
+</div>
+<a id="aa89c9c867bc39484ed5e62fb3dff0b61"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa89c9c867bc39484ed5e62fb3dff0b61">&#9670;&nbsp;</a></span>countQuotes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Database::countQuotes </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$query</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Count the number of quotes, single, double, and html entity equivalents found in the query. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$query</td><td>The query for database </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>$quoteCount The total number of those strings mentioned above </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_database_8php_source.html#l00162">162</a> of file <a class="el" href="_database_8php_source.html">Database.php</a>.</p>
+
+</div>
+</div>
+<a id="a44a0e2cc39749eaebbbdf7e41e99d85b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44a0e2cc39749eaebbbdf7e41e99d85b">&#9670;&nbsp;</a></span>countSymbols()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Database::countSymbols </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$query</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Count the number of symbols, mostly &lt; and &gt; which would be convereted to html entites in the method sanitize query if we dont flag them. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$query</td><td>The query for database </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>$symbolCount The total number of symbols including &lt; and &gt; </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_database_8php_source.html#l00189">189</a> of file <a class="el" href="_database_8php_source.html">Database.php</a>.</p>
+
+</div>
+</div>
+<a id="aca1427b28cc8d55eb804b2aceac0ca09"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aca1427b28cc8d55eb804b2aceac0ca09">&#9670;&nbsp;</a></span>countWhere()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Database::countWhere </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$query</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Count the number of where clauses in the query. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$query</td><td>The query for database </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>$whereCount The total number of 'WHERE' appearing in the query </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_database_8php_source.html#l00210">210</a> of file <a class="el" href="_database_8php_source.html">Database.php</a>.</p>
+
+</div>
+</div>
+<a id="a8fc32c3d4666857f83e7feaaf28f7046"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8fc32c3d4666857f83e7feaaf28f7046">&#9670;&nbsp;</a></span>delete()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Database::delete </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$query</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$values</em> = <code>&quot;&quot;</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$wheres</em> = <code>1</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$conditions</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$quotes</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$symbols</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$spacesAllowed</em> = <code>false</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$semiColonAllowed</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Perform a delete query and returns boolean true or false based on success of query. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$query</td><td>The query for database </td></tr>
+    <tr><td class="paramname">$values</td><td>An array that holds the values for all the ? in $query </td></tr>
+    <tr><td class="paramname">$wheres</td><td>The total number of WHERE statements in the query </td></tr>
+    <tr><td class="paramname">$conditions</td><td>The number of conditional statements in the query </td></tr>
+    <tr><td class="paramname">$quotes</td><td>The number of quotes in the query </td></tr>
+    <tr><td class="paramname">$symbols</td><td>The number of symbols in the query </td></tr>
+    <tr><td class="paramname">$spacesAllowed</td><td>A boolean value showing if spaces are allowed </td></tr>
+    <tr><td class="paramname">$semiColonAllowed</td><td>A boolean value showing if semicolons are allowed </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>$success A boolean value of the success of the delete query </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_database_8php_source.html#l00233">233</a> of file <a class="el" href="_database_8php_source.html">Database.php</a>.</p>
+
+</div>
+</div>
+<a id="acaaf07b46f361637f989439d569c8920"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acaaf07b46f361637f989439d569c8920">&#9670;&nbsp;</a></span>insert()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Database::insert </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$query</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$values</em> = <code>&quot;&quot;</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$wheres</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$conditions</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$quotes</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$symbols</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$spacesAllowed</em> = <code>false</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$semiColonAllowed</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Perform a insert query and returns boolean true or false based on success of query. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$query</td><td>The query for database </td></tr>
+    <tr><td class="paramname">$values</td><td>An array that holds the values for all the ? in $query </td></tr>
+    <tr><td class="paramname">$wheres</td><td>The total number of WHERE statements in the query </td></tr>
+    <tr><td class="paramname">$conditions</td><td>The number of conditional statements in the query </td></tr>
+    <tr><td class="paramname">$quotes</td><td>The number of quotes in the query </td></tr>
+    <tr><td class="paramname">$symbols</td><td>The number of symbols in the query </td></tr>
+    <tr><td class="paramname">$spacesAllowed</td><td>A boolean value showing if spaces are allowed </td></tr>
+    <tr><td class="paramname">$semiColonAllowed</td><td>A boolean value showing if semicolons are allowed </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>$success A boolean value of the success of the insert query </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_database_8php_source.html#l00284">284</a> of file <a class="el" href="_database_8php_source.html">Database.php</a>.</p>
+
+</div>
+</div>
+<a id="ad0fddec711b2276b04c64f7de2182de8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad0fddec711b2276b04c64f7de2182de8">&#9670;&nbsp;</a></span>lastInsert()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Database::lastInsert </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return the autonumber primary key on the last insert statement you just performed. </p>
+<dl class="section return"><dt>Returns</dt><dd>$recordSet[0]["LAST_INSERT_ID()"] The ID on the last insert statement </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_database_8php_source.html#l00327">327</a> of file <a class="el" href="_database_8php_source.html">Database.php</a>.</p>
+
+</div>
+</div>
+<a id="a614781a5568a1a3757309cef2a50f630"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a614781a5568a1a3757309cef2a50f630">&#9670;&nbsp;</a></span>sanitizeQuery()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Database::sanitizeQuery </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$query</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$spacesAllowed</em> = <code>false</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$semiColonAllowed</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sanitize queries for security. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$query</td><td>The query for database </td></tr>
+    <tr><td class="paramname">$spacesAllowed</td><td>A boolean value showing if spaces are allowed </td></tr>
+    <tr><td class="paramname">$semiColonAllowed</td><td>A boolean value showing if semicolons are allowed </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>$query The result query </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_database_8php_source.html#l00358">358</a> of file <a class="el" href="_database_8php_source.html">Database.php</a>.</p>
+
+</div>
+</div>
+<a id="a73307b9ebf7ef5054b9b795b11c4a463"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a73307b9ebf7ef5054b9b795b11c4a463">&#9670;&nbsp;</a></span>select()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Database::select </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$query</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$values</em> = <code>&quot;&quot;</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$wheres</em> = <code>1</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$conditions</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$quotes</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$symbols</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$spacesAllowed</em> = <code>false</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$semiColonAllowed</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Perform a select query and returns an associtative array. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$query</td><td>The query for database </td></tr>
+    <tr><td class="paramname">$values</td><td>An array that holds the values for all the ? in $query </td></tr>
+    <tr><td class="paramname">$wheres</td><td>The total number of WHERE statements in the query </td></tr>
+    <tr><td class="paramname">$conditions</td><td>The number of conditional statements in the query </td></tr>
+    <tr><td class="paramname">$quotes</td><td>The number of quotes in the query </td></tr>
+    <tr><td class="paramname">$symbols</td><td>The number of symbols in the query </td></tr>
+    <tr><td class="paramname">$spacesAllowed</td><td>A boolean value showing if spaces are allowed </td></tr>
+    <tr><td class="paramname">$semiColonAllowed</td><td>A boolean value showing if semicolons are allowed </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>$recordSet The result generated from the select query </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_database_8php_source.html#l00412">412</a> of file <a class="el" href="_database_8php_source.html">Database.php</a>.</p>
+
+</div>
+</div>
+<a id="af85c3485c7be03d426bd44d21db273e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af85c3485c7be03d426bd44d21db273e3">&#9670;&nbsp;</a></span>testquery()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Database::testquery </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$query</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$values</em> = <code>&quot;&quot;</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$wheres</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$conditions</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$quotes</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$symbols</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$spacesAllowed</em> = <code>false</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$semiColonAllowed</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Test a query for the printed messages. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$query</td><td>The query for database </td></tr>
+    <tr><td class="paramname">$values</td><td>An array that holds the values for all the ? in $query </td></tr>
+    <tr><td class="paramname">$wheres</td><td>The total number of WHERE statements in the query </td></tr>
+    <tr><td class="paramname">$conditions</td><td>The number of conditional statements in the query </td></tr>
+    <tr><td class="paramname">$quotes</td><td>The number of quotes in the query </td></tr>
+    <tr><td class="paramname">$symbols</td><td>The number of symbols in the query </td></tr>
+    <tr><td class="paramname">$spacesAllowed</td><td>A boolean value showing if spaces are allowed </td></tr>
+    <tr><td class="paramname">$semiColonAllowed</td><td>A boolean value showing if semicolons are allowed </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="_database_8php_source.html#l00460">460</a> of file <a class="el" href="_database_8php_source.html">Database.php</a>.</p>
+
+</div>
+</div>
+<a id="ac8bfb00225584712a3b7e6181a3c7eda"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac8bfb00225584712a3b7e6181a3c7eda">&#9670;&nbsp;</a></span>update()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Database::update </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$query</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$values</em> = <code>&quot;&quot;</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$wheres</em> = <code>1</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$conditions</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$quotes</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$symbols</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$spacesAllowed</em> = <code>false</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$semiColonAllowed</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Perform an update query and returns boolean true or false based on success of query. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">$query</td><td>The query for database </td></tr>
+    <tr><td class="paramname">$values</td><td>An array that holds the values for all the ? in $query </td></tr>
+    <tr><td class="paramname">$wheres</td><td>The total number of WHERE statements in the query </td></tr>
+    <tr><td class="paramname">$conditions</td><td>The number of conditional statements in the query </td></tr>
+    <tr><td class="paramname">$quotes</td><td>The number of quotes in the query </td></tr>
+    <tr><td class="paramname">$symbols</td><td>The number of symbols in the query </td></tr>
+    <tr><td class="paramname">$spacesAllowed</td><td>A boolean value showing if spaces are allowed </td></tr>
+    <tr><td class="paramname">$semiColonAllowed</td><td>A boolean value showing if semicolons are allowed </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>$success A boolean value of the success of the update query </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="_database_8php_source.html#l00519">519</a> of file <a class="el" href="_database_8php_source.html">Database.php</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>/Users/chun/Documents/2018Spring/Rehab-Tracker/RTIT/Restful/<a class="el" href="_database_8php_source.html">Database.php</a></li>
 </ul>
 </div><!-- contents -->

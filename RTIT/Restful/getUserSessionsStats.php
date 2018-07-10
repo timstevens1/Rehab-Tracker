@@ -1,4 +1,12 @@
 <?php
+/** \file
+ \brief Code for retrieving a patient's all sessions.
+ 
+ This code retrieves a patient's all sessions in the database for a GET request.
+ 
+ The code on Github is [here] (https://github.com/timstevens1/Rehab-Tracker/blob/master/RTIT/Restful/getUserSessionsStats.php).
+ \cond
+ **/
   require_once realpath("../constants.php");
   require_once "Database.php";
   

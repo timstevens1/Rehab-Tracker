@@ -65,50 +65,19 @@ $(function() {
 </div>
 </div><!-- top -->
 <div class="header">
-  <div class="summary">
-<a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">cronDatabaseCompliance.php File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>Temporarily documented to generate the link of the folder.  
+<p>Code for checking patient's compliance everyday.  
 <a href="#details">More...</a></p>
 
 <p><a href="cron_database_compliance_8php_source.html">Go to the source code of this file.</a></p>
-<table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
-Variables</h2></td></tr>
-<tr class="memitem:ad261ba7f5542e7dc5a3e8089f2ca3ad2"><td class="memItemLeft" align="right" valign="top"><a id="ad261ba7f5542e7dc5a3e8089f2ca3ad2"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>$dbUserName</b> = DB_WRITER</td></tr>
-<tr class="separator:ad261ba7f5542e7dc5a3e8089f2ca3ad2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2120ee9892d37ec9607f253d806db5ce"><td class="memItemLeft" align="right" valign="top"><a id="a2120ee9892d37ec9607f253d806db5ce"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>$whichPass</b> = &quot;w&quot;</td></tr>
-<tr class="separator:a2120ee9892d37ec9607f253d806db5ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a68f39949e76b64662a06cb56579d91c3"><td class="memItemLeft" align="right" valign="top"><a id="a68f39949e76b64662a06cb56579d91c3"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>$dbName</b> = DATABASE_NAME</td></tr>
-<tr class="separator:a68f39949e76b64662a06cb56579d91c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6a46d2e6b7842324b483dcd59ccafee1"><td class="memItemLeft" align="right" valign="top"><a id="a6a46d2e6b7842324b483dcd59ccafee1"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>$RTC</b> = true</td></tr>
-<tr class="separator:a6a46d2e6b7842324b483dcd59ccafee1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:accc708e9dbc70f0def5052ecb83bb4a7"><td class="memItemLeft" align="right" valign="top"><a id="accc708e9dbc70f0def5052ecb83bb4a7"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>$thisDatabaseWriter</b> = new <a class="el" href="class_database.html">Database</a>($dbUserName, $whichPass, $dbName)</td></tr>
-<tr class="separator:accc708e9dbc70f0def5052ecb83bb4a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a71b0d4434a284e136badb5b9a37f38bb"><td class="memItemLeft" align="right" valign="top"><a id="a71b0d4434a284e136badb5b9a37f38bb"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>$currentDate</b> = date('Y-m-d')</td></tr>
-<tr class="separator:a71b0d4434a284e136badb5b9a37f38bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afa77839cf88678b3c18edd35672bd49f"><td class="memItemLeft" align="right" valign="top"><a id="afa77839cf88678b3c18edd35672bd49f"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>$tblPatientQuery</b> = 'SELECT pmkPatientID, fldWeekStart, DAYOFWEEK(fldWeekStart), fldWeekCompliance FROM tblPatient'</td></tr>
-<tr class="separator:afa77839cf88678b3c18edd35672bd49f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a84336960c11f5305031131c593a630bc"><td class="memItemLeft" align="right" valign="top"><a id="a84336960c11f5305031131c593a630bc"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>$patientPrimaries</b> = $thisDatabaseWriter -&gt; select($tblPatientQuery, &quot;&quot;, 0, 0, 0, 0, false, false)</td></tr>
-<tr class="separator:a84336960c11f5305031131c593a630bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a416e7a1ad3cb8728972fb25647329b5e"><td class="memItemLeft" align="right" valign="top"><a id="a416e7a1ad3cb8728972fb25647329b5e"></a>
-foreach($patientPrimaries as $patientPrimary)&#160;</td><td class="memItemRight" valign="bottom"><b>$success</b> = $thisDatabaseWriter-&gt;update('UPDATE tblPush SET fldDelivered = 0 WHERE fldDelivered IS NULL',&quot;&quot;,1,0,0,0,false,false)</td></tr>
-<tr class="separator:a416e7a1ad3cb8728972fb25647329b5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p class="">Temporarily documented to generate the link of the folder. </p>
+<div class="textblock"><p class="">Code for checking patient's compliance everyday. </p>
+<p class="">This code checks patient's compliance since the first day of a week and selects a corresponding message.</p>
+<p class="">The code on Github is <a href="https://github.com/timstevens1/Rehab-Tracker/blob/master/RTIT/Restful/cronDatabaseCompliance.php">here</a>. </p>
 
 <p class="definition">Definition in file <a class="el" href="cron_database_compliance_8php_source.html">cronDatabaseCompliance.php</a>.</p>
 </div></div><!-- contents -->

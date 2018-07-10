@@ -1,4 +1,14 @@
 <?php
+/** \file
+ \brief Page for clinician to log in.
+ 
+ This page allows a new physician to log in by typing ID and password and jumps to the index page if the information is valid.
+ 
+ Check the [webpage] (https://rehabtracker.med.uvm.edu/physicianPortal/login.php).
+ The code on Github is [here] (https://github.com/timstevens1/Rehab-Tracker/blob/master/RTIT/physicianPortal/login.php).
+ \cond
+ **/
+    
 session_start();
 include 'dbh.php';
 require_once'head.php';

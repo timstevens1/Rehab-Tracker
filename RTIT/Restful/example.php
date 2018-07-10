@@ -1,4 +1,12 @@
 <?php
+/** \file
+ \brief Example code for using RESTful operations.
+ 
+ This code shows an example of processing a GET request or a POST request for the database.
+ 
+ The code on Github is [here] (https://github.com/timstevens1/Rehab-Tracker/blob/master/RTIT/Restful/example.php).
+ \cond
+ **/
   // example request: http://path/to/resource/Example?method=sayHello&name=World
 
   require_once realpath("../constants.php");

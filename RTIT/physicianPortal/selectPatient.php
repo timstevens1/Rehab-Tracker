@@ -1,5 +1,13 @@
 <?php
-
+/** \file
+ \brief Page for selecting a patient.
+ 
+ This page allows a physician to select a patient to view their session history by choosing a patient in the drop-down list.
+ 
+ Check the [webpage] (https://rehabtracker.med.uvm.edu/physicianPortal/selectPatient.php).
+ The code on Github is [here] (https://github.com/timstevens1/Rehab-Tracker/blob/master/RTIT/physicianPortal/selectPatient.php).
+ \cond
+ **/
 
 //Step One: Make connection with database (in top.php)
 include "top.php";

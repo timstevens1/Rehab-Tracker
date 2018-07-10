@@ -1,4 +1,15 @@
 <?php
+/** \file
+ \brief Page for adding a new patient.
+ 
+ This page allows a developer or a physician to create a new patient by typing ID, email, phone number, and start date.
+ 
+ Check the [webpage] (https://rehabtracker.med.uvm.edu/physicianPortal/form.php).
+ The code on Github is [here] (https://github.com/timstevens1/Rehab-Tracker/blob/master/RTIT/physicianPortal/form.php).
+ 
+ \cond
+ **/
+    
 /* the purpose of this page is to display a form to allow a user and allow us
  * to add a new user or update an existing user 
  * 

@@ -1,11 +1,21 @@
 <?php
+/** \file
+ \brief Home page of the physician portal.
+ 
+ This page shows patients who are out of compliance and the summary of active patients.
+ 
+ Check the [webpage] (https://rehabtracker.med.uvm.edu/physicianPortal/index.php).
+ The code on Github is [here] (https://github.com/timstevens1/Rehab-Tracker/blob/master/RTIT/physicianPortal/index.php).
+ 
+ \cond
+ **/
+    
 include "top.php";
 ?>
 <?php
 
 //--------------------Table displays summary of patients OUT of weekly compliance----------------
 print "<article><h2>Patients who are OUT of compliance: </h2>";
-
 $tableName = tblPatient;
 
 $checkCompQuery = "SELECT pmkPatientID, fldWeekCompliance, fldPhone, fldPatientEmail FROM tblPatient ";
@@ -27,11 +37,13 @@ if ($tableName != "") {
     print '</tr>';
 }
 print '</article>';
-////now print out each record
+    
+//now print out each record
 $notCompliant = "SELECT pmkPatientID, fldWeekCompliance, fldWeekStart, fldDeviceSynced FROM " 
         . $tableName . " WHERE fldWeekCompliance < 1 and fnkCLIN = '" . $_SESSION['DocID'] . "'"
         . " ORDER BY fldWeekCompliance ";
 $complianceResult = $thisDatabaseReader->select($notCompliant, "", 1, 2, 2, 1, false, false);
+
 foreach ($complianceResult as $rec) {
     print '<tr>';
     for ($i = 0; $i < $columns; $i++) {
@@ -40,7 +52,7 @@ foreach ($complianceResult as $rec) {
     print '</tr>';
 }
 print '</table>';
-
+    
 // all done
 
 print '</aside>';
@@ -52,7 +64,6 @@ print '</aside>';
 <!--        <p>*This is a glance at the patients who are out of compliance. </p>
         <p>  More information can be found on the Patient Overview or Patient Sessions pages. </p></br>-->
         <h2>Summary of Active Patients for Clinician <?php print $_SESSION['DocID']; ?> </h2>
-
 
 <?php
 //Display all the records for a given table

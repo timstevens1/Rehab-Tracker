@@ -7,6 +7,8 @@
  *  fixed the data pull so now there is no need for an off-app button for the sync, 
  *  the intensity values have been completely overhauled, 
  *  and multiple sessions can now be stored within the EEPROM just incase the user doesn't have internet
+ *  
+ *  The code on Github is [here] (https://github.com/timstevens1/Rehab-Tracker/blob/master/Hardware/Arduino/Arduino.ino).
  */
 
 

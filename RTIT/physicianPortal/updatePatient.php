@@ -1,4 +1,15 @@
 <?php
+/** \file
+ \brief Page for updating an existing patient to active or inactive.
+ 
+ This page allows a developer or a physician to update an existing patient to active or inactive with the corresponding patient ID.
+ 
+ There is no webpage for this.
+ The code on Github is [here] (https://github.com/timstevens1/Rehab-Tracker/blob/master/RTIT/physicianPortal/updatePatient.php).
+ 
+ \cond
+ **/
+
 /* the purpose of this page is to display a form to allow a user and allow us
  * to add a new user or update an existing user 
  * 

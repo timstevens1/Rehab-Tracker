@@ -4,6 +4,16 @@
 The overarching goal of the project was to create a mobile application/wireless-enabled NMES device to improve rehabilitation compliance of patients with ACL tears through increased monitoring and novel patient-provider interactions. The iOS app connects to the NMES electrotherapy device through bluetooth, and receives data on the rehabilitation session. This data is saved in a database and is viewable to the physician on the physician-portal website. Copyright © University of Vermont.
 
 
+\section Directory
+The description of each directory is organized as on [**Github**] (https://github.com/timstevens1/Rehab-Tracker):
+- [**Hardware:**] (_arduino_8ino.html) The code for the Blend Arduino that will be uploaded to the board on the NMES machine. There is only one file, Arduino.ino, in this directory.
+- [**RTIT:**] (files.html) The code for web services including physician web portal and backend database web services. 
+	- [**Restful:**] (dir_1a919a50d07c73a92bcf5580ca94153b.html) All of the scripts that involve RESTful communication, PUSH notifications, and compliance scripts as well as database architecture.
+	- [**PhysicianPortal:**] (dir_d95c1d06a83d9225385d6463223d8b80.html) The code for the online portal which clinicians can use to add/manage users as well as track compliance and patient sessions.
+
+- [**Rehab Tracker:**](../jazzy/index.html) The code for the mobile application(iOS) where patients upload their session information which writes to the database. The documentation of the app is written with Jazzy. 
+- **Documentation:** The text documents, configuration files, images, and HTML files.
+
 
 \section Components
 
@@ -28,16 +38,6 @@ Relations between components:
 <br>
 \image html images/flow.png Flow Chart width=800px
 
-
-\section Directory
-The description of each directory is organized as on [**Github**] (https://github.com/timstevens1/Rehab-Tracker):
-- [**Hardware:**] (_arduino_8ino.html) The code for the Blend Arduino that will be uploaded to the board on the NMES machine. There is only one file, Arduino.ino, in this directory.
-- [**RTIT:**] (files.html) The code for web services including physician web portal and backend database web services. 
-	- [**Restful:**] (dir_1a919a50d07c73a92bcf5580ca94153b.html) All of the scripts that involve RESTful communication, PUSH notifications, and compliance scripts as well as database architecture.
-	- [**PhysicianPortal:**] (dir_d95c1d06a83d9225385d6463223d8b80.html) The code for the online portal which clinicians can use to add/manage users as well as track compliance and patient sessions.
-
-- [**Rehab Tracker:**](../jazzy/index.html) The code for the mobile application(iOS) where patients upload their session information which writes to the database. The documentation of the app is written with Jazzy. 
-- **Documentation:** The text documents, configuration files, images, and HTML files.
 
 \section Database
 \image html images/ER.PNG ER diagram of the database width=700px

@@ -1,8 +1,13 @@
 <?php
 /** \file
- \brief Temporarily documented to generate the link of the folder
+ \brief Page for adding a new physician.
  
- */
+ This page allows a new physician to create a new account by typing ID, email, and password.
+ 
+ Check the [webpage] (https://rehabtracker.med.uvm.edu/physicianPortal/addPhysician.php).
+ The code on Github is [here] (https://github.com/timstevens1/Rehab-Tracker/blob/master/RTIT/physicianPortal/addPhysician.php).
+ \cond
+ **/
 if (isset($_POST['btn-signup'])) {
     $DocID = strip_tags($_POST['DocID']);
     $fldEmail = strip_tags($_POST['fldEmail']);

@@ -1,8 +1,12 @@
 <<?php
 /** \file
- \brief Temporarily documented to generate the link of the folder
+ \brief Code for checking patient's compliance everyday.
  
- */
+ This code checks patient's compliance since the first day of a week and selects a corresponding message.
+ 
+ The code on Github is [here] (https://github.com/timstevens1/Rehab-Tracker/blob/master/RTIT/Restful/cronDatabaseCompliance.php).
+ \cond
+ **/
 //begin analysis script
 	require_once realpath(dirname(dirname(__FILE__))."\constants.php");
 	require_once "Database.php";

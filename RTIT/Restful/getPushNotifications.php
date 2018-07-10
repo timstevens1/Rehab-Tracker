@@ -1,4 +1,12 @@
 <?php
+/** \file
+ \brief Code for retrieving push notifications that have not been delivered or updating notifications as delivered.
+ 
+ This code retrieves all push notifications stored in the database that have not been delivered for a GET request or marks delivered push notifications for a POST request.
+ 
+ The code on Github is [here] (https://github.com/timstevens1/Rehab-Tracker/blob/master/RTIT/Restful/getPustNotifications.php).
+ \cond
+ **/
   require_once realpath("../constants.php");
   require_once "Database.php";
   

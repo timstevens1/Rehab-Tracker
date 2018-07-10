@@ -1,8 +1,14 @@
 <?php
 /** \file
- \brief Temporarily documented to generate the link of the folder
+ \brief Code for connecting to the database and providing functions.
  
- */
+ This code establishes the connection to the database and handles all interactions with the database.
+ 
+ More description of the class is [here] (class_database.html).
+ 
+ The code on Github is [here] (https://github.com/timstevens1/Rehab-Tracker/blob/master/RTIT/Restful/Database.php).
+ 
+ **/
     
 //$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
 //
@@ -39,15 +45,27 @@
 // 
 //$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$
 
+/// This class is designed to connect to your database and to handle all interactions with the database.
 class Database {
 
     public $db;
 
+    /** \brief The constructor function where a function is called to build the connection to the database
+     \param $dbUserName Username you wish to open the database with
+     \param $whichPass First letter after the underscore in the username
+     \param $dbName The name of the database that you want to access
+     */
     public function __construct($dbUserName, $whichPass, $dbName) {
         $this->db = null;
         $this->connect($dbUserName, $whichPass, $dbName);
     }
 
+    /** \brief Connect to the database
+     \param $dbUserName Username you wish to open the database with
+     \param $whichPass First letter after the underscore in the username
+     \param $dbName The name of the database that you want to access
+     \return $this->db The connection to the database
+     */
     private function connect($dbUserName, $whichPass, $dbName) {
         require(realpath(__DIR__.'/../pass.php'));
 
@@ -102,6 +120,11 @@ class Database {
     // NOT, !	Negates value
     // ||, OR	Logical OR
     // XOR
+    
+    /** \brief Count the number of conditional statements in the query
+     \param $query The query for database
+     \return $conditions The number of conditional statements
+     */
     private function countConditions($query) {
         $conditions = 0;
         $andCount = 0;
@@ -131,6 +154,11 @@ class Database {
     // #########################################################################
     // counts the number of quotes, single and double  plus html entity 
     // equivalents found in your query.
+    
+    /** \brief Count the number of quotes, single, double, and html entity equivalents found in the query
+     \param $query The query for database
+     \return $quoteCount The total number of those strings mentioned above
+     */
     private function countQuotes($query) {
         $quoteCount = 0;
         $singleCount = 0;
@@ -153,6 +181,11 @@ class Database {
     // #########################################################################
     // counts the number of symbols, mostly < and > which would be convereted to 
     // html entites in the method sanitize query if we dont flag them.
+    
+    /** \brief Count the number of symbols, mostly < and > which would be convereted to html entites in the method sanitize query if we dont flag them
+     \param $query The query for database
+     \return $symbolCount The total number of symbols including < and >
+     */
     private function countSymbols($query) {
         $symbolCount = 0;
         $ltCount = 0;
@@ -169,6 +202,11 @@ class Database {
     // #########################################################################
     // counts the number of where clauses in the query. a select in a select 
     // will often have two where clauses (one for each query)
+    
+    /** \brief Count the number of where clauses in the query
+     \param $query The query for database
+     \return $whereCount The total number of 'WHERE' appearing in the query
+     */
     private function countWhere($query) {
         $whereCount = 0;
 
@@ -179,7 +217,19 @@ class Database {
 
     // #########################################################################
     // Performs a delete query and returns boolean true or false based on 
-    // success of query. 
+    // success of query.
+    
+    /** \brief Perform a delete query and returns boolean true or false based on success of query
+     \param $query The query for database
+     \param $values An array that holds the values for all the ? in $query
+     \param $wheres The total number of WHERE statements in the query
+     \param $conditions The number of conditional statements in the query
+     \param $quotes The number of quotes in the query
+     \param $symbols The number of symbols in the query
+     \param $spacesAllowed A boolean value showing if spaces are allowed
+     \param $semiColonAllowed A boolean value showing if semicolons are allowed
+     \return $success A boolean value of the success of the delete query
+     */
     public function delete($query, $values = "", $wheres = 1, $conditions = 0, $quotes = 0, $symbols = 0, $spacesAllowed = false, $semiColonAllowed = false) {
         $success = false;
 
@@ -218,7 +268,19 @@ class Database {
 
     //############################################################################
     // Performs an insert query and returns boolean true or false based on success
-    // of query.     
+    // of query.
+    
+    /** \brief Perform a insert query and returns boolean true or false based on success of query
+     \param $query The query for database
+     \param $values An array that holds the values for all the ? in $query
+     \param $wheres The total number of WHERE statements in the query
+     \param $conditions The number of conditional statements in the query
+     \param $quotes The number of quotes in the query
+     \param $symbols The number of symbols in the query
+     \param $spacesAllowed A boolean value showing if spaces are allowed
+     \param $semiColonAllowed A boolean value showing if semicolons are allowed
+     \return $success A boolean value of the success of the insert query
+     */
     public function insert($query, $values = "", $wheres = 0, $conditions = 0, $quotes = 0, $symbols = 0, $spacesAllowed = false, $semiColonAllowed = false) {
         $success = false;
 
@@ -258,6 +320,10 @@ class Database {
     // #########################################################################
     // Used the get the value of the autonumber primary key on the last insert
     // sql statement you just performed
+    
+    /** \brief Return the autonumber primary key on the last insert statement you just performed
+     \return $recordSet[0]["LAST_INSERT_ID()"] The ID on the last insert statement
+     */
     public function lastInsert() {
         $query = "SELECT LAST_INSERT_ID()";
 
@@ -282,6 +348,13 @@ class Database {
     // query to execute but it will fail returning nothing.
     // spaces in this conext refer to %20 and most likely will not be in your
     // query
+    
+    /** \brief Sanitize queries for security
+     \param $query The query for database
+     \param $spacesAllowed A boolean value showing if spaces are allowed
+     \param $semiColonAllowed A boolean value showing if semicolons are allowed
+     \return $query The result query
+     */
     function sanitizeQuery($query, $spacesAllowed = false, $semiColonAllowed = false) {
         $replaceValue = "Q";
 
@@ -324,6 +397,18 @@ class Database {
     //  $spacesAllowed are %20 and not a blank space
     //  $semiColonAllowed is ; and generally you do not have them in your query
     //
+    
+    /** \brief Perform a select query and returns an associtative array
+     \param $query The query for database
+     \param $values An array that holds the values for all the ? in $query
+     \param $wheres The total number of WHERE statements in the query
+     \param $conditions The number of conditional statements in the query
+     \param $quotes The number of quotes in the query
+     \param $symbols The number of symbols in the query
+     \param $spacesAllowed A boolean value showing if spaces are allowed
+     \param $semiColonAllowed A boolean value showing if semicolons are allowed
+     \return $recordSet The result generated from the select query
+     */
     public function select($query, $values = "", $wheres = 1, $conditions = 0, $quotes = 0, $symbols = 0, $spacesAllowed = false, $semiColonAllowed = false) {
 
         if ($wheres != $this->countWhere($query)) {
@@ -362,6 +447,16 @@ class Database {
     }
 
     // #########################################################################
+    /** \brief Test a query for the printed messages
+     \param $query The query for database
+     \param $values An array that holds the values for all the ? in $query
+     \param $wheres The total number of WHERE statements in the query
+     \param $conditions The number of conditional statements in the query
+     \param $quotes The number of quotes in the query
+     \param $symbols The number of symbols in the query
+     \param $spacesAllowed A boolean value showing if spaces are allowed
+     \param $semiColonAllowed A boolean value showing if semicolons are allowed
+     */
     public function testquery($query, $values = "", $wheres = 0, $conditions = 0, $quotes = 0, $symbols = 0, $spacesAllowed = false, $semiColonAllowed = false) {
 
         print "<p>TEST Query: does not execute.</p>";
@@ -408,7 +503,19 @@ class Database {
 
     // #########################################################################
     // Performs an update query and returns boolean true or false based on 
-    // success of query. 
+    // success of query.
+    
+    /** \brief Perform an update query and returns boolean true or false based on success of query.
+     \param $query The query for database
+     \param $values An array that holds the values for all the ? in $query
+     \param $wheres The total number of WHERE statements in the query
+     \param $conditions The number of conditional statements in the query
+     \param $quotes The number of quotes in the query
+     \param $symbols The number of symbols in the query
+     \param $spacesAllowed A boolean value showing if spaces are allowed
+     \param $semiColonAllowed A boolean value showing if semicolons are allowed
+     \return $success A boolean value of the success of the update query
+     */
     public function update($query, $values = "", $wheres = 1, $conditions = 0, $quotes = 0, $symbols = 0, $spacesAllowed = false, $semiColonAllowed = false) {
         $success = false;
 

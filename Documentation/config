@@ -450,7 +450,7 @@ EXTRACT_ALL            = NO
 # be included in the documentation.
 # The default value is: NO.
 
-EXTRACT_PRIVATE        = NO
+EXTRACT_PRIVATE        = YES
 
 # If the EXTRACT_PACKAGE tag is set to YES, all members with package or internal
 # scope will be included in the documentation.
@@ -803,10 +803,9 @@ INPUT                  = mainpage.txt \
 			 installArduino.txt \
 			 ../Hardware/Arduino/Arduino.ino \
 			 documentationTutorial.txt \
-			 ../RTIT/physicianPortal/addPhysician.php \
-			 ../RTIT/physicianPortal/dbh.php \
-			 ../RTIT/Restful/cronDatabaseCompliance.php \
-			 ../RTIT/Restful/Database.php \
+			 ../RTIT/push.py \
+			 ../RTIT/PhysicianPortal \
+			 ../RTIT/Restful \
 
 
 
@@ -878,7 +877,7 @@ FILE_PATTERNS          = *.c \
                          *.vhdl \
                          *.ucf \
                          *.qsf \
-			 *.swift
+			 *.swift 
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.

@@ -1,5 +1,14 @@
 <?php
-
+/** \file
+ \brief Code that actually updates the goal intensity of a patient.
+ 
+ The code is included in patientSessions, which allows a physician to update a patient's goal intensity.
+ 
+ Check the [webpage] (https://rehabtracker.med.uvm.edu/physicianPortal/updateIntensity.php).
+ The code on Github is [here] (https://github.com/timstevens1/Rehab-Tracker/blob/master/RTIT/physicianPortal/updateIntensity.php).
+ \cond
+ **/
+    
 $patient = $_SESSION['patient'];
 
 //---------------------------UPDATE INTENSITY GOAL ------------------------------------------

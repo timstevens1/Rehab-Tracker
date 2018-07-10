@@ -1,3 +1,16 @@
+<?php
+/** \file
+ \brief Metadata of the physician portal.
+ 
+ This HTML element sets up some global variables, checks the security, and sets up database connection. This page doesn't display.
+ 
+ There is no webpage for this.
+ The code on Github is [here] (https://github.com/timstevens1/Rehab-Tracker/blob/master/RTIT/physicianPortal/head.php).
+ 
+ \cond
+ **/
+?>
+
 <head>
     <title>Rehab Compliance</title>
     <meta charset="UTF-8">

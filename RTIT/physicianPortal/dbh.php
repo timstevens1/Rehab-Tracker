@@ -1,8 +1,13 @@
 <?php
 /** \file
- \brief Temporarily documented to generate the link of the folder
+ \brief Page for connecting the database.
  
- */
+ This page checks the database information and connect the physician portal to it.
+ 
+ There is no webpage for this. The code on Github is [here] (https://github.com/timstevens1/Rehab-Tracker/blob/master/RTIT/physicianPortal/dbh.php).
+ 
+ \cond
+ **/
 require_once realpath("../constants.php");
 require_once realpath("../pass.php");
 $DBhost = DB_HOST;

@@ -1,5 +1,13 @@
-
 <?php
+/** \file
+ \brief Code for updating device ID of a patient.
+ 
+ This code updates the device ID of a patient for push notifications.
+ 
+ The code on Github is [here] (https://github.com/timstevens1/Rehab-Tracker/blob/master/RTIT/Restful/restful.php).
+ \cond
+ **/
+    
   // example request: http://path/to/resource/Example?method=sayHello&name=World
   
   require_once(realpath('../constants.php'));

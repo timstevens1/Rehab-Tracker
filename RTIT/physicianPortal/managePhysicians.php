@@ -1,4 +1,15 @@
 <?php
+/** \file
+ \brief Page for updating an existing physician to active or inactive.
+ 
+ This page allows the admin to update an existing physician to active or inactive with the corresponding doctor ID.
+ 
+ There is no webpage for this.
+ The code on Github is [here] (https://github.com/timstevens1/Rehab-Tracker/blob/master/RTIT/physicianPortal/updatePatient.php).
+ 
+ \cond
+ **/
+    
 //------------form to update/deactivate a physician
 
 /* the purpose of this page is to display a form to allow the admin to create a new clinician

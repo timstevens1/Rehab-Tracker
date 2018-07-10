@@ -18,6 +18,7 @@
 	- HTML_OUTPUT = html_doxygen
 	- GENERATE_LATEX = NO
 	- IMAGE_PATH = images
+	- EXTRACT_PRIVATE = YES
 <br><br>
 4. Generate the documentation
 	- Type “doxygen <config-file>”

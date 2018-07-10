@@ -1,4 +1,13 @@
 <?php
+/** \file
+ \brief Code for retrieving a patient's maximum session number or inserting a new session.
+ 
+ This code retrieves a patient's maximum session number for a GET request or inserts a session of the patient for a POST request.
+ 
+ The code on Github is [here] (https://github.com/timstevens1/Rehab-Tracker/blob/master/RTIT/Restful/sync.php).
+ \cond
+ **/
+    
   // example request: http://path/to/resource/Example?method=sayHello&name=World
 
   require_once realpath("../constants.php");

@@ -1,4 +1,13 @@
 <?php
+/** \file
+ \brief Testing code for retrieving push notifications that have not been delivered.
+ 
+ This code retrieves all push notifications stored in the database that have not been delivered and prints all notifications.
+ 
+ The code on Github is [here] (https://github.com/timstevens1/Rehab-Tracker/blob/master/RTIT/Restful/test.php).
+ \cond
+ **/
+    
   require_once realpath("../constants.php");
   require_once "Database.php";
   

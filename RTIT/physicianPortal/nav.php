@@ -1,3 +1,15 @@
+<?php
+/** \file
+ \brief Main navigation of the physician portal.
+ 
+ The code generates a set of navigation links including home, all patients, patient sessions, add clinician, add patient. It also shows current clinician name and a log out button.
+ 
+ There is no webpage for this.
+ The code on Github is [here] (https://github.com/timstevens1/Rehab-Tracker/blob/master/RTIT/physicianPortal/nav.php).
+ \cond
+ **/
+?>
+
 <!-- ######################     Main Navigation   ########################## -->
 <nav>
 <ul><b>

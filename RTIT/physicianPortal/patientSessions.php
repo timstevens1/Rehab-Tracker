@@ -1,4 +1,15 @@
 <?php
+/** \file
+ \brief Page for displaying patient's information and updating goal intensity.
+ 
+ This page allows a physician to update the goal intensity, view patient's information, and check the session history of that patient. It also provides a button to select another patient (go back to the selectPatient page).
+ 
+ Check the [webpage] (https://rehabtracker.med.uvm.edu/physicianPortal/patientSessions.php).
+ The code on Github is [here] (https://github.com/timstevens1/Rehab-Tracker/blob/master/RTIT/physicianPortal/patientSessions.php).
+ \cond
+ **/
+    
+    
 /*
  * The purpose of this page is to show granular information for an individual patient
  * this displays:
