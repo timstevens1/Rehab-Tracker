@@ -1,4 +1,17 @@
 <?php
+/** \file
+ \brief Page for adding a new physician.
+ 
+ This page allows a developer or a physician to create a new physician by typing ID, email, and password.
+ 
+ Check the [webpage] (https://rehabtracker.med.uvm.edu/physicianPortal/manageUsers.php).
+ The code on Github is [here] (https://github.com/timstevens1/Rehab-Tracker/blob/master/RTIT/physicianPortal/manageUsers.php).
+ 
+ \cond
+ **/
+    
+    
+    
 include 'top.php';
 //include 'form.php';
 //include 'managePatients.php';

@@ -1,33 +1,6 @@
 {
   "warnings": [
-    {
-      "file": "/Users/chun/Documents/2018Spring/Rehab-Tracker/Rehab Tracker/Rehab Tracker/User+CoreDataProperties.swift",
-      "line": 32,
-      "symbol": "User.addToHasSession(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/chun/Documents/2018Spring/Rehab-Tracker/Rehab Tracker/Rehab Tracker/User+CoreDataProperties.swift",
-      "line": 35,
-      "symbol": "User.removeFromHasSession(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/chun/Documents/2018Spring/Rehab-Tracker/Rehab Tracker/Rehab Tracker/User+CoreDataProperties.swift",
-      "line": 38,
-      "symbol": "User.addToHasSession(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/chun/Documents/2018Spring/Rehab-Tracker/Rehab Tracker/Rehab Tracker/User+CoreDataProperties.swift",
-      "line": 41,
-      "symbol": "User.removeFromHasSession(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    }
+
   ],
   "source_directory": "/Users/chun/Documents/2018Spring/Rehab-Tracker/Rehab Tracker"
 }
