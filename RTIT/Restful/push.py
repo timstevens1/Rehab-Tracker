@@ -1,3 +1,14 @@
+## \file
+#  \brief Not being used (This file is in Restful/).
+#
+#  This code was supposed to directly query the database and send push notifications from the Redcap server at the college of medicine. However, we were unable to do this on the Redcap server, so the code in RTIT/push.py hosted on Uvm’s silk server is currently used.
+#
+#  Read the document of RTIT/push.py.
+#
+#  The code on Github is [here] (https://github.com/timstevens1/Rehab-Tracker/blob/master/RTIT/Restful/push.py).
+#  \cond
+
+
 import time
 import random
 from apns import APNs, Payload, Frame
